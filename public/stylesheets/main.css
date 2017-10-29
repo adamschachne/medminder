@@ -25,3 +25,21 @@
     .jumbotron .lang-logo img {
       max-width: 100%; }
 
+/* Medication page CSS*/
+#pageTitle{
+  text-align: center;
+}
+#menuBtnGroup {
+    width: 100%;
+}
+.separate {
+    margin-left: 10px !important;
+    width: 23%;
+}
+#medicationList {
+  margin-top: 25px;
+}
+#medicationList h3{
+  margin-left: 10px;
+}
+/*End of Medication page CSS*/
