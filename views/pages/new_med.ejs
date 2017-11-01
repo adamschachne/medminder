@@ -2,12 +2,132 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+  <style>
+    .btn-secondary.active {
+      background-color: darkgrey;
+    }
+    .btn.btn-lg.active {
+      background-color: darkgrey;
+    }
+    .btn:focus,.btn:active {
+      outline: none !important;
+    }
+    .repeatmenu li {
+      cursor: pointer;
+    }
+    #start_time button {
+      width: 80%;
+      height: 100%;
+      /*padding-left: 10px;
+      padding-right: 10px;*/
+    }
+
+    #reminder_button {
+      width: 35%;
+    }
+
+    #dayofweek {
+      height: 100%;
+    }
+
+    #dayofweek button {
+      font-size: xx-large;
+      width: 14%;
+      height: 100%;
+    }
+}
+
+  </style>
 </head>
 
 <body>
 
 <% include ../partials/nav.ejs %>
-<h1>This Page is to schedule new Medicine.</h1>
+
+<div class="container">
+  <div class="form-group">
+    <h3>Medication Name:</h3>
+    <input type="text" class="form-control" id="mediction_name">
+    <h3>Reminder Days:</h3>
+    <div style="height: 80px;" class="btn-toolbar mb-3" role="toolbar">
+      <div id="dayofweek" style="width: 100%;" class="btn-group btn-group-lg" role="group">
+        <button type="button" class="btn btn-secondary">S</button>
+        <button type="button" class="btn btn-secondary">M</button>
+        <button type="button" class="btn btn-secondary">T</button>
+        <button type="button" class="btn btn-secondary">W</button>
+        <button type="button" class="btn btn-secondary">Th</button>
+        <button type="button" class="btn btn-secondary">F</button>
+        <button type="button" class="btn btn-secondary">Sa</button>
+      </div>
+    </div>
+
+    <h3>Repeat</h3>
+    <div class="dropdown">
+      <button id="reminder_button" class="btn btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
+        As Needed
+      <span class="caret"></span></button>
+      <ul class="repeatmenu dropdown-menu" role="menu">
+        <li class="active" role="presentation"><a role="menuitem">As Needed</a></li>
+        <li role="presentation"><a role="menuitem">Daily</a></li>
+        <li role="presentation"><a role="menuitem">Weekly</a></li>
+      </ul>
+    </div>
+    <br>
+    <br>
+
+    <div id="start_time" style="height:80px;" class="row">
+      <div style="height: inherit;" class="col-xs-4 text-center">
+        <button type="button" class="btn btn-lg">Start Now</button>
+      </div>
+      <div style="height: inherit;" class="col-xs-4 text-center">
+        <button type="button" class="btn btn-lg">On the Hour</button>
+      </div>
+      <div style="height: inherit;" class="col-xs-4 text-center">
+        <button type="button" class="btn btn-lg">Custom Time</button>
+      </div>
+    </div>
+    <br>
+    <div style="height:80px; padding-left: 5%; padding-right: 5%;" class="row">
+      <div style="height: inherit;" class="col text-center">
+        <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 </body>
+
+<script>
+  $(document).ready(function() {
+    $('body').on('click', '.btn.btn-secondary', function() {
+      if ($(this).hasClass('active')) {
+        $(this).removeClass('active');
+      } else {
+        $(this).addClass('active');
+      }
+    });
+
+    $('body').on('click', '#start_time .btn.btn-lg', function() {
+      $('#start_time .btn.btn-lg').removeClass('active');
+      if ($(this).hasClass('active')) {
+        $(this).removeClass('active');
+      } else {
+        $(this).addClass('active');
+      }
+    });
+
+    $('body').on('click', '#finish_button', function() {
+      //post
+      location.href = "/";
+    });
+
+    $('body').on('click', '.repeatmenu > li', function() {
+      $('.repeatmenu > li').removeClass('active');
+      $(this).addClass('active');
+      $('#reminder_button').html($(this).find('a').html() + ' <span class="caret"></span>');
+    });
+
+  });
+</script>
 </html>
