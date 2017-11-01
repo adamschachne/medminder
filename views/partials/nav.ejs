@@ -1,4 +1,7 @@
 <nav class="navbar navbar-default navbar-static-top">
+  <%if (page_title != 'Medication') { %>
+  <button class="btn btn-sm" onclick="location.href='/'" style="position: absolute;margin-top: 30px;left: 10%;width: 36px;"><span class="glyphicon glyphicon-arrow-left"></span></button>
+  <% } %>
   <div class="container" id="pageTitle">
     <h1><%=page_title%></h1>
   </div>
