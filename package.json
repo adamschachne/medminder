@@ -11,6 +11,7 @@
     "test": "node test.js"
   },
   "dependencies": {
+    "bootstrap-switch": "^3.3.4",
     "body-parser": "^1.18.2",
     "connect-session-knex": "^1.4.0",
     "ejs": "2.5.6",

@@ -16,26 +16,12 @@
       cursor: pointer;
     }
     #start_time button {
-      width: 80%;
-      height: 100%;
-      /*padding-left: 10px;
-      padding-right: 10px;*/
-    }
-
-    #reminder_button {
-      width: 35%;
-    }
-
-    #dayofweek {
       height: 100%;
     }
-
     #dayofweek button {
-      font-size: xx-large;
       width: 14%;
-      height: 100%;
     }
-}
+
 
   </style>
 </head>
@@ -43,7 +29,124 @@
 <body>
 
 <% include ../partials/nav.ejs %>
+<form class="" action="index.html" method="post">
+  <div class="form-group">
+    <label for="">Medication Name</label>
+    <input type="text" class="form-control" id="medication_name">
+  </div>
+  <div class="form-group">
+    <label for="">Remind me on</label>
+    <div class="btn-toolbar" role="toolbar">
+      <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
+        <button type="button" class="btn btn-secondary">S</button>
+        <button type="button" class="btn btn-secondary">M</button>
+        <button type="button" class="btn btn-secondary">T</button>
+        <button type="button" class="btn btn-secondary">W</button>
+        <button type="button" class="btn btn-secondary">Th</button>
+        <button type="button" class="btn btn-secondary">F</button>
+        <button type="button" class="btn btn-secondary">Sa</button>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="">Repeat Every</label>
+      <select class="form-control" id="hoursToRepeat">
+        <option value="1">hour</option>
+        <option value="2">2 hours</option>
+        <option value="3">3 hours</option>
+        <option value="4">4 hours</option>
+        <option value="5">5 hours</option>
+        <option value="6">6 hours</option>
+        <option value="7">7 hours</option>
+        <option value="8">8 hours</option>
+        <option value="9">9 hours</option>
+        <option value="10">10 hours</option>
+        <option value="11">11 hours</option>
+        <option value="12">12 hours</option>
+      </select>
+  </div>
+  <div class="form-group">
+    <label for="">Start Reminders</label>
+    <div id="start_time" class="row">
+      <div style="height:70px;" class="col-xs-8 btn-group">
+        <button type="button" class="btn btn-lg">Now</button>
+        <button type="button" class="btn btn-lg">On the Hour</button>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label for="atThisTime">At this time</label>
+          <input type="text" class="form-control" id="hourSet" aria-describedby="hourSet" placeholder="Time">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="text-center">
+      <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish</button>
+    </div>
+  </div>
+  <!-- <button type="submit" class="btn btn-lg">Save</button> -->
 
+</form>
+
+<!-- <div class="container">
+    <h3>Medication Name</h3>
+    <input type="text" class="form-control" id="medication_name">
+    <h3>Remind me on</h3>
+    <div class="btn-toolbar" role="toolbar">
+      <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
+        <button type="button" class="btn btn-secondary">S</button>
+        <button type="button" class="btn btn-secondary">M</button>
+        <button type="button" class="btn btn-secondary">T</button>
+        <button type="button" class="btn btn-secondary">W</button>
+        <button type="button" class="btn btn-secondary">Th</button>
+        <button type="button" class="btn btn-secondary">F</button>
+        <button type="button" class="btn btn-secondary">Sa</button>
+      </div>
+    </div>
+
+    <h3>Repeat</h3>
+    <div class="dropdown">
+      <button id="reminder_button" class="btn btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
+        As Needed
+      <span class="caret"></span></button>
+      <ul class="repeatmenu dropdown-menu" role="menu">
+        <li class="active" role="presentation"><a role="menuitem">As Needed</a></li>
+        <li role="presentation"><a role="menuitem">Daily</a></li>
+        <li role="presentation"><a role="menuitem">Weekly</a></li>
+      </ul>
+    </div>
+    <br>
+    <br>
+
+    <div id="start_time" class="row">
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-lg">Start Now</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-lg">On the Hour</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn btn-lg">Custom Time</button>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col text-center">
+        <button id="finish_button"  type="button" class="btn btn-lg">Finish</button>
+      </div>
+    </div>
+
+</div> -->
+
+<!-- <div class="container">
+  <div class="form-group">
+    <h3>Medication Name</h3>
+    <input type="text" class="form-control" id="medication_name">
+    <h3>Remind me on</h3>
+    <div class="btn-toolbar" role="toolbar">
+      <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
+=======
 <div class="container">
   <%if (locals.message) { %>
   <h3><%=locals.message%></h3>
@@ -54,6 +157,7 @@
     <h3>Reminder Days:</h3>
     <div style="height: 80px;" class="btn-toolbar mb-3" role="toolbar">
       <div id="dayofweek" style="width: 100%;" class="btn-group btn-group-lg" role="group">
+>>>>>>> 2797efe60608c42631e69c9b687d05bb51264e86
         <button type="button" class="btn btn-secondary">S</button>
         <button type="button" class="btn btn-secondary">M</button>
         <button type="button" class="btn btn-secondary">T</button>
@@ -79,13 +183,13 @@
     <br>
 
     <div id="start_time" style="height:80px;" class="row">
-      <div style="height: inherit;" class="col-xs-4 text-center">
+      <div style="height: inherit;" class="col-xs-4">
         <button type="button" class="btn btn-lg">Start Now</button>
       </div>
-      <div style="height: inherit;" class="col-xs-4 text-center">
+      <div style="height: inherit;" class="col-xs-4">
         <button type="button" class="btn btn-lg">On the Hour</button>
       </div>
-      <div style="height: inherit;" class="col-xs-4 text-center">
+      <div style="height: inherit;" class="col-xs-4">
         <button type="button" class="btn btn-lg">Custom Time</button>
       </div>
     </div>
@@ -97,7 +201,7 @@
     </div>
 
   </div>
-</div>
+</div> -->
 
 </body>
 
