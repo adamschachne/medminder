@@ -6,8 +6,89 @@
 
 <body>
 
-<% include ../partials/nav.ejs %>
-<h1>This Page is to modify settings.</h1>
+  <% include ../partials/nav.ejs %>
+
+  <div class="container">
+
+    <form>
+      <div class="form-group row">
+        <label class="col-xs-12" for="slider-text-size">Font Size</label>
+        <div class="col-xs-12" id="slider-text-size"></div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12" for="">Notifications</label>
+        <input type="checkbox" name="notifications-switch" id="notifications-switch" >
+      </div>
+
+      <div class="form-group row">
+        <label class="col-xs-12" for="LayoutBtnGroup">Layout</label>
+        <div class="col-xs-12 btn-group" id="LayoutBtnGroup">
+          <button class="btn btn-default btn-lg separate" type="button" name="listButton">List</button>
+          <button class="btn btn-default btn-lg separate" type="button" name="gridButton">Grid</button>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-xs-12 btn-group" id="appSettingsBtns">
+          <button class="btn btn-default btn-lg separate" type="button" name="historyButton">History</button>
+          <button class="btn btn-default btn-lg separate" type="button" name="helpButton">Help</button>
+          <button class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
+        </div>
+      </div>
+
+      <!-- <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      </div> -->
+      <!-- <div class="form-check">
+        <label class="form-check-label">
+          <input type="checkbox" class="form-check-input">
+          Check me out
+        </label>
+      </div> -->
+
+      <button type="submit" class="btn-lg btn-primary">Save</button>
+    </form>
+
+    <!-- <div class="form-group">
+      <div class="row">
+        <h3>Font Size</h3>
+        <input id="slider-text-size" data-provide="slider" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+      </div>
+
+      <div class="row">
+        <h3>Notifications</h3>
+
+      </div>
+
+      <div class="row">
+        <h3>Layout</h3>
+        <div class="btn-group" id="LayoutBtnGroup">
+          <button class="btn btn-default btn-lg separate" type="button" name="listButton">List</button>
+          <button class="btn btn-default btn-lg separate" type="button" name="gridButton">Grid</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="btn-group" id="appSettingsBtns">
+          <button class="btn btn-default btn-lg separate" type="button" name="historyButton">History</button>
+          <button class="btn btn-default btn-lg separate" type="button" name="helpButton">Help</button>
+          <button class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
+        </div>
+      </div>
+
+    </div> -->
+
+  </div>
+
+
+
+
+
+  <script type="text/javascript">
+    // $("[name='notifications-switch']").bootstrapSwitch();
+  </script>
 
 </body>
 </html>

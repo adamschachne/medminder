@@ -1,8 +1,28 @@
 <nav class="navbar navbar-default navbar-static-top">
-  <%if (page_title != 'Medication') { %>
-  <button class="btn btn-sm" onclick="location.href='/'" style="position: absolute;margin-top: 30px;left: 10%;width: 36px;"><span class="glyphicon glyphicon-arrow-left"></span></button>
-  <% } %>
-  <div class="container" id="pageTitle">
-    <h1><%=page_title%></h1>
+  <div style ="margin-top:5px;" class="row">
+    <%if (page_title != 'Medication') { %>
+
+    <div class="col-xs-2">
+      <button class="btn" onclick="location.href='/'" >Back</button>
+    </div>
+    <div class="col-xs-10">
+      <div class="container" id="pageTitle">
+        <h4><%=page_title%></h4>
+      </div>
+    </div>
+
+    <% } else { %>
+
+      <div class="col-xs-12">
+        <div class="container" id="pageTitle">
+          <h4><%=page_title%></h4>
+        </div>
+      </div>
+
+    <% }%>
+
+
+
   </div>
+
 </nav>
