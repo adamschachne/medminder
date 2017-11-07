@@ -2,11 +2,7 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
-  <style media="screen">
-    .toggle.ios, .toggle-on.ios, .toggle-off.ios { margin-left: 15px; border-radius: 20px; }
-    .toggle.ios .toggle-handle { border-radius: 20px; }
-    .slider.slider-horizontal {margin-left: 15px}
-  </style>
+
 </head>
 
 <body>
@@ -58,9 +54,7 @@
   <script type="text/javascript">
      $("[name='notifications-switch']").bootstrapToggle();
      $("#slider-text-size").bootstrapSlider();
-     $("#slider-text-size").on("slide", function(slideEvt) {
-	      $("#ex6SliderVal").text(slideEvt.value);
-      });
+
   </script>
 
 </body>

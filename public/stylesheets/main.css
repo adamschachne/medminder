@@ -8,7 +8,12 @@
 #medicationList {
   margin-top: 25px;
 }
-#medicationList h3{
+#medicationList h4{
   margin-left: 10px;
 }
 /*End of Medication page CSS*/
+
+
+.toggle.ios, .toggle-on.ios, .toggle-off.ios { margin-left: 15px; border-radius: 20px; }
+.toggle.ios .toggle-handle { border-radius: 20px; }
+.slider.slider-horizontal {margin-left: 15px}
