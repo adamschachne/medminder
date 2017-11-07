@@ -1,5 +1,5 @@
 <nav class="navbar navbar-default navbar-static-top">
-  <%if (page_title != 'Medication') { %>
+  <%if (!(page_title == 'Medication' || page_title == 'Login' || page_title == 'Sign Up')) { %>
   <button class="btn btn-sm" onclick="location.href='/'" style="position: absolute;margin-top: 30px;left: 10%;width: 36px;"><span class="glyphicon glyphicon-arrow-left"></span></button>
   <% } %>
   <div class="container" id="pageTitle">
