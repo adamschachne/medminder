@@ -1,6 +1,6 @@
 <nav class="navbar navbar-default navbar-static-top">
   <div style ="margin-top:5px;" class="row">
-    <%if (page_title != 'Medication') { %>
+    <%if (page_title != 'Medication' || page_title == 'Login' || page_title == 'Sign Up') { %>
 
     <div class="col-xs-2">
       <button class="btn" onclick="location.href='/'" >Back</button>

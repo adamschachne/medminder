@@ -11,9 +11,18 @@
     "test": "node test.js"
   },
   "dependencies": {
+<<<<<<< HEAD
     "bootstrap-switch": "^3.3.4",
+=======
+    "body-parser": "^1.18.2",
+    "connect-session-knex": "^1.4.0",
+>>>>>>> 2797efe60608c42631e69c9b687d05bb51264e86
     "ejs": "2.5.6",
-    "express": "4.15.2"
+    "express": "4.15.2",
+    "express-session": "^1.15.6",
+    "knex": "^0.13.0",
+    "pbkdf2-password": "^1.2.1",
+    "pg": "7.4.0"
   },
   "devDependencies": {
     "request": "^2.81.0",

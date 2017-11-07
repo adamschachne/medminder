@@ -139,6 +139,7 @@
 
 </div> -->
 
+<<<<<<< HEAD
 <!-- <div class="container">
   <div class="form-group">
     <h3>Medication Name</h3>
@@ -146,6 +147,18 @@
     <h3>Remind me on</h3>
     <div class="btn-toolbar" role="toolbar">
       <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
+=======
+<div class="container">
+  <%if (locals.message) { %>
+  <h3><%=locals.message%></h3>
+  <% } %>
+  <div class="form-group">
+    <h3>Medication Name:</h3>
+    <input type="text" class="form-control" id="medication_name">
+    <h3>Reminder Days:</h3>
+    <div style="height: 80px;" class="btn-toolbar mb-3" role="toolbar">
+      <div id="dayofweek" style="width: 100%;" class="btn-group btn-group-lg" role="group">
+>>>>>>> 2797efe60608c42631e69c9b687d05bb51264e86
         <button type="button" class="btn btn-secondary">S</button>
         <button type="button" class="btn btn-secondary">M</button>
         <button type="button" class="btn btn-secondary">T</button>
@@ -213,8 +226,29 @@
     });
 
     $('body').on('click', '#finish_button', function() {
-      //post
-      location.href = "/";
+      var days = [];
+      $('#dayofweek button').each(function() {
+        var day = $(this);
+        if (day.hasClass('active')) {
+          days.push(day.html());
+        }
+      })
+      var payload = {
+        med_name: $('#medication_name')[0].value,
+        days: JSON.stringify(days),
+        repeat: $('.repeatmenu.dropdown-menu li.active').find('a').html(),
+        start_time: $('#start_time button.active').html()
+      }
+      $.ajax({
+        type: 'POST',
+        url: '/med/new',
+        dataType: 'application/json',
+        data: payload,
+        complete: function () {
+          console.log("done")
+          location.href = '/';
+        }
+      })
     });
 
     $('body').on('click', '.repeatmenu > li', function() {

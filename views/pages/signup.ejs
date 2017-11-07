@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+  <style>
+    .unidentical.form-control:focus {
+      border-color: #e96666;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(233, 102, 102, 0.6);
+    }
+  </style>
+</head>
+
+<body>
+
+<% include ../partials/nav.ejs %>
+
+<div class="container">
+  <form action="/signup" method="post">
+    <!-- <div class="form-group">
+      <input type="text" placeholder="First Name" class="form-control" name="first" id="first">
+    </div>
+    <div class="form-group">
+      <input type="text" placeholder="Last Name" class="form-control" name="last" id="last">
+    </div> -->
+    <div class="form-group">
+      <input type="text" placeholder="Username" class="form-control" name="username" id="username">
+    </div>
+    <!-- <div class="form-group">
+      <input type="text" placeholder="Email Address" class="form-control" name="email" id="email">
+    </div> -->
+    <div class="form-group">
+      <input type="password" placeholder="Password" class="form-control" name="password" id="password">
+    </div>
+    <div class="form-group">
+      <input type="password" placeholder="Confirm password"  class="form-control" name="confirm" id="confirm">
+    </div>
+    <button type="submit" class="disabled btn btn-default">Sign Up</button>
+  </form>
+  <%if (locals.message) { %>
+  <h3><%=locals.message%></h3>
+  <% } %>
+</div>
+
+</body>
+
+<script>
+  $(document).ready(function() {
+
+    var valid = !$('#confirm').hasClass('unidentical');
+    $('body').on('keyup', function(e) {
+      if ($('#confirm')[0].value != $('#password')[0].value) {
+        $('#confirm').addClass('unidentical');
+        valid = false;
+      } else {
+        $('#confirm').removeClass('unidentical');
+        valid = true;
+      }
+      if (valid && $('#username')[0].value.length > 0 && $('#confirm')[0].value.length > 0) {
+        $('button').removeClass('disabled');
+      } else {
+        $('button').addClass('disabled');
+      }
+    })
+
+  });
+</script>
+</html>
