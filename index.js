@@ -84,6 +84,7 @@ app.get('/med/new', restrict, function(request, response) {
   response.render('pages/new_med', scheduleMedPage);
 });
 app.post('/med/new', restrict, function(request, response) {
+  // console.log(request.body)
   var med_name = request.body.med_name;
   var days = JSON.parse(request.body.days);
   var repeat = request.body.repeat;
@@ -94,18 +95,6 @@ app.post('/med/new', restrict, function(request, response) {
     arr.push(days[key]);
   }
   days = arr;
-  var hours = 0;
-  switch (repeat) {
-    case 'As Needed':
-      hours = 0;
-    break;
-    case 'Daily':
-      hours = 24;
-    break;
-    case 'Weekly':
-      hours = 168;
-    break;
-  }
 
   if (med_name.length == 0) {
     message = "Please write the name of your medication.";
@@ -117,7 +106,7 @@ app.post('/med/new', restrict, function(request, response) {
     return response.render('pages/new_med', {page_title: 'Schedule Medication', message: message });
   }
 
-  knex.insert({uid: request.session.uid, med_name: med_name, days: JSON.stringify(days), repeat: hours}).into('medications')
+  knex.insert({uid: request.session.uid, med_name: med_name, days: JSON.stringify(days), repeat: repeat}).into('medications')
   .then(function () {
     return response.redirect('/');
   })
@@ -133,6 +122,11 @@ app.get('/login', function(request, response) {
 });
 app.get('/signup', function(request, response) {
   response.render('pages/signup', {page_title: 'Sign Up'});
+});
+app.get('/logout', function(request, response) {
+  request.session.destroy(function(){
+    response.redirect('/');
+  });
 });
 app.post('/login', function(request, response){
   authenticate(request.body.username, request.body.password, function(err, user){
