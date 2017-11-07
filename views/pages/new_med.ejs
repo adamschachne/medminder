@@ -120,7 +120,7 @@
       var payload = {
         med_name: $('#medication_name')[0].value,
         days: JSON.stringify(days),
-        repeat: $('.repeatmenu.dropdown-menu li.active').find('a').html(),
+        repeat: $('#hoursToRepeat')[0].value,
         start_time: $('#start_time button.active').html()
       }
       $.ajax({
