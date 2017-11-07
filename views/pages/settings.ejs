@@ -2,6 +2,11 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+  <style media="screen">
+    .toggle.ios, .toggle-on.ios, .toggle-off.ios { margin-left: 15px; border-radius: 20px; }
+    .toggle.ios .toggle-handle { border-radius: 20px; }
+    .slider.slider-horizontal {margin-left: 15px}
+  </style>
 </head>
 
 <body>
@@ -13,12 +18,12 @@
     <form>
       <div class="form-group row">
         <label class="col-xs-12" for="slider-text-size">Font Size</label>
-        <div class="col-xs-12" id="slider-text-size"></div>
+        <div class="col-xs-12" id="slider-text-size" type="text" data-slider-min="0" data-slider-max="80" data-slider-step="1" data-slider-value="14"></div>
       </div>
 
       <div class="form-group row">
-        <label class="col-xs-12" for="">Notifications</label>
-        <input type="checkbox" name="notifications-switch" id="notifications-switch" >
+        <label class="col-xs-12" for="notifications-switch">Notifications</label>
+        <input style="margin-left:15px;"class="col-xs-12" type="checkbox" name="notifications-switch" id="notifications-switch" checked data-style="ios">
       </div>
 
       <div class="form-group row">
@@ -51,7 +56,11 @@
 
 
   <script type="text/javascript">
-    // $("[name='notifications-switch']").bootstrapSwitch();
+     $("[name='notifications-switch']").bootstrapToggle();
+     $("#slider-text-size").bootstrapSlider();
+     $("#slider-text-size").on("slide", function(slideEvt) {
+	      $("#ex6SliderVal").text(slideEvt.value);
+      });
   </script>
 
 </body>
