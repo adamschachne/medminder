@@ -10,7 +10,7 @@ var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  ssl: true
 });
 //db.connect();
 //console.log(db);
@@ -173,7 +173,7 @@ app.post('/signup', function(request, response){
     if (err) return consle.log(new Error('SQL error'));
     var user = rows[0];
     if (!user) {
-      hash({password: 'password' }, function (err, pass, salt, hash) {
+      hash({password: password }, function (err, pass, salt, hash) {
         if (err) throw err;
         knex.insert({username: username, hash: hash+salt}).into('users')
         .returning('uid')
@@ -270,7 +270,6 @@ function authenticate(uname, pass, cb) {
 
     hash({ password: pass, salt: user.hash.substring(172)}, function (err, pass, salt, hash) {
       if (err) return cb(err);
-
       if (hash+salt == user.hash) {
         console.log(user.username + " logged in");
         return cb(null, user);
