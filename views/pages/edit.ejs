@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+  <style>
+    .btn-secondary.active {
+      background-color: darkgrey;
+    }
+    .btn.btn-lg.active {
+      background-color: darkgrey;
+    }
+    .btn:focus,.btn:active {
+      outline: none !important;
+    }
+    .repeatmenu li {
+      cursor: pointer;
+    }
+    #start_time button {
+      height: 100%;
+    }
+    #dayofweek button {
+      width: 14%;
+    }
+
+
+  </style>
+</head>
+
+<body>
+
+  <% include ../partials/nav.ejs %>
+  <div class="container">
+    <form class="" action="index.html" method="post">
+      <div class="form-group">
+        <label for="">Medication Name</label>
+        <input type="text" class="form-control" id="medication_name">
+      </div>
+      <div class="form-group">
+        <label for="">Remind me on</label>
+        <div class="btn-toolbar" role="toolbar">
+          <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
+            <button type="button" data-value="S" class="btn btn-secondary">S</button>
+            <button type="button" data-value="M" class="btn btn-secondary">M</button>
+            <button type="button" data-value="T" class="btn btn-secondary">T</button>
+            <button type="button" data-value="W" class="btn btn-secondary">W</button>
+            <button type="button" data-value="Th" class="btn btn-secondary">Th</button>
+            <button type="button" data-value="F" class="btn btn-secondary">F</button>
+            <button type="button" data-value="Sa" class="btn btn-secondary">Sa</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="">Repeat Every</label>
+          <select class="form-control" id="hoursToRepeat">
+            <option value="1">hour</option>
+            <option value="2">2 hours</option>
+            <option value="3">3 hours</option>
+            <option value="4">4 hours</option>
+            <option value="5">5 hours</option>
+            <option value="6">6 hours</option>
+            <option value="7">7 hours</option>
+            <option value="8">8 hours</option>
+            <option value="9">9 hours</option>
+            <option value="10">10 hours</option>
+            <option value="11">11 hours</option>
+            <option value="12">12 hours</option>
+          </select>
+      </div>
+      <div class="form-group">
+        <label for="">Start Reminders</label>
+        <div id="start_time" class="row">
+          <div style="height:70px;" class="col-xs-8 btn-group">
+            <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
+            <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">On the Hour</button>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <label for="atThisTime">At this time</label>
+              <input type="text" class="form-control" id="hourSet" aria-describedby="hourSet" placeholder="Time">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="text-center">
+          <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
+<script>
+  $(document).ready(function() {
+
+    $('#medication_name')[0].value = "<%= medication.med_name %>";
+  <% for(var i=0; i < medication.days.length; i++) { %>
+    $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
+  <% } %>
+    $('#hoursToRepeat')[0].value = <%=medication.repeat%>;
+
+    $('body').on('click', '.btn.btn-secondary', function() {
+      if ($(this).hasClass('active')) {
+        $(this).removeClass('active');
+      } else {
+        $(this).addClass('active');
+      }
+    });
+
+    $('body').on('click', '#start_time .btn.btn-lg', function() {
+      $('#start_time .btn.btn-lg').removeClass('active');
+      if ($(this).hasClass('active')) {
+        $(this).removeClass('active');
+      } else {
+        $(this).addClass('active');
+      }
+    });
+
+    $('body').on('click', '#finish_button', function() {
+      var days = [];
+      $('#dayofweek button').each(function() {
+        var day = $(this);
+        if (day.hasClass('active')) {
+          days.push(day.html());
+        }
+      })
+      var payload = {
+        med_name: $('#medication_name')[0].value,
+        days: JSON.stringify(days),
+        repeat: $('#hoursToRepeat')[0].value,
+        start_time: $('#start_time button.active').html()
+      }
+      $.ajax({
+        type: 'POST',
+        url: '/edit/<%=medication.mid%>',
+        dataType: 'application/json',
+        data: payload,
+        complete: function () {
+          console.log("done")
+          location.href = '/';
+        }
+      })
+    });
+
+    $('body').on('click', '.repeatmenu > li', function() {
+      $('.repeatmenu > li').removeClass('active');
+      $(this).addClass('active');
+      $('#reminder_button').html($(this).find('a').html() + ' <span class="caret"></span>');
+    });
+
+  });
+</script>
+</html>
