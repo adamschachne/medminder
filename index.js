@@ -6,6 +6,7 @@ var remindersPage = require(__dirname + '/javascript/reminders_page');
 const { Client } = require('pg');
 var bodyParser = require("body-parser");
 var session = require('express-session');
+var cookie = require('cookie');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({

@@ -2,9 +2,6 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
-  <style media="screen">
-
-  </style>
 </head>
 
 <body>
@@ -12,7 +9,6 @@
   <% include ../partials/nav.ejs %>
 
   <div class="container">
-
     <form>
       <div class="form-group row">
         <label class="col-xs-12" for="slider-text-size">Font Size</label>
@@ -24,18 +20,9 @@
         <input style="margin-left:15px;"class="col-xs-12" type="checkbox" name="notifications-switch" id="notifications-switch" checked data-style="ios">
       </div>
 
-      <div class="form-group row">
-        <label class="col-xs-12" for="LayoutBtnGroup">Layout</label>
-        <div class="col-xs-12 btn-group" id="LayoutBtnGroup">
-          <button style="width:50%;" class="btn btn-default btn-lg" type="button" name="listButton">List</button>
-          <button style="width:50%;" class="btn btn-default btn-lg" type="button" name="gridButton">Grid</button>
-        </div>
-      </div>
-
       <div class="form-group">
-        <button style="width:100%" type="submit" class="btn-lg btn-primary">Save</button>
+        <button id="saveSettings" style="width:100%" class="btn-lg btn-primary">Save</button>
       </div>
-
 
       <div class="form-group row">
         <div class="col-xs-12 btn-group" id="appSettingsBtns">
@@ -44,9 +31,7 @@
           <button onclick="location.href='/logout'" style="width:33%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
         </div>
       </div>
-
     </form>
-
   </div>
 
 
@@ -55,18 +40,26 @@
 
   <script type="text/javascript">
     $(document).ready(function(){
-      // if($.cookie("font-size")){
-      //   $('*').css('font-size', $.cookie("font-size") + 'px');
-      // }
+      if(Cookies.get("font-size")){
+        $('*').css('font-size', Cookies.get("font-size") + 'px');
+      }
     })
-     $("[name='notifications-switch']").bootstrapToggle();
-     $("#slider-text-size").bootstrapSlider();
-     $('#slider-text-size').change(function () {
-       var sliderVal = $('#slider-text-size').val();
-      //  $.cookie("font-size",sliderVal);
 
-       $('*').css('font-size', sliderVal + 'px');
-     });
+
+
+   $("[name='notifications-switch']").bootstrapToggle();
+   $("#slider-text-size").bootstrapSlider();
+   $('#slider-text-size').change(function () {
+     var sliderVal = $('#slider-text-size').val();
+     $('*').css('font-size', sliderVal + 'px');
+     Cookies.set("font-size-placeholder", sliderVal)
+
+   });
+
+   $("#saveSettings").click(function() {
+     Cookies.set("font-size",Cookies.get("font-size-placeholder"));
+
+   })
 
   </script>
 

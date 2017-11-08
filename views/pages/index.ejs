@@ -10,9 +10,7 @@
     .centered-modal .modal-dialog {
         margin: auto;
     }
-    /** {
-      font-size: 25px !important;
-    }*/
+
   </style>
 </head>
 
@@ -96,6 +94,10 @@
 </body>
 <script>
   $( document ).ready(function() {
+    if(Cookies.get("font-size")){
+      $('*').css('font-size', Cookies.get("font-size") + 'px');
+    }
+
     $(".editIcons").toggle();
     $(".reminder").toggle();
     $("[name='reminders-switch']").bootstrapToggle();
@@ -111,13 +113,8 @@
         function(){
           console.log(this);
           if(!$(this).hasClass('off')){
-            console.log("Does not have off class");
-
             $("[name='reminders-switch-specific']").parent().removeClass('off');
-
           } else {
-            console.log("Has off class");
-
             $("[name='reminders-switch-specific']").parent().addClass('off');
           }
 
