@@ -120,12 +120,36 @@
           days.push(day.html());
         }
       })
+
+      var valid = true;
+
+      if ($('#medication_name')[0].value.length == 0) {
+        $('#medication_name').tooltip({title: "Please enter a medication name"}).tooltip('show');
+        setTimeout(function() {
+          $('#medication_name').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
+      if (days.length == 0) {
+        $('#dayofweek').tooltip({placement: "right", title: "please select at least one day of the week"}).tooltip('show');
+        setTimeout(function() {
+          $('#dayofweek').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
+      if (!valid) {
+        return false;
+      }
+
       var payload = {
         med_name: $('#medication_name')[0].value,
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
         start_time: $('#start_time button.active').html()
       }
+
       $.ajax({
         type: 'POST',
         url: '/med/new',
