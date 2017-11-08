@@ -94,7 +94,6 @@
     if(Cookies.get("font-size")){
       $('*').css('font-size', Cookies.get("font-size") + 'px');
     }
-    
     $('body').on('click', '.btn.btn-secondary', function() {
       if ($(this).hasClass('active')) {
         $(this).removeClass('active');
