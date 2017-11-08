@@ -62,6 +62,12 @@ app.get('/', restrict,  function(request, response) {
     page_title: 'Medication',
     data: []
   };
+
+  var medname = request.query.medname;
+  if (medname) {
+    medicationPage.medname = medname;
+  }
+
   knex.select('med_name', 'days', 'repeat', 'mid')
   .from('medications')
   .where('uid', '=', request.session.uid)

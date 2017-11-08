@@ -94,7 +94,7 @@
     if(Cookies.get("font-size")){
       $('*').css('font-size', Cookies.get("font-size") + 'px');
     }
-    
+
     $('body').on('click', '.btn.btn-secondary', function() {
       if ($(this).hasClass('active')) {
         $(this).removeClass('active');
@@ -124,7 +124,7 @@
       var valid = true;
 
       if ($('#medication_name')[0].value.length == 0) {
-        $('#medication_name').tooltip({title: "Please enter a medication name"}).tooltip('show');
+        $('#medication_name').tooltip({placement: "bottom", title: "Please enter a medication name"}).tooltip('show');
         setTimeout(function() {
           $('#medication_name').tooltip('destroy');
         }, 2000);
@@ -132,7 +132,7 @@
       }
 
       if (days.length == 0) {
-        $('#dayofweek').tooltip({placement: "right", title: "please select at least one day of the week"}).tooltip('show');
+        $('#dayofweek').tooltip({placement: "bottom", title: "please select at least one day of the week"}).tooltip('show');
         setTimeout(function() {
           $('#dayofweek').tooltip('destroy');
         }, 2000);
@@ -157,7 +157,7 @@
         data: payload,
         complete: function () {
           console.log("done")
-          location.href = '/';
+          location.href = '/?medname=' + payload.med_name;
         }
       })
     });
