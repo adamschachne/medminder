@@ -22,9 +22,6 @@
       width: 14%;
     }
 
-    /** {
-      font-size: 25px;
-    }*/
 
   </style>
 </head>
@@ -42,13 +39,13 @@
         <label for="">Remind me on</label>
         <div class="btn-toolbar" role="toolbar">
           <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
-            <button type="button" class="btn btn-secondary">S</button>
-            <button type="button" class="btn btn-secondary">M</button>
-            <button type="button" class="btn btn-secondary">T</button>
-            <button type="button" class="btn btn-secondary">W</button>
-            <button type="button" class="btn btn-secondary">Th</button>
-            <button type="button" class="btn btn-secondary">F</button>
-            <button type="button" class="btn btn-secondary">Sa</button>
+            <button type="button" data-value="S" class="btn btn-secondary">S</button>
+            <button type="button" data-value="M" class="btn btn-secondary">M</button>
+            <button type="button" data-value="T" class="btn btn-secondary">T</button>
+            <button type="button" data-value="W" class="btn btn-secondary">W</button>
+            <button type="button" data-value="Th" class="btn btn-secondary">Th</button>
+            <button type="button" data-value="F" class="btn btn-secondary">F</button>
+            <button type="button" data-value="Sa" class="btn btn-secondary">Sa</button>
           </div>
         </div>
       </div>
@@ -95,6 +92,13 @@
 
 <script>
   $(document).ready(function() {
+
+    $('#medication_name')[0].value = "<%= medication.med_name %>";
+  <% for(var i=0; i < medication.days.length; i++) { %>
+    $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
+  <% } %>
+    $('#hoursToRepeat')[0].value = <%=medication.repeat%>;
+
     $('body').on('click', '.btn.btn-secondary', function() {
       if ($(this).hasClass('active')) {
         $(this).removeClass('active');
@@ -128,7 +132,7 @@
       }
       $.ajax({
         type: 'POST',
-        url: '/med/new',
+        url: '/edit/<%=medication.mid%>',
         dataType: 'application/json',
         data: payload,
         complete: function () {

@@ -52,17 +52,6 @@ app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
 }));
 
-// app.use(function(req, res, next){
-//   var err = req.session.error;
-//   var msg = req.session.success;
-//   delete req.session.error;
-//   delete req.session.success;
-//   res.locals.message = '';
-//   if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
-//   if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
-//   next();
-// });
-
 // views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -72,10 +61,14 @@ app.get('/', restrict,  function(request, response) {
     page_title: 'Medication',
     data: []
   };
-  knex.select('med_name', 'days', 'repeat').from('medications').where('uid', '=', request.session.uid)
+  knex.select('med_name', 'days', 'repeat', 'mid')
+  .from('medications')
+  .where('uid', '=', request.session.uid)
+  .orderBy('mid', 'asc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
     for (var i = 0; i < rows.length; i++) {
+      // console.log(rows[i].mid);
       medicationPage.data.push(rows[i]);
       medicationPage.data[i].days = JSON.parse(medicationPage.data[i].days);
     }
@@ -138,7 +131,6 @@ app.post('/login', function(request, response){
       return response.redirect('/login');
     }
     if (user) {
-      //console.log(user)
       // Regenerate session when signing in
       // to prevent fixation
       request.session.regenerate(function(){
@@ -183,7 +175,7 @@ app.post('/signup', function(request, response){
     if (err) return consle.log(new Error('SQL error'));
     var user = rows[0];
     if (!user) {
-      hash({password: 'password' }, function (err, pass, salt, hash) {
+      hash({password: password }, function (err, pass, salt, hash) {
         if (err) throw err;
         knex.insert({username: username, hash: hash+salt}).into('users')
         .returning('uid')
@@ -203,6 +195,59 @@ app.post('/signup', function(request, response){
       response.render('pages/signup', {page_title: 'Sign Up', message: message});
     }
   });
+});
+app.get('/delete/:mid', restrict, function(request, response) {
+  var mid = request.params.mid;
+  knex.select('uid').from('medications').where('mid', '=', mid)
+  .andWhere('uid', '=', request.session.uid)
+  .asCallback(function(err, rows) {
+    if (rows.length > 0) {
+      knex('medications')
+        .where('mid','=',mid)
+        .del()
+        .then(function () {
+          // console.log('deleted ', mid)
+          return response.redirect('/');
+        });
+    } else {
+      console.log('medication %s does not exist or user has bad privileges', mid)
+      return response.redirect('/');
+    }
+  })
+  // check session uid owns the medication
+});
+app.get('/edit/:mid', restrict, function(request, response) {
+  var mid = request.params.mid;
+  knex.select('uid', 'med_name', 'days', 'repeat', 'mid').from('medications')
+  .where('mid', '=', mid)
+  .andWhere('uid', '=', request.session.uid)
+  .asCallback(function(err, rows) {
+    if (rows.length > 0) {
+      var medication = rows[0];
+      medication.days = JSON.parse(medication.days);
+      return response.render('pages/edit', {page_title: 'Edit Medication', medication: medication});
+    } else {
+      // console.log('medication %s does not exist or user has bad privileges', mid)
+      return response.redirect('/');
+    }
+  })
+  // check session uid owns the medication
+});
+app.post('/edit/:mid', restrict, function(request, response) {
+  var mid = request.params.mid;
+  // console.log(request.body)
+  knex('medications')
+  .where('mid', '=', mid)
+  .andWhere('uid', '=', request.session.uid)
+  .update({
+    med_name: request.body.med_name,
+    days: request.body.days,
+    repeat: request.body.repeat
+  })
+  .then(function (result) {
+    // console.log(result);
+    return response.redirect('/');
+  })
 });
 
 function restrict(req, res, next) {
@@ -227,7 +272,6 @@ function authenticate(uname, pass, cb) {
 
     hash({ password: pass, salt: user.hash.substring(172)}, function (err, pass, salt, hash) {
       if (err) return cb(err);
-
       if (hash+salt == user.hash) {
         console.log(user.username + " logged in");
         return cb(null, user);

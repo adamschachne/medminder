@@ -4,12 +4,15 @@
   <% include ../partials/header.ejs %>
 
   <style media="screen">
-  .centered-modal.in {
-    display: flex !important;
-  }
-  .centered-modal .modal-dialog {
-      margin: auto;
-  }
+    .centered-modal.in {
+      display: flex !important;
+    }
+    .centered-modal .modal-dialog {
+        margin: auto;
+    }
+    /** {
+      font-size: 25px !important;
+    }*/
   </style>
 </head>
 
@@ -38,8 +41,8 @@
      <div class="panel panel-default">
        <div class="panel-body">
         <div class="row">
-          <div onclick="location.href='/med/new';" class="editIcons col-xs-2">
-            <a class="btn btn-default" data-href="" data-toggle="modal" data-target="#confirm-delete">
+          <div class="editIcons col-xs-2">
+            <a onclick="location.href='/edit/<%=data[i].mid%>';" class="btn btn-default" data-toggle="modal">
               <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
             </a>
           </div>
@@ -50,7 +53,7 @@
                 <h4><%=data[i].med_name%></h4>
               </div>
               <div class="col-xs-2 reminder">
-                <input class="col-xs-12" type="checkbox" name="reminders-switch" checked data-style="ios">
+                <input class="col-xs-12" type="checkbox" name="reminders-switch-specific" checked data-style="ios">
               </div>
             </div>
             <div class="row">
@@ -64,7 +67,7 @@
           </div>
 
           <div class="editIcons col-xs-2">
-            <a class="btn btn-default" data-href="" data-toggle="modal" data-target="#confirm-delete">
+            <a class="btn btn-default" data-id="<%=data[i].mid%>" data-toggle="modal" data-target="#confirm-delete">
                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
             </a>
           </div>
@@ -96,18 +99,26 @@
     $(".editIcons").toggle();
     $(".reminder").toggle();
     $("[name='reminders-switch']").bootstrapToggle();
+    $("[name='reminders-switch-specific']").bootstrapToggle();
+
 
     $('#confirm-delete').on('show.bs.modal', function(e) {
-        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        console.log($(e.relatedTarget).data('id'))
+        $(this).find('.btn-ok').attr('href', '/delete/'+$(e.relatedTarget).data('id'));
     });
 
-    $('#allRemindersToggle').change(
+    $("#reminders-switch").parent().change(
         function(){
-          if($(this).hasClass('off')){
-            $("[name='reminders-switch']").parent().removeClass('off');
+          console.log(this);
+          if(!$(this).hasClass('off')){
+            console.log("Does not have off class");
+
+            $("[name='reminders-switch-specific']").parent().removeClass('off');
 
           } else {
-            $("[name='reminders-switch']").parent().addClass('off');
+            console.log("Has off class");
+
+            $("[name='reminders-switch-specific']").parent().addClass('off');
           }
 
     });
