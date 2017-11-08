@@ -20,8 +20,8 @@
         <input style="margin-left:15px;"class="col-xs-12" type="checkbox" name="notifications-switch" id="notifications-switch" checked data-style="ios">
       </div> -->
 
-      <div class="form-group">
-        <button id="saveSettings" style="width:100%" class="btn-lg btn-primary">Save</button>
+      <div class="form-group row">
+        <a id="saveSettings" style="text-align:center" type="button" class="col-xs-12 btn-lg btn-primary">Save</a>
       </div>
 
       <div class="form-group row">
@@ -57,8 +57,9 @@
    });
 
    $("#saveSettings").click(function() {
-     Cookies.set("font-size",Cookies.get("font-size-placeholder"));
+     location.href='/'
 
+     Cookies.set("font-size",Cookies.get("font-size-placeholder"));
    })
 
   </script>
