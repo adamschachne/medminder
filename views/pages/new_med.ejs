@@ -1,54 +1,62 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <% include ../partials/header.ejs %>
-  <style>
-    .btn-secondary.active {
-      background-color: darkgrey;
-    }
-    .btn.btn-lg.active {
-      background-color: darkgrey;
-    }
-    .btn:focus,.btn:active {
-      outline: none !important;
-    }
-    .repeatmenu li {
-      cursor: pointer;
-    }
-    #start_time button {
-      height: 100%;
-    }
-    #dayofweek button {
-      width: 14%;
-    }
-  </style>
+    <style>
+      .btn-secondary.active {
+        background-color: darkgrey;
+      }
+
+      .btn.btn-lg.active {
+        background-color: darkgrey;
+      }
+
+      .btn:focus,
+      .btn:active {
+        outline: none !important;
+      }
+
+      .repeatmenu li {
+        cursor: pointer;
+      }
+
+      #start_time button {
+        height: 100%;
+      }
+
+      #dayofweek button {
+        width: 14%;
+      }
+    </style>
 </head>
 
 <body>
 
   <% include ../partials/nav.ejs %>
-  <div class="container">
-    <form class="" action="index.html" method="post">
-      <div class="form-group">
-        <label for="">Medication Name</label>
-        <input type="text" class="form-control" id="medication_name">
-      </div>
-      <div class="form-group">
-        <label for="">Remind me on</label>
-        <div class="btn-toolbar" role="toolbar">
-          <div id="dayofweek"  class="btn-group btn-group-lg" role="group">
-            <button type="button" class="btn btn-secondary">S</button>
-            <button type="button" class="btn btn-secondary">M</button>
-            <button type="button" class="btn btn-secondary">T</button>
-            <button type="button" class="btn btn-secondary">W</button>
-            <button type="button" class="btn btn-secondary">Th</button>
-            <button type="button" class="btn btn-secondary">F</button>
-            <button type="button" class="btn btn-secondary">Sa</button>
+    <div class="container">
+
+      <form class="" action="index.html" method="post">
+        <div class="form-group">
+          <label for="">Medication Name</label>
+          <input type="text" class="form-control" id="medication_name">
+        </div>
+        <div class="form-group">
+          <label for="">Remind me on</label>
+          <div class="btn-toolbar" role="toolbar">
+            <div id="dayofweek" class="btn-group btn-group-lg" role="group">
+              <button type="button" class="btn btn-secondary">S</button>
+              <button type="button" class="btn btn-secondary">M</button>
+              <button type="button" class="btn btn-secondary">T</button>
+              <button type="button" class="btn btn-secondary">W</button>
+              <button type="button" class="btn btn-secondary">Th</button>
+              <button type="button" class="btn btn-secondary">F</button>
+              <button type="button" class="btn btn-secondary">Sa</button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="">Repeat Every</label>
+        <div class="form-group">
+          <label for="">Repeat Every</label>
           <select class="form-control" id="hoursToRepeat">
             <option value="1">hour</option>
             <option value="2">2 hours</option>
@@ -63,35 +71,35 @@
             <option value="11">11 hours</option>
             <option value="12">12 hours</option>
           </select>
-      </div>
-      <div class="form-group">
-        <label for="">Start Reminders</label>
-        <div id="start_time" class="row">
-          <div style="height:70px;" class="col-xs-8 btn-group">
-            <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
-            <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">On the Hour</button>
-          </div>
-          <div class="col-xs-4">
-            <div class="form-group">
-              <label for="atThisTime">At this time</label>
-              <input type="text" class="form-control" id="hourSet" aria-describedby="hourSet" placeholder="Time">
+        </div>
+        <div class="form-group">
+          <label for="">Start Reminders</label>
+          <div id="start_time" class="row">
+            <div style="height:70px;" class="col-xs-8 btn-group">
+              <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
+              <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">On the Hour</button>
+            </div>
+            <div class="col-xs-4">
+              <div class="form-group">
+                <label for="atThisTime">At this time</label>
+                <input type="text" class="form-control" id="hourSet" aria-describedby="hourSet" placeholder="Time">
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="text-center">
-          <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish</button>
+        <div class="row">
+          <div class="col-xs-12">
+            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Add reminder</button>
+          </div>
         </div>
-      </div>
-    </form>
-  </div>
+      </form>
+    </div>
 </body>
 
 <script>
   $(document).ready(function() {
 
-    if(Cookies.get("font-size")){
+    if (Cookies.get("font-size")) {
       $('*').css('font-size', Cookies.get("font-size") + 'px');
     }
     $('body').on('click', '.btn.btn-secondary', function() {
@@ -123,7 +131,10 @@
       var valid = true;
 
       if ($('#medication_name')[0].value.length == 0) {
-        $('#medication_name').tooltip({placement: "bottom", title: "Please enter a medication name"}).tooltip('show');
+        $('#medication_name').tooltip({
+          placement: "bottom",
+          title: "Please enter a medication name"
+        }).tooltip('show');
         setTimeout(function() {
           $('#medication_name').tooltip('destroy');
         }, 2000);
@@ -131,7 +142,10 @@
       }
 
       if (days.length == 0) {
-        $('#dayofweek').tooltip({placement: "bottom", title: "please select at least one day of the week"}).tooltip('show');
+        $('#dayofweek').tooltip({
+          placement: "bottom",
+          title: "please select at least one day of the week"
+        }).tooltip('show');
         setTimeout(function() {
           $('#dayofweek').tooltip('destroy');
         }, 2000);
@@ -154,7 +168,7 @@
         url: '/med/new',
         dataType: 'application/json',
         data: payload,
-        complete: function () {
+        complete: function() {
           console.log("done")
           location.href = '/?medname=' + payload.med_name;
         }
@@ -169,4 +183,5 @@
 
   });
 </script>
+
 </html>

@@ -1,5 +1,5 @@
 module.exports = {
-  page_title: 'Medication',
+  page_title: 'Medication Reminders',
   data:
     [{
       med_name: "Synthroid",

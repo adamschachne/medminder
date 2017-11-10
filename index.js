@@ -11,7 +11,7 @@ var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
 
-  connectionString: process.env.DATABASE_URL,
+  connectionString: "postgres://byeqqktcpejzsj:9818338064bc71a71b172a94fd4bcf84cd307e6246a859c113b52e96e79628d1@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg",
   ssl: true
 
 });
@@ -59,7 +59,7 @@ app.set('view engine', 'ejs');
 
 app.get('/', restrict,  function(request, response) {
   var medicationPage = {
-    page_title: 'Medication',
+    page_title: 'Medication Reminders',
     data: []
   };
 

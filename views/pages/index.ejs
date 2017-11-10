@@ -1,127 +1,170 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <% include ../partials/header.ejs %>
 
-  <style media="screen">
-    .centered-modal.in {
-      display: flex !important;
-    }
-    .centered-modal .modal-dialog {
-        margin: auto;
-    }
+    <style media="screen">
+      .centered-modal.in {
+        display: flex !important;
+      }
 
-  </style>
+      .centered-modal .modal-dialog {
+        margin: auto;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        /* Set the fixed height of the footer here */
+        height: 60px;
+        background-color: #f5f5f5;
+      }
+    </style>
 </head>
 
 <body>
 
-<% include ../partials/nav.ejs %>
+  <!-- Navigation bar -->
+  <% include ../partials/nav.ejs %>
 
-<div class="container" id="menuButtons">
-  <div class="btn-group" id="menuBtnGroup">
-    <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="newMedBtn" onclick="location.href='/med/new';">
-      <span style="display:inherit" class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-      <font size="2px">Add</font>
-    </button>
-    <button style="width:25%; white-space: normal;" onclick="editMedication()" class="btn btn-default btn-lg" type="button" name="editMedBtn">
-        <span style="display:inherit" class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-        <font size="2px">Edit</font>
-    </button>
-    <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="settingsBtn" onclick="location.href='/settings';">
-        <span style="display:inherit" class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-        <font size="2px">Settings</font>
-    </button>
-    <button style="width:25%; white-space: normal; padding-left: 7px;" class="btn btn-default btn-lg" type="button" name="remindersBtn" onclick="editReminders()">
-      <span style="display:inherit" class="glyphicon glyphicon-time" aria-hidden="true"></span>
-      <font size="2px">Reminders</font>
-    </button>
-  </div>
-  <div id="allRemindersToggle" class="reminder row">
-      <label class="col-xs-12">All reminders</label>
-      <input class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
-  </div>
-</div>
+    <!-- Start of Menu -->
+    <div class="container" id="menuButtons">
+      <div class="btn-group" id="menuBtnGroup">
+        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="newMedBtn" onclick="location.href='/med/new';">
+        <span style="display:inherit" class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        <font size="2px">Add</font>
+      </button>
+        <button style="width:25%; white-space: normal;" onclick="editMedication()" class="btn btn-default btn-lg" type="button" name="editMedBtn">
+          <span style="display:inherit" class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+          <font size="2px">Edit</font>
+      </button>
+        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="settingsBtn" onclick="location.href='/settings';">
+          <span style="display:inherit" class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+          <font size="2px">Settings</font>
+      </button>
+        <button style="width:25%; white-space: normal; padding-left: 7px;" class="btn btn-default btn-lg" type="button" name="remindersBtn" onclick="editReminders()">
+        <span style="display:inherit" class="glyphicon glyphicon-time" aria-hidden="true"></span>
+        <font size="2px">Reminders</font>
+      </button>
+      </div>
+      <div id="allRemindersToggle" class="reminder row">
+        <label class="col-xs-12">All reminders</label>
+        <input class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
+      </div>
+    </div>
+    <!-- End of menu options -->
 
-
-
-<div class="container" id="medicationList">
-  <% for(var i=0; i < data.length; i++) { %>
-     <div class="panel panel-default">
-       <div class="panel-body">
-        <div class="row">
-          <div class="editIcons col-xs-2">
-            <a onclick="location.href='/edit/<%=data[i].mid%>';" class="btn btn-default" data-toggle="modal">
-              <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
-            </a>
-          </div>
-
-          <div class="col-xs-7">
+    <!-- Start of Medication List -->
+    <div class="container" id="medicationList">
+      <% for(var i=0; i < data.length; i++) { %>
+        <div class="panel panel-default">
+          <div class="panel-body">
             <div class="row">
-              <div class="col-xs-6">
-                <h4><%=data[i].med_name%></h4>
+              <div class="editIcons col-xs-2">
+                <a onclick="location.href='/edit/<%=data[i].mid%>';" class="btn btn-default" data-toggle="modal">
+                <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+              </a>
               </div>
-              <div class="col-xs-2 reminder">
-                <input class="col-xs-12" type="checkbox" name="reminders-switch-specific" checked data-style="ios">
+
+              <div class="col-xs-7">
+                <div class="row">
+                  <div class="col-xs-6">
+                    <h4><%=data[i].med_name%></h4>
+                  </div>
+                  <div class="col-xs-2 reminder">
+                    <input class="col-xs-12" type="checkbox" name="reminders-switch-specific" checked data-style="ios">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-8">
+                    <p>
+                      <%=data[i].days%>
+                    </p>
+                  </div>
+                  <div class="col-xs-4">
+                    <p>Every
+                      <%=data[i].repeat%> hours</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="editIcons col-xs-2">
+                <a class="btn btn-default" data-id="<%=data[i].mid%>" data-toggle="modal" data-target="#confirm-delete">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              </a>
               </div>
             </div>
-            <div class="row">
-              <div class="col-xs-8">
-                <p><%=data[i].days%></p>
-              </div>
-              <div class="col-xs-4">
-                <p>Every <%=data[i].repeat%> hours</p>
-              </div>
-            </div>
-          </div>
 
-          <div class="editIcons col-xs-2">
-            <a class="btn btn-default" data-id="<%=data[i].mid%>" data-toggle="modal" data-target="#confirm-delete">
-                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-            </a>
           </div>
         </div>
+        <% } %>
+    </div>
+    <!-- End of Container for Medication List -->
 
-       </div>
-     </div>
-  <% } %>
-</div>
 
-<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+
+    <!-- Start of delete confirmation -->
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
 
+          <div class="modal-body">
+            Are you sure you want to delete this reminder?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
+            <a id="deleteReminderBtn" class="btn btn-danger btn-ok">Delete reminder</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Delete Confirmation -->
+
+
+
+    <!--Start of reminder simulation -->
+    <% if (locals.medname) { %>
+      <div class="modal fade" id="reminder-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+
             <div class="modal-body">
-                Are you sure you want to delete this reminder?
+              This is a reminder to take
+              <%=medname%>!
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
-                <a class="btn btn-danger btn-ok">Delete reminder</a>
+              <button type="button" onclick="closeReminder()" class="btn btn-default" data-dismiss="modal">I've taken it</button>
             </div>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
+      <% } %>
+        <!-- End of Reminder Simulation -->
 
-<% if (locals.medname) { %>
-<div class="modal fade" id="reminder-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
 
-            <div class="modal-body">
-                This is a reminder to take <%=medname%>!
-            </div>
-            <div class="modal-footer">
-                <button type="button" onclick="closeReminder()" class="btn btn-default" data-dismiss="modal">I've taken it</button>
-            </div>
+  <footer class="footer">
+    <!-- Start of save and undo element -->
+    <div id="deleteOptionsBar" class="container">
+      <div style="margin-top: 10px;" class="row">
+        <div class="col-xs-12">
+          <div style="width: 95%;"class="btn-group btn-group-lg" role="group" aria-label="Save and Undo Buttn Group">
+            <button style="width: 50%;" type="button" class="btn btn-default" onclick="undoDelete()">Undo Delete</button>
+            <button style="width: 50%;" type="button" class="btn btn-danger" onclick="saveDelete()">Save Delete</button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-<% } %>
+    <!-- End of save and undo element -->
+  </footer>
+
 
 </body>
+
 <script>
-  $( document ).ready(function() {
-    if(Cookies.get("font-size")){
+  $(document).ready(function() {
+    if (Cookies.get("font-size")) {
       $('*').css('font-size', Cookies.get("font-size") + 'px');
     }
 
@@ -130,37 +173,54 @@
     $("[name='reminders-switch']").bootstrapToggle();
     $("[name='reminders-switch-specific']").bootstrapToggle();
 
+    $(".footer").toggle();
 
     $('#confirm-delete').on('show.bs.modal', function(e) {
-        console.log($(e.relatedTarget).data('id'))
-        $(this).find('.btn-ok').attr('href', '/delete/'+$(e.relatedTarget).data('id'));
+      // TODO: Dont reload the page yet, until they click save, or if they undo it, then bring reminder back
+      $(this).find('.btn-ok').attr('href', '/delete/' + $(e.relatedTarget).data('id'));
+
     });
+
+    $("#deleteReminderBtn").click(function popUpSaveUndo() {
+      $(".footer").toggle();
+    })
 
     $("#reminders-switch").parent().change(
-        function(){
-          console.log(this);
-          if(!$(this).hasClass('off')){
-            $("[name='reminders-switch-specific']").parent().removeClass('off');
-          } else {
-            $("[name='reminders-switch-specific']").parent().addClass('off');
-          }
+      function() {
+        console.log(this);
+        if (!$(this).hasClass('off')) {
+          $("[name='reminders-switch-specific']").parent().removeClass('off');
+        } else {
+          $("[name='reminders-switch-specific']").parent().addClass('off');
+        }
 
-    });
+      });
+
+
   });
+
+  // TODO: Save and undo reminder logic
+  function saveDelete() {
+    console.log("Saved Delete");
+  }
+  function undoDelete() {
+    console.log("Undid Delete");
+  }
+
 
   function editMedication() {
     $(".editIcons").toggle();
     $(".reminder").hide();
-
   }
-
   function editReminders() {
     $(".reminder").toggle();
     $(".editIcons").hide();
-
   }
 
+
+
   <% if (locals.medname) { %>
+
   function closeReminder() {
     $('#reminder-modal').modal('hide');
   }
@@ -168,8 +228,6 @@
     $('#reminder-modal').modal('show');
   }, 3000);
   <% } %>
-
-
 </script>
 
 </html>
