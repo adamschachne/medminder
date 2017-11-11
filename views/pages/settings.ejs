@@ -58,7 +58,7 @@
       $("#slider-text-size").bootstrapSlider();
       $('#slider-text-size').change(function() {
         var sliderVal = $('#slider-text-size').val();
-        $('*').css('font-size', 100 + sliderVal + '%');
+        $('*').css('font-size', sliderVal + 'vw');
         Cookies.set("font-size-placeholder", sliderVal)
 
       });

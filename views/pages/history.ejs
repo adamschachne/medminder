@@ -1,17 +1,67 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <% include ../partials/header.ejs %>
 </head>
 
 <body>
 
-<% include ../partials/nav.ejs %>
+  <!-- Navigation bar -->
+  <% include ../partials/nav.ejs %>
 
-<div class="container">
-<h2>Reminders History</h2>
 
-</div>
+
+    <!-- Start of Medication List -->
+    <div class="container" id="medicationList">
+      <% for(var i=0; i < data.length; i++) { %>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="row">
+
+              <div class="col-xs-12">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <h4><%=data[i].med_name%></h4>
+                  </div>
+
+                </div>
+                <div class="row">
+                  <div class="col-xs-8">
+                    <p>
+                      <%=data[i].days%>
+                    </p>
+                  </div>
+                  <div class="col-xs-4">
+                    <p>Every
+                      <%=data[i].repeat%> hours</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 ">
+                <button class="btn btn-lg pull-right" type="button" name="button">Recover Medicine Reminder</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <% } %>
+    </div>
+    <!-- End of Container for Medication List -->
+
+
 
 </body>
+
+<script>
+  $(document).ready(function() {
+    if (Cookies.get("font-size")) {
+      $('*').css('font-size', Cookies.get("font-size") + 'px');
+    }
+
+  });
+</script>
+
 </html>
