@@ -16,7 +16,7 @@
             <label for="slider-text-size">Font Size</label>
           </div>
           <div class="col-xs-12">
-            <div id="slider-text-size" type="text" data-slider-min="14" data-slider-max="20" data-slider-step="1" data-slider-value="14"></div>
+            <div id="slider-text-size" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="0"></div>
           </div>
         </div>
 
@@ -37,8 +37,8 @@
 
         <div class="form-group row">
           <div class="col-xs-12 btn-group" id="appSettingsBtns">
-            <button style="width:33%;" class="btn btn-default btn-lg" type="button" name="historyButton">History</button>
-            <button style="width:33%;" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
+            <button style="width:33%;" onclick="location.href='/history'" class="btn btn-default btn-lg" type="button" name="historyButton">History</button>
+            <button style="width:33%;" onclick="location.href='/help'" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
             <button style="width:33%;" onclick="location.href='/logout'" style="width:100%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
           </div>
         </div>
@@ -46,23 +46,19 @@
     </div>
 
 
-
-
-
     <script type="text/javascript">
       $(document).ready(function() {
         if (Cookies.get("font-size")) {
           $('*').css('font-size', Cookies.get("font-size") + 'px');
         }
-      })
-
+      });
 
 
       $("[name='notifications-switch']").bootstrapToggle();
       $("#slider-text-size").bootstrapSlider();
       $('#slider-text-size').change(function() {
         var sliderVal = $('#slider-text-size').val();
-        $('*').css('font-size', sliderVal + 'px');
+        $('*').css('font-size', 100 + sliderVal + '%');
         Cookies.set("font-size-placeholder", sliderVal)
 
       });

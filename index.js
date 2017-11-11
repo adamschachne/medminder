@@ -1,12 +1,17 @@
 var express = require('express');
+
 var medPage = require(__dirname + '/javascript/medication_page');
 var scheduleMedPage = require(__dirname + '/javascript/schedule_page');
 var settingsPage = require(__dirname + '/javascript/settings_page');
 var remindersPage = require(__dirname + '/javascript/reminders_page');
+var historyPage = require(__dirname + '/javascript/history_page');
+
+
 const { Client } = require('pg');
 var bodyParser = require("body-parser");
 var session = require('express-session');
 var cookie = require('cookie');
+var moment = require('moment');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
@@ -118,6 +123,12 @@ app.get('/settings', restrict, function(request, response) {
 });
 app.get('/reminders', restrict, function(request, response) {
   response.render('pages/reminders', remindersPage);
+});
+app.get('/history', restrict, function(request, response) {
+  response.render('pages/history', historyPage);
+});
+app.get('/help', restrict, function(request, response) {
+  response.render('pages/help',{page_title: 'Help'});
 });
 app.get('/login', function(request, response) {
   response.render('pages/login', {page_title: 'Login'});

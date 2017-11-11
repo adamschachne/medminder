@@ -19,6 +19,7 @@
     "express-session": "^1.15.6",
     "jquery": "^3.2.1",
     "knex": "^0.13.0",
+    "moment": "^2.19.1",
     "pbkdf2-password": "^1.2.1",
     "pg": "7.4.0"
   },
