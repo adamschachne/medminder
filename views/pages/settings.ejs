@@ -16,7 +16,7 @@
             <label for="slider-text-size">Font Size</label>
           </div>
           <div class="col-xs-12">
-            <div id="slider-text-size" type="text" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="0"></div>
+            <div id="slider-text-size" type="text" data-slider-min="0" data-slider-max="2" data-slider-step="1" data-slider-value="0"></div>
           </div>
         </div>
 
@@ -48,17 +48,45 @@
 
     <script type="text/javascript">
       $(document).ready(function() {
+
+
+
         if (Cookies.get("font-size")) {
-          $('*').css('font-size', Cookies.get("font-size") + 'px');
+          $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
+          switch(Cookies.get("font-size")) {
+              case "0":
+                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+                  break;
+              case "1":
+                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '1.5em');
+                  break;
+              case "2":
+                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '2em');
+                  break;
+              default:
+                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+          }
         }
       });
 
-
-      $("[name='notifications-switch']").bootstrapToggle();
       $("#slider-text-size").bootstrapSlider();
+      $("[name='notifications-switch']").bootstrapToggle();
       $('#slider-text-size').change(function() {
         var sliderVal = $('#slider-text-size').val();
-        $('*').css('font-size', sliderVal + 'vw');
+        switch(sliderVal) {
+            case 0:
+                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+                break;
+            case 1:
+                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '1.5em');
+                break;
+            case 2:
+                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '2em');
+                break;
+            default:
+                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+        }
+
         Cookies.set("font-size-placeholder", sliderVal)
 
       });

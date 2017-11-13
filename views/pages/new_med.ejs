@@ -28,6 +28,11 @@
       #dayofweek button {
         width: 14%;
       }
+      .vcenter {
+          display: inline-block;
+          vertical-align: middle;
+          float: none;
+      }
     </style>
 </head>
 
@@ -39,7 +44,7 @@
       <form class="" action="index.html" method="post">
         <div class="form-group">
           <label for="">Medication Name</label>
-          <input type="text" class="form-control" id="medication_name">
+          <input type="text" class="form-control" id="medication_name" placeholder="Enter name of Medication">
         </div>
         <div class="form-group">
           <label for="">Remind me on</label>
@@ -58,34 +63,43 @@
         <div class="form-group">
           <label for="">Repeat Every</label>
           <select class="form-control" id="hoursToRepeat">
-            <option value="0">As needed</option>
+            <option value="0">Select how often to repeat</option>
             <option value="1">hour</option>
+            <option value="1.5">1.5 hours</option>
             <option value="2">2 hours</option>
+            <option value="2.5">2.5 hours</option>
             <option value="3">3 hours</option>
+            <option value="3.5">3.5 hours</option>
             <option value="4">4 hours</option>
+            <option value="4.5">4.5 hours</option>
             <option value="5">5 hours</option>
+            <option value="5.5">5.5 hours</option>
             <option value="6">6 hours</option>
+            <option value="6.5">6.5 hours</option>
             <option value="7">7 hours</option>
+            <option value="7.5">7.5 hours</option>
             <option value="8">8 hours</option>
+            <option value="8.5">8.5 hours</option>
             <option value="9">9 hours</option>
+            <option value="9.5">9.5 hours</option>
             <option value="10">10 hours</option>
+            <option value="10.5">10.5 hours</option>
             <option value="11">11 hours</option>
+            <option value="11.5">11.5 hours</option>
             <option value="12">12 hours</option>
           </select>
         </div>
         <div class="form-group">
           <label for="">Start Reminders</label>
           <div id="start_time" class="row">
-            <div style="height:70px;" class="col-xs-8 btn-group">
-              <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
-              <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">On the Hour</button>
-            </div>
-            <div class="col-xs-4">
-              <div class="form-group">
-                <label for="atThisTime">At this time</label>
-                <input size="16" type="text" value="2012-06-15 14:45" readonly id="timeToStartReminders">
-                <!-- <input type="text" class="form-control" id="hourSet" aria-describedby="hourSet" placeholder="Time"> -->
+            <div class="col-xs-6">
+              <div style="height:85px;" class=" btn-group">
+                <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
+                <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">Next hour</button>
               </div>
+            </div>
+            <div class="col-xs-6">
+                <input style="margin-top:25px;"id="specifiedStartTime" type="text" placeholder="At this time ..." data-input>
             </div>
           </div>
         </div>
@@ -97,14 +111,32 @@
       </form>
     </div>
 </body>
-<script type="text/javascript" src"bootstrap-datetimepicker.min.js"></script>
+
+
 <script>
+
+
   $(document).ready(function() {
 
+
+
     if (Cookies.get("font-size")) {
-      $('*').css('font-size', Cookies.get("font-size") + 'px');
+      switch(Cookies.get("font-size")) {
+          case "0":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+              break;
+          case "1":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
+              break;
+          case "2":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
+              break;
+          default:
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+      }
     }
-    $("#timeToStartReminders").datetimepicker();
+
+    $('#specifiedStartTime').datetimepicker();
 
     $('body').on('click', '.btn.btn-secondary', function() {
       if ($(this).hasClass('active')) {

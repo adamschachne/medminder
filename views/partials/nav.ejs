@@ -1,29 +1,22 @@
 <nav class="navbar navbar-default navbar-static-top">
-  <div style ="margin-top:5px; width:100%" class="row">
-    <%if (!(page_title == 'Medication Reminders' || page_title == 'Login')) { %>
+  <div class="container">
+    <div class="row">
 
-    <div class="col-xs-2">
-      <button class="btn" onclick="location.href='/'" >Back</button>
-    </div>
-    <div class="col-xs-10">
-      <div class="container" id="pageTitle">
-        <h4><%=page_title%></h4>
-      </div>
-    </div>
-
-    <% } else { %>
-      <div class="col-xs-2">
-      </div>
-      <div class="col-xs-10">
-        <div class="container" id="pageTitle">
+      <%if (!(page_title == 'Medication Reminders' || page_title == 'Login')) { %>
+        <div class="col-xs-2">
+          <button style="margin-top:5px"class="btn" onclick="location.href='/'" ><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+        </div>
+        <div id="pageTitle" class="col-xs-10">
           <h4><%=page_title%></h4>
         </div>
-      </div>
+      <% } else { %>
 
-    <% }%>
+        <div id="pageTitle" class="col-xs-12">
+          <h4><%=page_title%></h4>
+        </div>
 
-
-
+      <% }%>
+    </div>
   </div>
 
 </nav>

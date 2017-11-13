@@ -16,25 +16,19 @@
 
 <div class="container">
   <form action="/signup" method="post">
-    <!-- <div class="form-group">
-      <input type="text" placeholder="First Name" class="form-control" name="first" id="first">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" placeholder="Enter new username" class="form-control" name="username" id="username">
     </div>
     <div class="form-group">
-      <input type="text" placeholder="Last Name" class="form-control" name="last" id="last">
-    </div> -->
-    <div class="form-group">
-      <input type="text" placeholder="Username" class="form-control" name="username" id="username">
-    </div>
-    <!-- <div class="form-group">
-      <input type="text" placeholder="Email Address" class="form-control" name="email" id="email">
-    </div> -->
-    <div class="form-group">
-      <input type="password" placeholder="Password" class="form-control" name="password" id="password">
+      <label for="password">Password</label>
+      <input type="password" placeholder="Enter new password" class="form-control" name="password" id="password">
     </div>
     <div class="form-group">
-      <input type="password" placeholder="Confirm password"  class="form-control" name="confirm" id="confirm">
+      <label for="confirm">Confirm Password</label>
+      <input type="password" placeholder="Confirm new password"  class="form-control" name="confirm" id="confirm">
     </div>
-    <button type="submit" class="disabled btn btn-default">Sign Up</button>
+    <button type="submit" class="disabled btn btn-primary">Sign Up</button>
   </form>
   <%if (locals.message) { %>
   <h3><%=locals.message%></h3>
@@ -45,6 +39,22 @@
 
 <script>
   $(document).ready(function() {
+
+    if (Cookies.get("font-size")) {
+      switch(Cookies.get("font-size")) {
+          case "0":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+              break;
+          case "1":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
+              break;
+          case "2":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
+              break;
+          default:
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+      }
+    }
 
     var valid = !$('#confirm').hasClass('unidentical');
     $('body').on('keyup', function(e) {

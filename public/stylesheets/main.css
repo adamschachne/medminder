@@ -1,4 +1,7 @@
 /* Medication page CSS*/
+#pageTitle {
+  text-align: center;
+}
 #menuBtnGroup {
     width: 100%;
 }

@@ -1,5 +1,4 @@
 var express = require('express');
-
 var medPage = require(__dirname + '/javascript/medication_page');
 var scheduleMedPage = require(__dirname + '/javascript/schedule_page');
 var settingsPage = require(__dirname + '/javascript/settings_page');
@@ -11,7 +10,6 @@ const { Client } = require('pg');
 var bodyParser = require("body-parser");
 var session = require('express-session');
 var cookie = require('cookie');
-var moment = require('moment');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
@@ -162,7 +160,7 @@ app.post('/login', function(request, response){
         })
       });
     } else {
-      //request.session.error = 'Authentication failed, please check your username and password.'
+      //request.session.error = 'z failed, please check your username and password.'
       response.redirect('/login');
     }
   });
@@ -278,7 +276,6 @@ function restrict(req, res, next) {
 }
 
 function authenticate(uname, pass, cb) {
-  console.log('authenticating %s:%s', uname, pass);
   //knex.raw('select * from users where uid = ?', [1]).on('query-error', function(error, obj) {
   knex.select('*').from('users').where('username', '=', uname)
   .asCallback(function(err, rows) {
