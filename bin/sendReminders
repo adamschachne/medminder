@@ -3,7 +3,7 @@
 const moment = require('moment');
 const { Client } = require('pg');
 const connection = new Client({
-  connectionString: "postgres://iugleukpepqler:3ea4ab8dbd71dc7e498d3b1f058908c58d5e94296bdc1a7ab66690e730eccda1@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg",
+  connectionString: process.env.DATABASE_URL,
   ssl: true
 });
 const knex = require('knex')({
