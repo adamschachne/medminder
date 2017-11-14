@@ -18,6 +18,7 @@
     "express-session": "^1.15.6",
     "flatpickr": "^4.1.0",
     "knex": "^0.13.0",
+    "moment": "^2.19.2",
     "pbkdf2-password": "^1.2.1",
     "pg": "7.4.0"
   },

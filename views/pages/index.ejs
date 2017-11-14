@@ -69,7 +69,11 @@
                     <h4><%=data[i].med_name%></h4>
                   </div>
                   <div class="col-xs-2 reminder">
-                    <input class="col-xs-12" type="checkbox" name="reminders-switch-specific" checked data-style="ios">
+                    <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific"
+                    <% if (data[i].active) { %>
+                      checked
+                    <% } %>
+                    data-style="ios">
                   </div>
                 </div>
                 <div class="row">
@@ -79,8 +83,7 @@
                     </p>
                   </div>
                   <div class="col-xs-4">
-                    <p>Every
-                      <%=data[i].repeat%> hours</p>
+                    <p>Every <%=data[i].repeat%> hour(s)</p>
                   </div>
                 </div>
               </div>
@@ -190,6 +193,18 @@
     $("[name='reminders-switch']").bootstrapToggle();
     $("[name='reminders-switch-specific']").bootstrapToggle();
 
+    $("[name='reminders-switch-specific']").change(function() {
+      $.ajax({
+        type: 'POST',
+        url: '/modifyNotification',
+        dataType: 'application/json',
+        data: {
+          mid: $(this).data("target"),
+          active: $(this).prop('checked')
+        }
+      })
+    })
+
     $(".footer").toggle();
 
     $('#confirm-delete').on('show.bs.modal', function(e) {
@@ -204,26 +219,23 @@
 
     $("#reminders-switch").parent().change(
       function() {
-        console.log(this);
+        //console.log(this);
         if (!$(this).hasClass('off')) {
           $("[name='reminders-switch-specific']").parent().removeClass('off');
+          $.ajax({
+            type: 'POST',
+            url: '/enableAllNotifications',
+          })
         } else {
           $("[name='reminders-switch-specific']").parent().addClass('off');
+          $.ajax({
+            type: 'POST',
+            url: '/disableAllNotifications',
+          })
         }
 
       });
-
-
   });
-
-  // TODO: Save and undo reminder logic
-  function saveDelete() {
-    console.log("Saved Delete");
-  }
-  function undoDelete() {
-    console.log("Undid Delete");
-  }
-
 
   function editMedication() {
     $(".editIcons").toggle();
