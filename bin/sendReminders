@@ -33,7 +33,7 @@ webpush.setVapidDetails(
 );
 
 var nowMoment = moment();
-var buffer = 0.1; // ~6 minutes plus or minus
+var buffer = 0.6667; // ~4 minutes plus or minus in hours
 var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
 
 knex.select('*')
@@ -119,7 +119,7 @@ knex.select('*')
     } else if (type == "2") {
       let duration = moment.duration(nowMoment.diff(remindMoment));
       let numHoursNormalized = (duration.asHours() % repeat);
-      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within 6 mintues of the scheduled time
+      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within a buffer of the scheduled time
         toRemind.push(rows[i]);
       }
     }
