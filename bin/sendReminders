@@ -42,12 +42,11 @@ knex.select('*')
 .andWhere('active', '=', true)
 .asCallback(function(err, rows) {
   if (err) console.log(err)
-
   var toRemind = [];
   for (var i = 0; i < rows.length; i++) {
-
     if (rows[i].snooze > 0) {
       toRemind.push(rows[i]);
+      continue;
     }
 
     // last notified will always be before now
@@ -85,9 +84,9 @@ knex.select('*')
 
       // check to see if today is any one of the days prescribed for the reminder
       var validDayOfWeek = false;
-      for (var i = 0; i < days.length; i++) {
+      for (var dayi = 0; dayi < days.length; dayi++) {
         let dayIndex = 0;
-        switch (days[i]) {
+        switch (days[dayi]) {
           case 'S': dayIndex = 0;
             break;
           case 'M': dayIndex = 1;
@@ -143,7 +142,6 @@ function sendNotifications(rows, index) {
     if (err) console.log(err)
 
     var subscription = subs[0].subscription;
-    // This is the same output of calling JSON.stringify on a PushSubscription
     let pushSubscription = {
       endpoint: subscription.endpoint,
       keys: subscription.keys

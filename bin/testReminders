@@ -31,6 +31,8 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 );
 
+var notifications = [];
+
 knex.select('subscription')
 .from('subscriptions')
 .asCallback(function(err, subs) {
@@ -38,12 +40,20 @@ knex.select('subscription')
 
   for (var i = 0; i < subs.length; i++) {
     var subscription = subs[i].subscription;
-    // This is the same output of calling JSON.stringify on a PushSubscription
-    let pushSubscription = {
-      endpoint: subscription.endpoint,
-      keys: subscription.keys
-    };
-    let payloadMessage = '{"msg" : "Take your medication!"}';
-    webpush.sendNotification(pushSubscription, payloadMessage);
+    notifications.push(subscription);
   }
+  sendNotifications(notifications, notifications.length-1);
 });
+
+function sendNotifications(rows, index) {
+  if (index == -1) {
+    process.exit(1);
+  }
+  let pushSubscription = {
+    endpoint: subscription.endpoint,
+    keys: subscription.keys
+  };
+  let payloadMessage = '{"msg" : "Take your medication!"}';
+  webpush.sendNotification(pushSubscription, payloadMessage);
+  sendNotifications(rows, index-1);
+}
