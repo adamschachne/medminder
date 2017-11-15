@@ -28,11 +28,6 @@
       #dayofweek button {
         width: 14%;
       }
-      .vcenter {
-          display: inline-block;
-          vertical-align: middle;
-          float: none;
-      }
     </style>
 </head>
 
@@ -46,8 +41,18 @@
           <label for="">Medication Name</label>
           <input type="text" class="form-control" id="medication_name" placeholder="Enter name of Medication">
         </div>
+
         <div class="form-group">
-          <label for="">Remind me on</label>
+          <label for="">Type of Reminder</label>
+          <select class="form-control" id="reminderTypeSelector">
+            <option value="0">What kind of reminders does this medication require?</option>
+            <option value="1">Specific days of the week</option>
+            <option value="2">Daily several hours apart</option>
+          </select>
+        </div>
+
+        <div id="daysToRemind" class="form-group">
+          <labelfor="">Remind me on</label>
           <div class="btn-toolbar" role="toolbar">
             <div id="dayofweek" class="btn-group btn-group-lg" role="group">
               <button type="button" class="btn btn-secondary">S</button>
@@ -60,7 +65,7 @@
             </div>
           </div>
         </div>
-        <div class="form-group">
+        <div id="hourlyRepetition" class="form-group">
           <label for="">Repeat Every</label>
           <select class="form-control" id="hoursToRepeat">
             <option value="0">Select how often to repeat</option>
@@ -90,16 +95,10 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="">Start Reminders</label>
+          <label for="">Start Reminders At</label>
           <div id="start_time" class="row">
-            <!-- <div class="col-xs-6">
-              <div style="height:85px;" class=" btn-group">
-                <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
-                <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">Next hour</button>
-              </div>
-            </div> -->
-            <div class="col-xs-6">
-                <input style="margin-top:25px;"id="specifiedStartTime" type="text" placeholder="At this time ..." data-input>
+            <div class="col-xs-12">
+                <input id="specifiedStartTime" type="text" placeholder="Pick date and time" data-input>
             </div>
           </div>
         </div>
@@ -118,7 +117,9 @@
 
   $(document).ready(function() {
 
-
+    $reminderTypeSelector = $('#reminderTypeSelector');
+    $hourlyRepetitionDiv = $('#hourlyRepetition');
+    $daysToRemindDiv = $('#daysToRemind');
 
     if (Cookies.get("font-size")) {
       switch(Cookies.get("font-size")) {
@@ -137,6 +138,25 @@
     }
 
     $('#specifiedStartTime').datetimepicker();
+
+    $daysToRemindDiv.hide();
+    $hourlyRepetitionDiv.hide();
+
+
+
+    $reminderTypeSelector.change(function() {
+      if($reminderTypeSelector.val() == "1"){
+        $daysToRemindDiv.show();
+        $hourlyRepetitionDiv.hide();
+      } else if ($reminderTypeSelector.val() == "2"){
+        $hourlyRepetitionDiv.show();
+        $daysToRemindDiv.hide();
+      } else {
+        $hourlyRepetitionDiv.hide();
+        $daysToRemindDiv.hide();
+      }
+    });
+
 
     $('body').on('click', '.btn.btn-secondary', function() {
       if ($(this).hasClass('active')) {
