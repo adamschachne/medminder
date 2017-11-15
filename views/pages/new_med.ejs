@@ -148,9 +148,15 @@
       if($reminderTypeSelector.val() == "1"){
         $daysToRemindDiv.show();
         $hourlyRepetitionDiv.hide();
+        $('#specifiedStartTime').data("DateTimePicker").destroy()
+        $('#specifiedStartTime').datetimepicker({
+            format: 'LT'
+        });
       } else if ($reminderTypeSelector.val() == "2"){
         $hourlyRepetitionDiv.show();
         $daysToRemindDiv.hide();
+        $('#specifiedStartTime').data("DateTimePicker").destroy()
+        $('#specifiedStartTime').datetimepicker();
       } else {
         $hourlyRepetitionDiv.hide();
         $daysToRemindDiv.hide();
@@ -186,6 +192,17 @@
 
       var valid = true;
 
+      if($reminderTypeSelector.val() == "0") {
+        $('#reminderTypeSelector').tooltip({
+          placement: "bottom",
+          title: "Please choose a type of reminder"
+        }).tooltip('show');
+        setTimeout(function() {
+          $('#reminderTypeSelector').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
       if ($('#medication_name')[0].value.length == 0) {
         $('#medication_name').tooltip({
           placement: "bottom",
@@ -197,15 +214,17 @@
         valid = false;
       }
 
-      if (days.length == 0) {
-        $('#dayofweek').tooltip({
-          placement: "bottom",
-          title: "please select at least one day of the week"
-        }).tooltip('show');
-        setTimeout(function() {
-          $('#dayofweek').tooltip('destroy');
-        }, 2000);
-        valid = false;
+      if($reminderTypeSelector.val() == "1") {
+        if (days.length == 0) {
+          $('#dayofweek').tooltip({
+            placement: "bottom",
+            title: "please select at least one day of the week"
+          }).tooltip('show');
+          setTimeout(function() {
+            $('#dayofweek').tooltip('destroy');
+          }, 2000);
+          valid = false;
+        }
       }
 
       if (!$('#specifiedStartTime').data("DateTimePicker").date()) {
@@ -219,15 +238,17 @@
         valid = false;
       }
 
-      if ($('#hoursToRepeat')[0].value == "0") {
-        $('#hoursToRepeat').tooltip({
-          placement: "bottom",
-          title: "Please select how often you wish to be reminded"
-        }).tooltip('show');
-        setTimeout(function() {
-          $('#hoursToRepeat').tooltip('destroy');
-        }, 2000);
-        valid = false;
+      if($reminderTypeSelector.val() == "2") {
+        if ($('#hoursToRepeat')[0].value == "0") {
+          $('#hoursToRepeat').tooltip({
+            placement: "bottom",
+            title: "Please select how often you wish to be reminded"
+          }).tooltip('show');
+          setTimeout(function() {
+            $('#hoursToRepeat').tooltip('destroy');
+          }, 2000);
+          valid = false;
+        }
       }
 
       if (!valid) {
@@ -236,6 +257,7 @@
 
       var payload = {
         med_name: $('#medication_name')[0].value,
+        type: $reminderTypeSelector.val(),
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
         //start_time: $('#start_time button.active').html()
