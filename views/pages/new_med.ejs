@@ -87,12 +87,12 @@
         <div class="form-group">
           <label for="">Start Reminders</label>
           <div id="start_time" class="row">
-            <div class="col-xs-6">
+            <!-- <div class="col-xs-6">
               <div style="height:85px;" class=" btn-group">
                 <button style="width:50%;" type="button" class="btn btn-lg">Now</button>
                 <button style="width:50%; white-space: normal;" type="button" class="btn btn-lg">Next hour</button>
               </div>
-            </div>
+            </div> -->
             <div class="col-xs-6">
                 <input style="margin-top:25px;"id="specifiedStartTime" type="text" placeholder="At this time ..." data-input>
             </div>
@@ -183,6 +183,28 @@
         valid = false;
       }
 
+      if (!$('#specifiedStartTime').data("DateTimePicker").date()) {
+        $('#specifiedStartTime').tooltip({
+          placement: "bottom",
+          title: "Please choose a date to be reminded"
+        }).tooltip('show');
+        setTimeout(function() {
+          $('#specifiedStartTime').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
+      if ($('#hoursToRepeat')[0].value == "0") {
+        $('#hoursToRepeat').tooltip({
+          placement: "bottom",
+          title: "Please select how often you wish to be reminded"
+        }).tooltip('show');
+        setTimeout(function() {
+          $('#hoursToRepeat').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
       if (!valid) {
         return false;
       }
@@ -191,7 +213,8 @@
         med_name: $('#medication_name')[0].value,
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
-        start_time: $('#start_time button.active').html()
+        //start_time: $('#start_time button.active').html()
+        time: $('#specifiedStartTime').data("DateTimePicker").date().unix() * 1000
       }
 
       $.ajax({

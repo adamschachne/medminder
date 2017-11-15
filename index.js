@@ -73,10 +73,11 @@ app.get('/', restrict,  function(request, response) {
     medicationPage.medname = medname;
   }
 
-  knex.select('med_name', 'days', 'repeat', 'mid')
+  knex.select('med_name', 'days', 'repeat', 'mid', 'active')
   .from('medications')
-  .where('uid', '=', request.session.uid)
-  .orderBy('mid', 'asc')
+  .whereNull('deleted')
+  .andWhere('uid', '=', request.session.uid)
+  .orderBy('mid', 'desc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
     for (var i = 0; i < rows.length; i++) {
@@ -84,6 +85,7 @@ app.get('/', restrict,  function(request, response) {
       medicationPage.data.push(rows[i]);
       medicationPage.data[i].days = JSON.parse(medicationPage.data[i].days);
     }
+    //console.log(medicationPage)
     response.render('pages/index', medicationPage);
   })
 });
@@ -95,7 +97,9 @@ app.post('/med/new', restrict, function(request, response) {
   var med_name = request.body.med_name;
   var days = JSON.parse(request.body.days);
   var repeat = request.body.repeat;
-  var start_time = request.body.start_time;
+  //var start_time = request.body.start_time;
+  var time = request.body.time;
+
   var message = "";
   var arr = [];
   for (var key in days) {
@@ -113,7 +117,7 @@ app.post('/med/new', restrict, function(request, response) {
     return response.render('pages/new_med', {page_title: 'Schedule Medication', message: message });
   }
 
-  knex.insert({uid: request.session.uid, med_name: med_name, days: JSON.stringify(days), repeat: repeat}).into('medications')
+  knex.insert({uid: request.session.uid, med_name: med_name, days: JSON.stringify(days), repeat: repeat, remind_time : time, active: true}).into('medications')
   .then(function () {
     return response.redirect('/');
   })
@@ -214,6 +218,30 @@ app.post('/signup', function(request, response){
     }
   });
 });
+app.post('/register', restrict, function(request, response) {
+  var subscription = null;
+  if (request.body.subscription) {
+    subscription = JSON.parse(request.body.subscription);
+  }
+  // delete (unregister) all other subscriptions for this user
+  knex('subscriptions')
+  .where('uid', '=', request.session.uid)
+  .del()
+  .then(function (result) {
+    if (subscription) {
+       // subscription exists, create a new one
+      knex.insert({
+        uid: request.session.uid,
+        subscription: subscription
+      }).into('subscriptions')
+      .then(function () {
+        return response.sendStatus(200);
+      })
+    } else {
+      return response.sendStatus(200);
+    }
+  })
+});
 app.get('/delete/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
   knex.select('uid').from('medications').where('mid', '=', mid)
@@ -222,7 +250,9 @@ app.get('/delete/:mid', restrict, function(request, response) {
     if (rows.length > 0) {
       knex('medications')
         .where('mid','=',mid)
-        .del()
+        .update({
+          deleted: knex.fn.now()
+        })
         .then(function () {
           // console.log('deleted ', mid)
           return response.redirect('/');
@@ -237,7 +267,8 @@ app.get('/delete/:mid', restrict, function(request, response) {
 app.get('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
   knex.select('uid', 'med_name', 'days', 'repeat', 'mid').from('medications')
-  .where('mid', '=', mid)
+  .whereNull('deleted')
+  .andWhere('mid', '=', mid)
   .andWhere('uid', '=', request.session.uid)
   .asCallback(function(err, rows) {
     if (rows.length > 0) {
@@ -265,6 +296,41 @@ app.post('/edit/:mid', restrict, function(request, response) {
   .then(function (result) {
     // console.log(result);
     return response.redirect('/');
+  })
+});
+app.post('/modifyNotification', restrict, function(request, response) {
+  var mid = request.body.mid;
+
+  knex('medications')
+  .where('mid', '=', mid)
+  .andWhere('uid', '=', request.session.uid)
+  .update({
+    active: request.body.active
+  })
+  .then(function (result) {
+    // console.log(result);
+    return response.sendStatus(200);
+  })
+
+});
+app.post('/enableAllNotifications', restrict, function(request, response) {
+  knex('medications')
+  .where('uid', '=', request.session.uid)
+  .update({
+    active: true
+  })
+  .then(function (result) {
+    return response.sendStatus(200);
+  })
+});
+app.post('/disableAllNotifications', restrict, function(request, response) {
+  knex('medications')
+  .where('uid', '=', request.session.uid)
+  .update({
+    active: false
+  })
+  .then(function (result) {
+    return response.sendStatus(200);
   })
 });
 

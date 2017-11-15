@@ -1,0 +1,87 @@
+#!/usr/bin/env node
+
+const moment = require('moment');
+const { Client } = require('pg');
+const connection = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host: connection.host,
+    port: connection.port,
+    user: connection.user,
+    password: connection.password,
+    database: connection.database,
+    ssl: true
+  }
+  //connection: process.env.DATABASE_URL
+});
+
+var nowMoment = moment();
+var buffer = 0.1; // ~6 minutes plus or minus
+var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
+
+knex.select('*')
+.from('medications')
+.where('active', '=', true)
+.asCallback(function(err, rows) {
+  if (err) console.log(err)
+
+  var toRemind = [];
+  for (var i = 0; i < rows.length; i++) {
+
+    // last notified will always be before now
+    var last_notified = rows[i].last_notified;
+    if (last_notified) {
+      var lastNotifiedMoment = moment(parseFloat(last_notified));
+      var timeSinceLastNotification = moment.duration(nowMoment.diff(lastNotifiedMoment)).asHours();
+      //console.log(timeSinceLastNotification);
+
+      // dont send a notification if the last one was sent within half an hour
+      if (timeSinceLastNotification < 0.5) {
+        continue;
+      }
+    }
+
+    var remind_time = parseFloat(rows[i].remind_time);
+    var repeat = parseFloat(rows[i].repeat);
+
+    if (nowMoment.valueOf() < remind_time) {
+      continue;
+    }
+
+    var remindMoment = moment(remind_time);
+    var duration = moment.duration(nowMoment.diff(remindMoment));
+    var numHoursNormalized = (duration.asHours() % repeat);
+
+    if (buffer > numHoursNormalized && numHoursNormalized > 0) {
+      toRemind.push(rows[i]);
+    }
+  }
+
+  sendNotifications(toRemind, toRemind.length-1)
+
+})
+
+function sendNotifications(rows, index) {
+
+  if (index == -1) {
+    process.exit(1);
+  }
+  /*
+
+  add notification code here
+
+  */
+  knex('medications')
+  .where('mid', '=', rows[index].mid)
+  .update({
+    last_notified: nowMoment.valueOf()
+  })
+  .then(function (result) {
+    console.log(currentTimeString + "   -----   " + "sending notification to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
+    sendNotifications(rows, index-1);
+  })
+}
