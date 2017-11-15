@@ -73,7 +73,7 @@ app.get('/', restrict,  function(request, response) {
     medicationPage.medname = medname;
   }
 
-  knex.select('med_name', 'days', 'repeat', 'mid', 'active')
+  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active')
   .from('medications')
   .whereNull('deleted')
   .andWhere('uid', '=', request.session.uid)
@@ -99,6 +99,7 @@ app.post('/med/new', restrict, function(request, response) {
   var repeat = request.body.repeat;
   //var start_time = request.body.start_time;
   var time = request.body.time;
+  var type = request.body.type;
 
   var message = "";
   var arr = [];
@@ -107,17 +108,7 @@ app.post('/med/new', restrict, function(request, response) {
   }
   days = arr;
 
-  if (med_name.length == 0) {
-    message = "Please write the name of your medication.";
-    return response.render('pages/new_med', {page_title: 'Schedule Medication', message: message });
-  }
-
-  if (days.length == 0) {
-    message = "Please select at least one day of the week.";
-    return response.render('pages/new_med', {page_title: 'Schedule Medication', message: message });
-  }
-
-  knex.insert({uid: request.session.uid, med_name: med_name, days: JSON.stringify(days), repeat: repeat, remind_time : time, active: true}).into('medications')
+  knex.insert({uid: request.session.uid, med_name: med_name, type: type, days: JSON.stringify(days), repeat: repeat, remind_time : time, active: true}).into('medications')
   .then(function () {
     return response.redirect('/');
   })
