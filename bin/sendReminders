@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const webpush = require('web-push');
 const moment = require('moment');
 const { Client } = require('pg');
 const connection = new Client({
@@ -19,13 +20,26 @@ const knex = require('knex')({
   //connection: process.env.DATABASE_URL
 });
 
+const vapidKeys = {
+  publicKey : process.env.VAPID_PUBLIC_KEY,
+  privateKey : process.env.VAPID_PRIVATE_KEY
+}
+
+webpush.setGCMAPIKey(process.env.FCM_SERVER_KEY);
+webpush.setVapidDetails(
+  'mailto:'+process.env.CONTACT_EMAIL,
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
+);
+
 var nowMoment = moment();
 var buffer = 0.1; // ~6 minutes plus or minus
 var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
 
 knex.select('*')
 .from('medications')
-.where('active', '=', true)
+.whereNull('deleted')
+.andWhere('active', '=', true)
 .asCallback(function(err, rows) {
   if (err) console.log(err)
 
@@ -63,25 +77,43 @@ knex.select('*')
 
   sendNotifications(toRemind, toRemind.length-1)
 
-})
+});
 
 function sendNotifications(rows, index) {
 
   if (index == -1) {
     process.exit(1);
   }
-  /*
 
-  add notification code here
+  knex.select('subscription')
+  .from('subscriptions')
+  .where('uid', '=', rows[index].uid)
+  .asCallback(function(err, subs) {
+    if (err) console.log(err)
 
-  */
-  knex('medications')
-  .where('mid', '=', rows[index].mid)
-  .update({
-    last_notified: nowMoment.valueOf()
-  })
-  .then(function (result) {
-    console.log(currentTimeString + "   -----   " + "sending notification to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
-    sendNotifications(rows, index-1);
-  })
+    var subscription = subs[0].subscription;
+
+    // subscription.endpoint
+    // subscription.keys
+
+    // This is the same output of calling JSON.stringify on a PushSubscription
+    let pushSubscription = {
+      endpoint: subscription.endpoint,
+      keys: subscription.keys
+    };
+    let payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'"}';
+
+    webpush.sendNotification(pushSubscription, payloadMessage);
+
+    knex('medications')
+    .where('mid', '=', rows[index].mid)
+    .update({
+      last_notified: nowMoment.valueOf()
+    })
+    .then(function (result) {
+      console.log(currentTimeString + "   -----   " + "notification sent to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
+      sendNotifications(rows, index-1);
+    })
+  });
+
 }
