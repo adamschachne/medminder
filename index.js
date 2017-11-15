@@ -70,7 +70,7 @@ app.get('/', restrict,  function(request, response) {
     medicationPage.medname = medname;
   }
 
-  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active','remind_time')
+  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active', 'remind_time')
   .from('medications')
   .whereNull('deleted')
   .andWhere('uid', '=', request.session.uid)
@@ -120,15 +120,15 @@ app.get('/reminders', restrict, function(request, response) {
   response.render('pages/reminders', remindersPage);
 });
 app.get('/history', restrict, function(request, response) {
-  var medicationPage = {
-    page_title: 'Medication Reminders',
+  var historyPage = {
+    page_title: 'History',
     data: []
   };
   var medname = request.query.medname;
   if (medname) {
-    medicationPage.medname = medname;
+    historyPage.medname = medname;
   }
-  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active')
+  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active', 'remind_time')
   .from('medications')
   .whereNotNull('deleted')
   .andWhere('uid', '=', request.session.uid)
@@ -136,10 +136,10 @@ app.get('/history', restrict, function(request, response) {
   .asCallback(function(err, rows) {
     if (err) console.log(err)
     for (var i = 0; i < rows.length; i++) {
-      medicationPage.data.push(rows[i]);
-      medicationPage.data[i].days = JSON.parse(medicationPage.data[i].days);
+      historyPage.data.push(rows[i]);
+      historyPage.data[i].days = JSON.parse(historyPage.data[i].days);
     }
-    response.render('pages/index', medicationPage);
+    response.render('pages/history', historyPage);
   })
 });
 app.get('/help', restrict, function(request, response) {
