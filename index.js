@@ -122,6 +122,9 @@ app.post('/med/new', restrict, function(request, response) {
     return response.redirect('/');
   })
 });
+app.get('/landing', restrict, function(request, response) {
+  response.render('pages/landing_page', {page_title: 'Welcome!'});
+});
 app.get('/settings', restrict, function(request, response) {
   response.render('pages/settings', settingsPage);
 });
