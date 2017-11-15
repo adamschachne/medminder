@@ -30,8 +30,9 @@ self.addEventListener('push', function(event) {
       {
         action: 'snooze', title: 'Snooze'
         //icon: 'images/xmark.png'
-      },
-    ]
+      }
+    ],
+    vibrate: [100, 50, 100]
   };
   const notificationPromise = self.registration.showNotification(title, options);
   event.waitUntil(notificationPromise);
