@@ -295,6 +295,19 @@ app.get('/edit/:mid', restrict, function(request, response) {
 });
 app.post('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
+  var med_name = request.body.med_name;
+  var days = JSON.parse(request.body.days);
+  var repeat = request.body.repeat;
+  //var start_time = request.body.start_time;
+  var time = request.body.time;
+  var type = request.body.type;
+
+  var message = "";
+  var arr = [];
+  for (var key in days) {
+    arr.push(days[key]);
+  }
+  days = arr;
   // console.log(request.body)
   knex('medications')
   .where('mid', '=', mid)
@@ -302,7 +315,9 @@ app.post('/edit/:mid', restrict, function(request, response) {
   .update({
     med_name: request.body.med_name,
     days: request.body.days,
-    repeat: request.body.repeat
+    repeat: request.body.repeat,
+    time: request.body.time,
+    type: request.body.type
   })
   .then(function (result) {
     // console.log(result);
