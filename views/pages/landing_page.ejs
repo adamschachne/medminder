@@ -2,6 +2,29 @@
 <html>
 <head>
   <% include ../partials/header.ejs %>
+
+  <style media="screen">
+    div {
+      /* Set size of crop area. Setting its location happens bellow. */
+      width: 140;
+      height: 100;
+      overflow: hidden;  /* Crop it like it's hot! */
+
+    }
+
+    img {
+      /* Set the crop location by shifting the image
+       * up by 70px and to the right by 30px.
+       */
+      /*position: relative;
+      top: -70px;
+      left: 30px;*/
+
+      /* Scale the image as you normally would. */
+      /*width: 300px;
+      height: 150px;*/
+    }
+  </style>
 </head>
 
 <body>
@@ -9,7 +32,7 @@
 <% include ../partials/nav.ejs %>
 
 <div class="container">
-  <img src="" alt="Pills Image">
+  <img src="images/pills.jpg" alt="Pills Image">
 </div>
 
 </body>
