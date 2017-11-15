@@ -16,9 +16,6 @@ const connection = new Client({
   // connectionString: process.env.DATABASE_URL,
   connectionString: "postgres://vuezzvdnlortow:a5e04be5858874386c6cf626e96c7a68be459df14f126977cbfc2d61425c963e@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg",
   ssl: true
-
-
-
 });
 //db.connect();
 //console.log(db);
@@ -120,7 +117,27 @@ app.get('/reminders', restrict, function(request, response) {
   response.render('pages/reminders', remindersPage);
 });
 app.get('/history', restrict, function(request, response) {
-  response.render('pages/history', historyPage);
+  var medicationPage = {
+    page_title: 'Medication Reminders',
+    data: []
+  };
+  var medname = request.query.medname;
+  if (medname) {
+    medicationPage.medname = medname;
+  }
+  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active')
+  .from('medications')
+  .whereNotNull('deleted')
+  .andWhere('uid', '=', request.session.uid)
+  .orderBy('mid', 'desc')
+  .asCallback(function(err, rows) {
+    if (err) console.log(err)
+    for (var i = 0; i < rows.length; i++) {
+      medicationPage.data.push(rows[i]);
+      medicationPage.data[i].days = JSON.parse(medicationPage.data[i].days);
+    }
+    response.render('pages/index', medicationPage);
+  })
 });
 app.get('/help', restrict, function(request, response) {
   response.render('pages/help',{page_title: 'Help'});
