@@ -13,9 +13,11 @@ var cookie = require('cookie');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
-
-  connectionString: "postgres://byeqqktcpejzsj:9818338064bc71a71b172a94fd4bcf84cd307e6246a859c113b52e96e79628d1@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg",
+  // connectionString: process.env.DATABASE_URL,
+  connectionString: "postgres://vuezzvdnlortow:a5e04be5858874386c6cf626e96c7a68be459df14f126977cbfc2d61425c963e@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg",
   ssl: true
+
+
 
 });
 //db.connect();
