@@ -66,12 +66,59 @@ knex.select('*')
       continue;
     }
 
-    var remindMoment = moment(remind_time);
-    var duration = moment.duration(nowMoment.diff(remindMoment));
-    var numHoursNormalized = (duration.asHours() % repeat);
+    var type = rows[i].type;
+    let remindMoment = moment(remind_time);
+    if (type == "1") { // specific days of the week
+      // if not on the same hour of the day, continue
 
-    if (buffer > numHoursNormalized && numHoursNormalized > 0) {
+      var days = JSON.parse(rows[i].days);
+      // make sure the the reminder is within +-6 mintes of the original scheduled minute
+      var reminderToday = moment(remindMoment.hour()+":"+remindMoment.minutes(), "HH:mm");
+      var difference = moment.duration(nowMoment.diff(remindMoment));
+      if (difference.asMinutes() > buffer*60) {
+        continue;
+      }
+
+      // check to see if today is any one of the days prescribed for the reminder
+      var validDayOfWeek = false;
+      for (var i = 0; i < days.length; i++) {
+        let dayIndex = 0;
+        switch (days[i]) {
+          case 'S': dayIndex = 0;
+            break;
+          case 'M': dayIndex = 1;
+            break;
+          case 'T': dayIndex = 2;
+            break;
+          case 'W': dayIndex = 3;
+            break;
+          case 'Th': dayIndex = 4;
+            break;
+          case 'F': dayIndex = 5;
+            break;
+          case 'Sa': dayIndex = 6;
+            break;
+        }
+        // if today is the same day as the prescribed day
+        if (dayIndex == nowMoment.weekday()) {
+          validDayOfWeek = true;
+          break;
+        }
+      }
+
+      if (validDayOfWeek == false) {
+        continue;
+      }
+
+      //passes all tests, send a notification for this reminder
       toRemind.push(rows[i]);
+
+    } else if (type == "2") {
+      let duration = moment.duration(nowMoment.diff(remindMoment));
+      let numHoursNormalized = (duration.asHours() % repeat);
+      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within 6 mintues of the scheduled time
+        toRemind.push(rows[i]);
+      }
     }
   }
 
@@ -92,10 +139,6 @@ function sendNotifications(rows, index) {
     if (err) console.log(err)
 
     var subscription = subs[0].subscription;
-
-    // subscription.endpoint
-    // subscription.keys
-
     // This is the same output of calling JSON.stringify on a PushSubscription
     let pushSubscription = {
       endpoint: subscription.endpoint,
