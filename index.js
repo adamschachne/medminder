@@ -344,6 +344,18 @@ app.post('/disableAllNotifications', restrict, function(request, response) {
     return response.sendStatus(200);
   })
 });
+app.post('/recover/:mid', restrict, function(request, response) {
+  var mid = request.params.mid;
+  knex('medications')
+  .where('mid', '=', mid)
+  .andWhere('uid', '=', request.session.uid)
+  .update({
+    deleted: null
+  })
+  .then(function (result) {
+    return response.sendStatus(200);
+  })
+});
 
 function restrict(req, res, next) {
   if (req.session.uid) {

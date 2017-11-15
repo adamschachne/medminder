@@ -54,6 +54,13 @@
                   </div>
                 </div>
               </div>
+
+              <div class="row">
+                <div class="col-xs-12 ">
+                  <button onclick="recoverReminder(<%=data[i].mid%>)" class="btn btn-lg pull-right" type="button" name="button">Recover Reminder</button>
+                </div>
+              </div>
+
             </div>
 
           </div>
@@ -97,6 +104,16 @@
     <% } %>
 
   });
+
+  function recoverReminder(mid) {
+    $.ajax({
+      type: 'POST',
+      url: '/recover/'+mid,
+      complete: function () {
+        location.reload();
+      }
+    })
+  }
 
 
 </script>
