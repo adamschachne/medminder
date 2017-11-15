@@ -71,7 +71,8 @@ app.get('/', restrict,  function(request, response) {
 
   knex.select('med_name', 'days', 'repeat', 'mid', 'active')
   .from('medications')
-  .where('uid', '=', request.session.uid)
+  .whereNull('deleted')
+  .andWhere('uid', '=', request.session.uid)
   .orderBy('mid', 'desc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
@@ -213,6 +214,30 @@ app.post('/signup', function(request, response){
     }
   });
 });
+app.post('/register', restrict, function(request, response) {
+  var subscription = null;
+  if (request.body.subscription) {
+    subscription = JSON.parse(request.body.subscription);
+  }
+  // delete (unregister) all other subscriptions for this user
+  knex('subscriptions')
+  .where('uid', '=', request.session.uid)
+  .del()
+  .then(function (result) {
+    if (subscription) {
+       // subscription exists, create a new one
+      knex.insert({
+        uid: request.session.uid,
+        subscription: subscription
+      }).into('subscriptions')
+      .then(function () {
+        return response.sendStatus(200);
+      })
+    } else {
+      return response.sendStatus(200);
+    }
+  })
+});
 app.get('/delete/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
   knex.select('uid').from('medications').where('mid', '=', mid)
@@ -221,7 +246,9 @@ app.get('/delete/:mid', restrict, function(request, response) {
     if (rows.length > 0) {
       knex('medications')
         .where('mid','=',mid)
-        .del()
+        .update({
+          deleted: knex.fn.now()
+        })
         .then(function () {
           // console.log('deleted ', mid)
           return response.redirect('/');
@@ -236,7 +263,8 @@ app.get('/delete/:mid', restrict, function(request, response) {
 app.get('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
   knex.select('uid', 'med_name', 'days', 'repeat', 'mid').from('medications')
-  .where('mid', '=', mid)
+  .whereNull('deleted')
+  .andWhere('mid', '=', mid)
   .andWhere('uid', '=', request.session.uid)
   .asCallback(function(err, rows) {
     if (rows.length > 0) {

@@ -20,7 +20,8 @@
     "knex": "^0.13.0",
     "moment": "^2.19.2",
     "pbkdf2-password": "^1.2.1",
-    "pg": "7.4.0"
+    "pg": "7.4.0",
+    "web-push": "^3.2.4"
   },
   "devDependencies": {
     "request": "^2.81.0",
