@@ -82,6 +82,7 @@ knex.select('*')
         continue;
       }
 
+      //console.log(nowMoment.weekday())
       // check to see if today is any one of the days prescribed for the reminder
       var validDayOfWeek = false;
       for (var dayi = 0; dayi < days.length; dayi++) {

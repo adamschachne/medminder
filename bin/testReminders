@@ -49,11 +49,11 @@ function sendNotifications(rows, index) {
   if (index == -1) {
     process.exit(1);
   }
-  let pushSubscription = {
-    endpoint: subscription.endpoint,
-    keys: subscription.keys
+  var pushSubscription = {
+    endpoint: rows[index].endpoint,
+    keys: rows[index].keys
   };
-  let payloadMessage = '{"msg" : "Take your medication!"}';
+  var payloadMessage = '{"msg" : "Take your medication!", "mid": "1"}';
   webpush.sendNotification(pushSubscription, payloadMessage);
   sendNotifications(rows, index-1);
 }
