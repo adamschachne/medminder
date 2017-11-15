@@ -42,18 +42,26 @@ knex.select('subscription')
     var subscription = subs[i].subscription;
     notifications.push(subscription);
   }
+
   sendNotifications(notifications, notifications.length-1);
 });
+//
+
+var numDone = 0;
 
 function sendNotifications(rows, index) {
   if (index == -1) {
-    process.exit(1);
+    return;
   }
-  var pushSubscription = {
-    endpoint: rows[index].endpoint,
-    keys: rows[index].keys
-  };
   var payloadMessage = '{"msg" : "Take your medication!", "mid": "1"}';
-  webpush.sendNotification(pushSubscription, payloadMessage);
+  webpush.sendNotification(rows[index], payloadMessage).catch((error) => {
+    //console.log(error)
+  }).then(function(res) {
+    //console.log(res)
+    numDone++;
+    if (numDone == notifications.length) {
+      process.exit(1);
+    }
+  })
   sendNotifications(rows, index-1);
 }

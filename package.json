@@ -15,6 +15,7 @@
     "connect-session-knex": "^1.4.0",
     "ejs": "2.5.6",
     "express": "4.15.2",
+    "express-https-redirect": "^1.0.0",
     "express-session": "^1.15.6",
     "flatpickr": "^4.1.0",
     "knex": "^0.13.0",

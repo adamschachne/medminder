@@ -4,7 +4,7 @@ var scheduleMedPage = require(__dirname + '/javascript/schedule_page');
 var settingsPage = require(__dirname + '/javascript/settings_page');
 var remindersPage = require(__dirname + '/javascript/reminders_page');
 var historyPage = require(__dirname + '/javascript/history_page');
-
+var httpsRedirect = require('express-https-redirect');
 
 const { Client } = require('pg');
 var bodyParser = require("body-parser");
@@ -41,6 +41,7 @@ const store = new KnexSessionStore({
 var app = express();
 app.set('port', (process.env.PORT || 5000));
 
+app.use('/', httpsRedirect());
 // static content delivery
 app.use(express.static(__dirname + '/public'));
 
