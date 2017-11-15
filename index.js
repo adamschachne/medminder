@@ -73,7 +73,7 @@ app.get('/', restrict,  function(request, response) {
     medicationPage.medname = medname;
   }
 
-  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active')
+  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active','remind_time')
   .from('medications')
   .whereNull('deleted')
   .andWhere('uid', '=', request.session.uid)
@@ -260,7 +260,7 @@ app.get('/delete/:mid', restrict, function(request, response) {
 });
 app.get('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
-  knex.select('uid', 'med_name', 'days', 'repeat', 'mid').from('medications')
+  knex.select('uid', 'med_name', 'type', 'days', 'repeat', 'mid', 'remind_time').from('medications')
   .whereNull('deleted')
   .andWhere('mid', '=', mid)
   .andWhere('uid', '=', request.session.uid)

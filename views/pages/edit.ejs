@@ -40,21 +40,21 @@
           <select class="form-control" id="reminderTypeSelector">
             <option value="0">What kind of reminders does this medication require?</option>
             <option value="1">Specific days of the week</option>
-            <option value="2">Daily, several hours apart</option>
+            <option value="2">Daily several hours apart</option>
           </select>
         </div>
 
         <div id="daysToRemind" class="form-group">
-          <labelfor="">Remind me on</label>
+          <label for="">Remind me on</label>
           <div class="btn-toolbar" role="toolbar">
             <div id="dayofweek" class="btn-group btn-group-lg" role="group">
-              <button type="button" class="btn btn-secondary">S</button>
-              <button type="button" class="btn btn-secondary">M</button>
-              <button type="button" class="btn btn-secondary">T</button>
-              <button type="button" class="btn btn-secondary">W</button>
-              <button type="button" class="btn btn-secondary">Th</button>
-              <button type="button" class="btn btn-secondary">F</button>
-              <button type="button" class="btn btn-secondary">Sa</button>
+              <button type="button" class="btn btn-secondary" data-value='S'>S</button>
+              <button type="button" class="btn btn-secondary" data-value='M'>M</button>
+              <button type="button" class="btn btn-secondary" data-value='T'>T</button>
+              <button type="button" class="btn btn-secondary" data-value='W'>W</button>
+              <button type="button" class="btn btn-secondary" data-value='Th'>Th</button>
+              <button type="button" class="btn btn-secondary" data-value='F'>F</button>
+              <button type="button" class="btn btn-secondary" data-value='Sa'>Sa</button>
             </div>
           </div>
         </div>
@@ -97,13 +97,12 @@
         </div>
         <div class="row">
           <div class="col-xs-12">
-            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Add reminder</button>
+            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Save reminder</button>
           </div>
         </div>
       </form>
     </div>
 </body>
-
 
 <script>
   $(document).ready(function() {
@@ -111,6 +110,7 @@
     $reminderTypeSelector = $('#reminderTypeSelector');
     $hourlyRepetitionDiv = $('#hourlyRepetition');
     $daysToRemindDiv = $('#daysToRemind');
+    $specifiedStartTimeInput = $('#specifiedStartTime');
 
     if (Cookies.get("font-size")) {
       switch(Cookies.get("font-size")) {
@@ -130,11 +130,6 @@
 
     $('#specifiedStartTime').datetimepicker();
 
-    $daysToRemindDiv.hide();
-    $hourlyRepetitionDiv.hide();
-
-
-
     $reminderTypeSelector.change(function() {
       if($reminderTypeSelector.val() == "1"){
         $daysToRemindDiv.show();
@@ -149,10 +144,22 @@
     });
 
     $('#medication_name')[0].value = "<%= medication.med_name %>";
-  <% for(var i=0; i < medication.days.length; i++) { %>
-    $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
-  <% } %>
-    $('#hoursToRepeat')[0].value = <%=medication.repeat%>;
+    $specifiedStartTimeInput.val(moment(parseInt("<%= medication.remind_time %>")).format("MM/d/YY h:mm a"));
+
+
+
+    <%if(medication.type == "1") {%>
+      $reminderTypeSelector.val("1");
+      $hourlyRepetitionDiv.hide();
+      <% for(var i=0; i < medication.days.length; i++) { %>
+        console.log("In here");
+        $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
+      <% } %>
+    <%} else if(medication.type == "2"){%>
+      $reminderTypeSelector.val("2");
+      $daysToRemindDiv.hide();
+      $('#hoursToRepeat')[0].value = <%=medication.repeat%>;
+    <%}%>
 
     $('body').on('click', '.btn.btn-secondary', function() {
       if ($(this).hasClass('active')) {
