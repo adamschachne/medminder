@@ -46,6 +46,10 @@ knex.select('*')
   var toRemind = [];
   for (var i = 0; i < rows.length; i++) {
 
+    if (rows[i].snooze > 0) {
+      toRemind.push(rows[i]);
+    }
+
     // last notified will always be before now
     var last_notified = rows[i].last_notified;
     if (last_notified) {
@@ -144,14 +148,15 @@ function sendNotifications(rows, index) {
       endpoint: subscription.endpoint,
       keys: subscription.keys
     };
-    let payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'"}';
+    let payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'", "mid": "'+rows[index].mid+'"}';
 
     webpush.sendNotification(pushSubscription, payloadMessage);
 
     knex('medications')
     .where('mid', '=', rows[index].mid)
     .update({
-      last_notified: nowMoment.valueOf()
+      last_notified: nowMoment.valueOf(),
+      snooze: rows[index].snooze > 0 ? rows[index].snooze - 1 : 0
     })
     .then(function (result) {
       console.log(currentTimeString + "   -----   " + "notification sent to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
