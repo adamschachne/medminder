@@ -33,8 +33,9 @@ webpush.setVapidDetails(
 );
 
 var nowMoment = moment();
-var buffer = 0.1; // ~6 minutes plus or minus
+var buffer = 0.6667; // ~4 minutes plus or minus in hours
 var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
+var numDone = 0;
 
 knex.select('*')
 .from('medications')
@@ -42,9 +43,12 @@ knex.select('*')
 .andWhere('active', '=', true)
 .asCallback(function(err, rows) {
   if (err) console.log(err)
-
   var toRemind = [];
   for (var i = 0; i < rows.length; i++) {
+    if (rows[i].snooze > 0) {
+      toRemind.push(rows[i]);
+      continue;
+    }
 
     // last notified will always be before now
     var last_notified = rows[i].last_notified;
@@ -79,11 +83,12 @@ knex.select('*')
         continue;
       }
 
+      //console.log(nowMoment.weekday())
       // check to see if today is any one of the days prescribed for the reminder
       var validDayOfWeek = false;
-      for (var i = 0; i < days.length; i++) {
+      for (var dayi = 0; dayi < days.length; dayi++) {
         let dayIndex = 0;
-        switch (days[i]) {
+        switch (days[dayi]) {
           case 'S': dayIndex = 0;
             break;
           case 'M': dayIndex = 1;
@@ -116,12 +121,16 @@ knex.select('*')
     } else if (type == "2") {
       let duration = moment.duration(nowMoment.diff(remindMoment));
       let numHoursNormalized = (duration.asHours() % repeat);
-      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within 6 mintues of the scheduled time
+      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within a buffer of the scheduled time
         toRemind.push(rows[i]);
       }
     }
   }
 
+  numDone = 0;
+  if (toRemind.length == 0) {
+    process.exit(1);
+  }
   sendNotifications(toRemind, toRemind.length-1)
 
 });
@@ -129,7 +138,7 @@ knex.select('*')
 function sendNotifications(rows, index) {
 
   if (index == -1) {
-    process.exit(1);
+    return;
   }
 
   knex.select('subscription')
@@ -138,25 +147,32 @@ function sendNotifications(rows, index) {
   .asCallback(function(err, subs) {
     if (err) console.log(err)
 
+    // only 1 subscription for a uid, take first index
     var subscription = subs[0].subscription;
-    // This is the same output of calling JSON.stringify on a PushSubscription
-    let pushSubscription = {
+    var pushSubscription = {
       endpoint: subscription.endpoint,
       keys: subscription.keys
     };
-    let payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'"}';
+    var payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'", "mid": "'+rows[index].mid+'"}';
 
-    webpush.sendNotification(pushSubscription, payloadMessage);
+    webpush.sendNotification(pushSubscription, payloadMessage).catch((error) => {
+      // delete subscription and force uid to re-register TODO
+    }).then(function(res) {
+      knex('medications')
+      .where('mid', '=', rows[index].mid)
+      .update({
+        last_notified: nowMoment.valueOf(),
+        snooze: rows[index].snooze > 0 ? rows[index].snooze - 1 : 0
+      })
+      .then(function (result) {
+        console.log(currentTimeString + "   -----   " + "notification sent to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
 
-    knex('medications')
-    .where('mid', '=', rows[index].mid)
-    .update({
-      last_notified: nowMoment.valueOf()
-    })
-    .then(function (result) {
-      console.log(currentTimeString + "   -----   " + "notification sent to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
-      sendNotifications(rows, index-1);
+        numDone++;
+        if (numDone == rows.length) {
+          process.exit(1);
+        }
+      })
     })
   });
-
+  sendNotifications(rows, index-1);
 }

@@ -57,8 +57,10 @@
       }
     }
 
-    $('#signup_button').tooltip({placement: "right"}).tooltip('show');
-
+    setTimeout(function() {
+      $('#signup_button').tooltip({placement: "right"}).tooltip('show');
+    }, 1000)
+    
     $('button').on('click', function(e){
       if ($(this)[0] == $('#signup_button')[0]) {
         e.preventDefault();

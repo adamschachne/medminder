@@ -187,6 +187,7 @@
         }
       })
       var payload = {
+        type: $reminderTypeSelector.val(),
         med_name: $('#medication_name')[0].value,
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
