@@ -148,7 +148,7 @@ function sendNotifications(rows, index) {
     if (err) console.log(err)
 
     if (subs.length == 0) {
-      console.log("no subscription for mid: " + rows[index].mid
+      console.log("no subscription for mid: " + rows[index].mid);
       return;
     }
 
