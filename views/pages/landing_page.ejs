@@ -4,36 +4,85 @@
   <% include ../partials/header.ejs %>
 
   <style media="screen">
-    div {
-      /* Set size of crop area. Setting its location happens bellow. */
-      width: 140;
-      height: 100;
-      overflow: hidden;  /* Crop it like it's hot! */
 
+    .with-background {
+      background-image: url('images/pills.jpg');
     }
 
-    img {
-      /* Set the crop location by shifting the image
-       * up by 70px and to the right by 30px.
-       */
-      /*position: relative;
-      top: -70px;
-      left: 30px;*/
-
-      /* Scale the image as you normally would. */
-      /*width: 300px;
-      height: 150px;*/
+    .screen-size {
+      width: 100vw;
+      height: 100vh;
     }
+
+    .center-text {
+      text-align: center;
+    }
+
+    .button-fill {
+      display: inline-block;
+      width: 100%;
+    }
+
+    .landing-page-header{
+      text-align: center;
+    }
+
+
+    #MedMinderLogo {
+      width:100%;
+      margin-left: -20px;
+    }
+
+    .add-margin{
+      margin-top: 55px;
+    }
+
+
   </style>
 </head>
 
 <body>
 
-<% include ../partials/nav.ejs %>
 
-<div class="container">
-  <img src="images/pills.jpg" alt="Pills Image">
-</div>
+
+  <div id="parent-container" class="container with-background screen-size">
+    <!-- <h3 class="landing-page-header">Never forget your medicine again!</h3> -->
+
+    <div class="row add-margin">
+      <div class="col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <img id="MedMinderLogo" src="images/med-minder-logo.png" alt="Med Minder Logo">
+            <h3 class="landing-page-header">Never forget your medicine again!</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-xs-12">
+                <h4>Already have an account?</h4>
+              </div>
+              <div class="col-xs-12">
+                <a type="button" class="btn btn-primary button-fill"  onclick="location.href='/login';" name="button">Log in</a>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-xs-12">
+                <h4>Don't have an account?</h4>
+              </div>
+              <div class="col-xs-12">
+                <button type="button" class="btn btn-default button-fill" onclick="location.href='/signup';" name="button">Sign Up</button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 
 </body>
+
+
 </html>

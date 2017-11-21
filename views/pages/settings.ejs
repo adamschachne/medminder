@@ -37,9 +37,9 @@
 
         <div class="form-group row">
           <div class="col-xs-12 btn-group" id="appSettingsBtns">
-            <button style="width:33%;" onclick="location.href='/history'" class="btn btn-default btn-lg" type="button" name="historyButton">History</button>
-            <button style="width:33%;" onclick="location.href='/help'" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
-            <button style="width:33%;" onclick="location.href='/logout'" style="width:100%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
+            <button style="width:100%; word-wrap:break-word;" onclick="location.href='/history'" class="btn btn-default btn-lg" type="button" name="historyButton">Recover Reminders</button>
+            <button style="width:100%;" onclick="location.href='/help'" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
+            <button style="width:100%;" onclick="location.href='/logout'" style="width:100%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
           </div>
         </div>
       </form>
@@ -55,16 +55,16 @@
           $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
           switch(Cookies.get("font-size")) {
               case "0":
-                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
                   break;
               case "1":
-                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '1.5em');
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
                   break;
               case "2":
-                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '2em');
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
                   break;
               default:
-                  $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
           }
         }
       });
@@ -75,16 +75,16 @@
         var sliderVal = $('#slider-text-size').val();
         switch(sliderVal) {
             case 0:
-                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
                 break;
             case 1:
-                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '1.5em');
+                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
                 break;
             case 2:
-                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '2em');
+                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
                 break;
             default:
-                $('.btn,h1,h2,h3,h4,p,label,a').not("label.btn").css('font-size', '');
+                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
         }
 
         Cookies.set("font-size-placeholder", sliderVal)
