@@ -22,7 +22,6 @@ function urlB64ToUint8Array(base64String) {
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
   //console.log('Service Worker and Push is supported');
-
   navigator.serviceWorker.register('scripts/sw.js')
   .then(function(swReg) {
     // console.log('Service Worker is registered', swReg);
@@ -57,9 +56,9 @@ function updateUI() {
     return;
   } else {
     // register the user here
-    if (!isSubscribed) {
+    // if (!isSubscribed) {
       subscribeUser();
-    }
+    // }
   }
 }
 
@@ -72,7 +71,7 @@ function subscribeUser() {
   .then(function(subscription) {
     updateSubscriptionOnServer(subscription);
     isSubscribed = true;
-    updateUI();
+    //updateUI();
   })
   .catch(function(err) {
     updateUI();
@@ -92,7 +91,7 @@ function unsubscribeUser() {
   .then(function() {
     updateSubscriptionOnServer(null);
     isSubscribed = false;
-    updateUI();
+    //updateUI();
   });
 }
 
@@ -115,12 +114,4 @@ function updateSubscriptionOnServer(subscription) {
       console.log(res.responseText)
     }
   })
-}
-
-function toggleRegistration() {
-  if (isSubscribed) {
-    unsubscribeUser();
-  } else {
-    subscribeUser();
-  }
 }
