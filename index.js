@@ -155,8 +155,6 @@ app.get('/settings', restrict, function(request, response) {
   .asCallback(function(err, rows) {
     if (err) console.log(err)
 
-    console.log(rows[0].notifications);
-
     response.render('pages/settings', {
       page_title:'Settings',
       notifications: rows[0].notifications
@@ -164,9 +162,17 @@ app.get('/settings', restrict, function(request, response) {
   })
 });
 app.get('/settings2', restrict, function(request, response) {
-  response.render('pages/settings2', {
-    page_title: 'Settings'
-  });
+  knex.select('notifications')
+  .from('users')
+  .where('uid', '=', request.session.uid)
+  .asCallback(function(err, rows) {
+    if (err) console.log(err)
+
+    response.render('pages/settings2', {
+      page_title:'Settings',
+      notifications: rows[0].notifications
+    });
+  })
 });
 app.get('/reminders', restrict, function(request, response) {
   response.render('pages/reminders', remindersPage);
@@ -432,7 +438,6 @@ app.post('/modifyNotification', restrict, function(request, response) {
 
 });
 app.post('/modifyUserNotification', restrict, function(request, response) {
-  console.log(request.session)
   knex('users')
   .where('uid', '=', request.session.uid)
   .update({

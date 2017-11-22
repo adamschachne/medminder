@@ -3,6 +3,17 @@
 
 <head>
   <% include ../partials/header.ejs %>
+  <style>
+    #saveSettings {
+      -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+         -khtml-user-select: none; /* Konqueror HTML */
+           -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                      supported by Chrome and Opera */
+    }
+  </style>
 </head>
 
 <body>
@@ -25,7 +36,11 @@
             <label for="notifications-switch">Notifications</label>
           </div>
           <div class="col-xs-12">
-            <input style="margin-left:15px;" type="checkbox" name="notifications-switch" id="notifications-switch" checked data-style="ios">
+            <% if (notifications) { %>
+              <input style="margin-left:15px;" type="checkbox" name="notifications-switch" id="notifications-switch" checked data-style="ios">
+            <% } else {%>
+              <input style="margin-left:15px;" type="checkbox" name="notifications-switch" id="notifications-switch" data-style="ios">
+            <%}%>
           </div>
         </div>
 
@@ -70,17 +85,7 @@
       });
 
       $("#slider-text-size").bootstrapSlider();
-      <% if (notifications) { %>
-        $("[name='notifications-switch']").bootstrapToggle().attr('checked');
-      <% } else {%>
-        $("[name='notifications-switch']").bootstrapToggle();
-      <%}%>
-
-
-      $("[name='notifications-switch']").change(function() {
-
-      });
-
+      $("[name='notifications-switch']").bootstrapToggle()
 
       $('#slider-text-size').change(function() {
         var sliderVal = $('#slider-text-size').val();
@@ -109,11 +114,10 @@
           url: '/modifyUserNotification',
           dataType: 'application/json',
           data: {
-            enable: $(this).prop('checked')
+            enable: $("[name='notifications-switch']").bootstrapToggle().prop('checked')
           },
           complete: function (){
             Cookies.set("font-size", Cookies.get("font-size-placeholder"));
-
             location.href = '/';
           }
         });

@@ -289,7 +289,6 @@
     <%} else if(medication.type == "2"){%>
 
       $specifiedStartTimeInput.datetimepicker({
-        minDate: new Date(),
         sideBySide:true
       });
       $("[dont-allow-input='true']").keydown(function() {
@@ -306,6 +305,7 @@
       //   sideBySide: true
       // });
       $specifiedStartTimeInput.data("DateTimePicker").date(new moment(<%=medication.remind_times[0]%>));
+      $specifiedStartTimeInput.data("DateTimePicker").minDate(new Date());
 
     <%}%>
 
