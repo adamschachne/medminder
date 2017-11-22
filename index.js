@@ -13,8 +13,7 @@ var cookie = require('cookie');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
-  //connectionString: process.env.DATABASE_URL,
-  connectionString: '***REMOVED***',
+  connectionString: process.env.DATABASE_URL,
   ssl: true
 });
 //db.connect();
