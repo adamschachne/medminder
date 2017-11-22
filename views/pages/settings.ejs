@@ -71,6 +71,19 @@
 
       $("#slider-text-size").bootstrapSlider();
       $("[name='notifications-switch']").bootstrapToggle();
+
+      $("[name='notifications-switch']").change(function() {
+        $.ajax({
+          type: 'POST',
+          url: '/modifyUserNotification',
+          dataType: 'application/json',
+          data: {
+            enable: $(this).prop('checked')
+          }
+        })
+      })
+
+
       $('#slider-text-size').change(function() {
         var sliderVal = $('#slider-text-size').val();
         switch(sliderVal) {

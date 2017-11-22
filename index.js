@@ -402,6 +402,17 @@ app.post('/modifyNotification', restrict, function(request, response) {
   })
 
 });
+app.post('/modifyUserNotification', restrict, function(request, response) {
+  knex('users')
+  .where('uid', '=', request.session.uid)
+  .update({
+    notifications: request.body.enable
+  })
+  .then(function (result) {
+    // console.log(result);
+    return response.sendStatus(200);
+  })
+});
 app.post('/enableAllNotifications', restrict, function(request, response) {
   knex('medications')
   .where('uid', '=', request.session.uid)

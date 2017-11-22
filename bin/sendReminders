@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+
+process.env = {
+  CONTACT_EMAIL:     '***REMOVED***',
+  DATABASE_URL:      '***REMOVED***',
+FCM_SERVER_KEY:    '***REMOVED***',
+VAPID_PRIVATE_KEY: '***REMOVED***',
+VAPID_PUBLIC_KEY:  '***REMOVED***',
+}
+
 const webpush = require('web-push');
 const moment = require('moment');
 const { Client } = require('pg');
@@ -33,18 +42,30 @@ webpush.setVapidDetails(
 );
 
 var nowMoment = moment();
-var buffer = 0.6667; // ~4 minutes plus or minus in hours
+const buffer = 0.06667; // ~4 minutes plus or minus in hours
+const lastNotificationBuffer =  0.16666; // ~10 minutes in hours
 var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
 var numDone = 0;
 
-knex.select('*')
+knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time', 'notifications', 'medications.uid', 'last_notified')
 .from('medications')
+.leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
+.leftOuterJoin('users', 'medications.uid', 'users.uid')
 .whereNull('deleted')
+.andWhere('notifications', '=', true)
 .andWhere('active', '=', true)
+.orderBy('mid', 'asc')
 .asCallback(function(err, rows) {
   if (err) console.log(err)
   var toRemind = [];
   for (var i = 0; i < rows.length; i++) {
+
+    // if the last notification set to be notified is the current one, don't notify it again.
+    if (toRemind.length > 0 && toRemind[toRemind.length-1].mid == rows[i].mid) {
+      continue;
+    }
+
+    // TODO snoozing, careful about remind_time pushed to toRemind here
     if (rows[i].snooze > 0) {
       toRemind.push(rows[i]);
       continue;
@@ -55,10 +76,9 @@ knex.select('*')
     if (last_notified) {
       var lastNotifiedMoment = moment(parseFloat(last_notified));
       var timeSinceLastNotification = moment.duration(nowMoment.diff(lastNotifiedMoment)).asHours();
-      //console.log(timeSinceLastNotification);
 
-      // dont send a notification if the last one was sent within half an hour
-      if (timeSinceLastNotification < 0.5) {
+      // dont send a notification if the last one was sent within 10 minutes ago
+      if (timeSinceLastNotification < lastNotificationBuffer) {
         continue;
       }
     }

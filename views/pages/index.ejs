@@ -56,11 +56,11 @@
         <div style="padding-top:20px" class="col-xs-4">
           <input  class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
         </div>
-        <div class="col-xs-12">
+        <!-- <div class="col-xs-12">
           <p><small>Reminders reset after 12:00 am</small></p>
-        </div>
+        </div> -->
         <div class="col-xs-12">
-          <h3>Pause individual reminders</h3>
+          <h3 style="position: relative;top: 26px;">Pause individual reminders</h3>
         </div>
       </div>
     </div>
@@ -132,6 +132,9 @@
           <div class="modal-body">
             Are you sure you want to delete this reminder?
           </div>
+          <p>
+            Deleted reminders can be recovered in the Settings menu under History.
+          </p>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
             <a id="deleteReminderBtn" class="btn btn-danger btn-ok">Delete reminder</a>
@@ -161,23 +164,6 @@
       </div>
       <% } %>
       <!-- End of Reminder Simulation -->
-
-
-  <footer class="footer">
-    <!-- Start of save and undo element -->
-    <div id="deleteOptionsBar" class="container">
-      <div style="margin-top: 10px;" class="row">
-        <div class="col-xs-12">
-          <div style="width: 95%;"class="btn-group btn-group-lg" role="group" aria-label="Save and Undo Buttn Group">
-            <button style="width: 50%;" type="button" class="btn btn-default" onclick="undoDelete()">Undo Delete</button>
-            <button style="width: 50%;" type="button" class="btn btn-danger" onclick="saveDelete()">Save Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- End of save and undo element -->
-  </footer>
-
 
 </body>
 
@@ -235,7 +221,7 @@
         var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
         $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
       <% } %>
-      
+
     <% } %>
 
     $('#confirm-delete').on('show.bs.modal', function(e) {
