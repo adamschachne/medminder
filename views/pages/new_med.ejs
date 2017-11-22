@@ -372,16 +372,13 @@
 
       var reminderTimesPerDaySelected = [];
       for (var i = 0; i <= counter; i++) {
-        console.log('Counter: '+counter + " " +$('#specifiedStartTime' + i).data("DateTimePicker").date());
         if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined || $('#specifiedStartTime' + i).data("DateTimePicker").date() == null) {
-          break;
+          continue;
         }
         if (reminders['timePickerTrashBtn' + i] == false) {
           continue;
         }
-        console.log(i);
-        reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
-
+        reminderTimesPerDaySelected.push($('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000);
       }
       console.log(reminderTimesPerDaySelected);
 

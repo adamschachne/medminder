@@ -70,18 +70,16 @@
       });
 
       $("#slider-text-size").bootstrapSlider();
-      $("[name='notifications-switch']").bootstrapToggle();
+      <% if (notifications) { %>
+        $("[name='notifications-switch']").bootstrapToggle().attr('checked');
+      <% } else {%>
+        $("[name='notifications-switch']").bootstrapToggle();
+      <%}%>
+
 
       $("[name='notifications-switch']").change(function() {
-        $.ajax({
-          type: 'POST',
-          url: '/modifyUserNotification',
-          dataType: 'application/json',
-          data: {
-            enable: $(this).prop('checked')
-          }
-        })
-      })
+
+      });
 
 
       $('#slider-text-size').change(function() {
@@ -105,9 +103,22 @@
       });
 
       $("#saveSettings").click(function() {
-        location.href = '/'
 
-        Cookies.set("font-size", Cookies.get("font-size-placeholder"));
+        $.ajax({
+          type: 'POST',
+          url: '/modifyUserNotification',
+          dataType: 'application/json',
+          data: {
+            enable: $(this).prop('checked')
+          },
+          complete: function (){
+            Cookies.set("font-size", Cookies.get("font-size-placeholder"));
+
+            location.href = '/';
+          }
+        });
+
+
       })
     </script>
 

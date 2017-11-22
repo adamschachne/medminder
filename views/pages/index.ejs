@@ -56,9 +56,9 @@
         <div style="padding-top:20px" class="col-xs-4">
           <input  class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
         </div>
-        <!-- <div class="col-xs-12">
+        <div class="col-xs-12">
           <p><small>Reminders reset after 12:00 am</small></p>
-        </div> -->
+        </div>
         <div class="col-xs-12">
           <h3 style="position: relative;top: 26px;">Pause individual reminders</h3>
         </div>
@@ -130,11 +130,14 @@
         <div class="modal-content">
 
           <div class="modal-body">
-            Are you sure you want to delete this reminder?
+            <p>
+              Are you sure you want to delete this reminder?
+            </p>
+            <p>
+              Deleted reminders can be recovered in the Settings menu under History.
+            </p>
           </div>
-          <p>
-            Deleted reminders can be recovered in the Settings menu under History.
-          </p>
+
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
             <a id="deleteReminderBtn" class="btn btn-danger btn-ok">Delete reminder</a>

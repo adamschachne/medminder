@@ -104,6 +104,7 @@ app.get('/med/new', restrict, function(request, response) {
   response.render('pages/new_med', scheduleMedPage);
 });
 app.post('/med/new', restrict, function(request, response) {
+
   // console.log(request.body)
   var med_name = request.body.med_name;
   var days = JSON.parse(request.body.days);
@@ -111,6 +112,7 @@ app.post('/med/new', restrict, function(request, response) {
   //var start_time = request.body.start_time;
   //var time = request.body.time;
   var times =  JSON.parse(request.body.times);
+  console.log(times);
   var type = request.body.type;
   var message = "";
   var arr = [];
@@ -147,7 +149,19 @@ app.get('/landing', function(request, response) {
   response.render('pages/landing_page', {page_title: 'Welcome!'});
 });
 app.get('/settings', restrict, function(request, response) {
-  response.render('pages/settings', settingsPage);
+  knex.select('notifications')
+  .from('users')
+  .where('uid', '=', request.session.uid)
+  .asCallback(function(err, rows) {
+    if (err) console.log(err)
+
+    console.log(rows[0].notifications);
+
+    response.render('pages/settings', {
+      page_title:'Settings',
+      notifications: rows[0].notifications
+    });
+  })
 });
 app.get('/settings2', restrict, function(request, response) {
   response.render('pages/settings2', {
@@ -418,6 +432,7 @@ app.post('/modifyNotification', restrict, function(request, response) {
 
 });
 app.post('/modifyUserNotification', restrict, function(request, response) {
+  console.log(request.session)
   knex('users')
   .where('uid', '=', request.session.uid)
   .update({

@@ -83,6 +83,17 @@
       // $("#slider-text-size").bootstrapSlider();
       $("[name='notifications-switch']").bootstrapToggle();
 
+      $("[name='notifications-switch']").change(function() {
+        $.ajax({
+          type: 'POST',
+          url: '/modifyUserNotification',
+          dataType: 'application/json',
+          data: {
+            enable: $(this).prop('checked')
+          }
+        })
+      });
+
       $('#smallFontBtn').click(function (){
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
         Cookies.set("font-size-placeholder", 0)
