@@ -362,7 +362,7 @@ app.post('/edit/:mid', restrict, function(request, response) {
   var days = JSON.parse(request.body.days);
   var repeat = request.body.repeat;
   //var start_time = request.body.start_time;
-  var time = request.body.time;
+  var times =  JSON.parse(request.body.times);
   var type = request.body.type;
 
   var message = "";
@@ -379,7 +379,7 @@ app.post('/edit/:mid', restrict, function(request, response) {
     med_name: request.body.med_name,
     days: request.body.days,
     repeat: request.body.repeat,
-    time: request.body.time,
+    times:  JSON.parse(request.body.times),
     type: request.body.type
   })
   .then(function (result) {

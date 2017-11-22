@@ -126,7 +126,7 @@
 
         <div class="row">
           <div class="col-xs-12">
-            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish adding reminder</button>
+            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish editing reminder</button>
           </div>
         </div>
       </form>
@@ -163,11 +163,7 @@
       }
     }
 
-    $specifiedStartTimeInput.datetimepicker();
-    $("[dont-allow-input='true']").keydown(function() {
-      //code to not allow any changes to be made to input field
-      return false;
-    });
+
 
     $reminderTypeSelector.change(function() {
 
@@ -180,7 +176,6 @@
         $('#specifiedStartTime0').data("DateTimePicker").destroy();
         $('#specifiedStartTime0').datetimepicker({
           format: 'LT',
-          minDate: new Date()
         });
 
       } else if ($reminderTypeSelector.val() == "2") {
@@ -244,8 +239,7 @@
       reminders['timePickerTrashBtn' + counter] = true;
 
       $('#specifiedStartTime' + counter).datetimepicker({
-        format: 'LT',
-        minDate: new Date()
+        format: 'LT'
       });
 
       $("[dont-allow-input='true']").keydown(function() {
@@ -268,20 +262,50 @@
 
     <%if(medication.type == "1") {%>
 
+      $specifiedStartTimeInput.datetimepicker({
+        format: 'LT'
+      });
+      $("[dont-allow-input='true']").keydown(function() {
+        //code to not allow any changes to be made to input field
+        return false;
+      });
+
       $reminderTypeSelector.val("1");
       $hourlyRepetitionDiv.hide();
+
       <% for(var i=0; i < medication.days.length; i++) { %>
-          console.log("In here");
           $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
+      <% } %>
+
+
+      $specifiedStartTimeInput.data("DateTimePicker").date(new moment(<%=medication.remind_times[0]%>));
+      // for each of the times
+      <% for(var i=1; i < medication.remind_times.length; i++) { %>
+          console.log("In here");
+          $('#addReminderTime').trigger('click');
+          $('#specifiedStartTime<%=i%>').data("DateTimePicker").date(new moment(<%=medication.remind_times[i]%>));
       <% } %>
 
     <%} else if(medication.type == "2"){%>
 
+      $specifiedStartTimeInput.datetimepicker({
+        minDate: new Date(),
+        sideBySide:true
+      });
+      $("[dont-allow-input='true']").keydown(function() {
+        //code to not allow any changes to be made to input field
+        return false;
+      });
 
       $reminderTypeSelector.val("2");
       $daysToRemindDiv.hide();
       $addReminderTimeBtn.hide();
       $('#hoursToRepeat')[0].value = <%=medication.repeat%>;
+      // $specifiedStartTimeInput.datetimepicker({
+      //   minDate: new Date(),
+      //   sideBySide: true
+      // });
+      $specifiedStartTimeInput.data("DateTimePicker").date(new moment(<%=medication.remind_times[0]%>));
 
     <%}%>
 
@@ -399,7 +423,7 @@
         med_name: $('#medication_name')[0].value,
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
-        start_time: $('#start_time button.active').html()
+        times: JSON.stringify(reminderTimesPerDaySelected)
       }
       $.ajax({
         type: 'POST',
