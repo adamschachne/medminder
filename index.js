@@ -71,19 +71,33 @@ app.get('/', restrict,  function(request, response) {
     medicationPage.medname = medname;
   }
 
-  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active', 'remind_time')
+  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time')
   .from('medications')
+  .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNull('deleted')
   .andWhere('uid', '=', request.session.uid)
   .orderBy('mid', 'desc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
     for (var i = 0; i < rows.length; i++) {
-      // console.log(rows[i].mid);
-      medicationPage.data.push(rows[i]);
-      medicationPage.data[i].days = JSON.parse(medicationPage.data[i].days);
+      // if we are adding a new remind time for the same medication
+      if (i > 0 && rows[i-1].mid == rows[i].mid) {
+        // simply push the time to its remind_times array
+        medicationPage.data[medicationPage.data.length-1].remind_times.push(rows[i].remind_time);
+      }
+      else {
+        medicationPage.data.push({
+          med_name: rows[i].med_name,
+          type: rows[i].type,
+          days: JSON.parse(rows[i].days),
+          repeat: rows[i].repeat,
+          mid: rows[i].mid,
+          active: rows[i].active,
+          remind_times: [rows[i].remind_time]
+        });
+      }
     }
-    //console.log(medicationPage)
+    // console.log(JSON.stringify(medicationPage))
     response.render('pages/index', medicationPage);
   })
 });
@@ -96,9 +110,9 @@ app.post('/med/new', restrict, function(request, response) {
   var days = JSON.parse(request.body.days);
   var repeat = request.body.repeat;
   //var start_time = request.body.start_time;
-  var time = request.body.time;
+  //var time = request.body.time;
+  var times =  JSON.parse(request.body.times);
   var type = request.body.type;
-
   var message = "";
   var arr = [];
   for (var key in days) {
@@ -106,9 +120,28 @@ app.post('/med/new', restrict, function(request, response) {
   }
   days = arr;
 
-  knex.insert({uid: request.session.uid, med_name: med_name, type: type, days: JSON.stringify(days), repeat: repeat, remind_time : time, active: true}).into('medications')
-  .then(function () {
-    return response.redirect('/');
+  knex.insert({
+    uid: request.session.uid,
+    med_name: med_name,
+    type: type,
+    days: JSON.stringify(days),
+    repeat: repeat,
+    active: true
+  }).into('medications')
+  .returning('mid')
+  .then(function (mid) {
+    var remind_times = [];
+    for (var i = 0; i < times.length; i++) {
+      remind_times.push({
+        mid: mid[0],
+        remind_time: times[i]
+      });
+    }
+    knex.insert(remind_times)
+    .into('remind_times')
+    .then(function() {
+      return response.redirect('/');
+    })
   })
 });
 app.get('/landing', restrict, function(request, response) {
@@ -130,20 +163,31 @@ app.get('/history', restrict, function(request, response) {
     page_title: 'Recover Reminders',
     data: []
   };
-  var medname = request.query.medname;
-  if (medname) {
-    historyPage.medname = medname;
-  }
-  knex.select('med_name', 'type', 'days', 'repeat', 'mid', 'active', 'remind_time')
+  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time')
   .from('medications')
+  .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNotNull('deleted')
   .andWhere('uid', '=', request.session.uid)
   .orderBy('mid', 'desc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
     for (var i = 0; i < rows.length; i++) {
-      historyPage.data.push(rows[i]);
-      historyPage.data[i].days = JSON.parse(historyPage.data[i].days);
+      // if we are adding a new remind time for the same medication
+      if (i > 0 && rows[i-1].mid == rows[i].mid) {
+        // simply push the time to its remind_times array
+        historyPage.data[historyPage.data.length-1].remind_times.push(rows[i].remind_time);
+      }
+      else {
+        historyPage.data.push({
+          med_name: rows[i].med_name,
+          type: rows[i].type,
+          days: JSON.parse(rows[i].days),
+          repeat: rows[i].repeat,
+          mid: rows[i].mid,
+          active: rows[i].active,
+          remind_times: [rows[i].remind_time]
+        });
+      }
     }
     response.render('pages/history', historyPage);
   })
