@@ -13,7 +13,8 @@ var cookie = require('cookie');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
-  connectionString: process.env.DATABASE_URL,
+  //connectionString: process.env.DATABASE_URL,
+  connectionString: '***REMOVED***',
   ssl: true
 });
 //db.connect();
@@ -148,6 +149,11 @@ app.get('/landing', function(request, response) {
 });
 app.get('/settings', restrict, function(request, response) {
   response.render('pages/settings', settingsPage);
+});
+app.get('/settings2', restrict, function(request, response) {
+  response.render('pages/settings2', {
+    page_title: 'Settings'
+  });
 });
 app.get('/reminders', restrict, function(request, response) {
   response.render('pages/reminders', remindersPage);
