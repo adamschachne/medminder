@@ -376,18 +376,11 @@
         if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined) {
           break;
         }
-<<<<<<< HEAD
-        if(reminders['timePickerTrashBtn'+i] == false) {
-          continue;
-        }
-        reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
-=======
         if (reminders['timePickerTrashBtn' + i] == false) {
           continue;
         }
         reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
 
->>>>>>> 4daa8e0cd7983c47e7ca638f7736fe291fa629f5
       }
       console.log(reminderTimesPerDaySelected);
 
@@ -408,12 +401,8 @@
         data: payload,
         complete: function() {
           console.log("done")
-<<<<<<< HEAD
           //location.href = '/?medname=' + payload.med_name;
           location.href = '/';
-=======
-          // location.href = '/?medname=' + payload.med_name;
->>>>>>> 4daa8e0cd7983c47e7ca638f7736fe291fa629f5
         }
       })
     });
