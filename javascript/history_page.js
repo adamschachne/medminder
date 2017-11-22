@@ -1,5 +1,5 @@
 module.exports = {
-  page_title: 'History',
+  page_title: 'Recover Reminders',
   data:
     [{
       med_name: "Synthroid",

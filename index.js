@@ -13,7 +13,8 @@ var cookie = require('cookie');
 var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
-  connectionString: process.env.DATABASE_URL,
+  //connectionString: process.env.DATABASE_URL,
+  connectionString: 'postgres://vuezzvdnlortow:a5e04be5858874386c6cf626e96c7a68be459df14f126977cbfc2d61425c963e@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg',
   ssl: true
 });
 //db.connect();
@@ -121,7 +122,7 @@ app.get('/reminders', restrict, function(request, response) {
 });
 app.get('/history', restrict, function(request, response) {
   var historyPage = {
-    page_title: 'History',
+    page_title: 'Recover Reminders',
     data: []
   };
   var medname = request.query.medname;
