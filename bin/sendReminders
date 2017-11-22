@@ -33,7 +33,7 @@ webpush.setVapidDetails(
 );
 
 var nowMoment = moment();
-const buffer = 0.06667; // ~4 minutes plus or minus in hours
+const buffer = 0.033333; // ~2 minutes plus or minus in hours
 const lastNotificationBuffer =  0.16666; // ~10 minutes in hours
 var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
 var numDone = 0;

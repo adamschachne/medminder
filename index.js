@@ -6,8 +6,7 @@ var remindersPage = require(__dirname + '/javascript/reminders_page');
 var historyPage = require(__dirname + '/javascript/history_page');
 var httpsRedirect = require('express-https-redirect');
 
-
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 const { Client } = require('pg');
 var bodyParser = require("body-parser");
 var session = require('express-session');
@@ -39,7 +38,6 @@ const store = new KnexSessionStore({
 });
 
 const NOTIFICATION_INTERVAL = 60000; // 1 minute
-var sendRemindersInterval = null;
 
 var app = express();
 app.set('port', (process.env.PORT || 5000));
@@ -52,7 +50,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
   store: store,
-  secret: "f6W;@En8&4;t^",//process.env.FOO_COOKIE_SECRET,
+  secret: process.env.COOKIE_SECRET,
   saveUninitialized: false, // don't create session until something stored
   resave: false,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
@@ -516,14 +514,20 @@ function authenticate(uname, pass, cb) {
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
-  sendRemindersInterval = setInterval(function() {
-    exec('sendReminders', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
-  });
+  setInterval(function() {
+    var child = spawn('node', ['bin/sendReminders']);
+
+    console.log(`started sendReminders - pid: ${child.pid}`);
+    child.stdout.on('data', (data) => {
+      console.log(`>>> ${data}`);
+    });
+
+    child.stderr.on('data', (data) => {
+      console.log(`>>> ${data}`);
+    });
+
+    child.on('close', (code) => {
+      console.log(`sendReminders:${child.pid} exited with code ${code}`);
+    });
   }, NOTIFICATION_INTERVAL);
 });
