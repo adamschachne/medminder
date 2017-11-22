@@ -143,7 +143,7 @@ app.post('/med/new', restrict, function(request, response) {
     })
   })
 });
-app.get('/landing', restrict, function(request, response) {
+app.get('/landing', function(request, response) {
   response.render('pages/landing_page', {page_title: 'Welcome!'});
 });
 app.get('/settings', restrict, function(request, response) {
@@ -321,21 +321,35 @@ app.get('/delete/:mid', restrict, function(request, response) {
 });
 app.get('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
-  knex.select('uid', 'med_name', 'type', 'days', 'repeat', 'mid', 'remind_time').from('medications')
+  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time')
+  .from('medications')
+  .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNull('deleted')
-  .andWhere('mid', '=', mid)
+  .andWhere('medications.mid', '=', mid)
   .andWhere('uid', '=', request.session.uid)
   .asCallback(function(err, rows) {
-    if (rows.length > 0) {
-      var medication = rows[0];
-      medication.days = JSON.parse(medication.days);
-      return response.render('pages/edit', {page_title: 'Edit Medication', medication: medication});
-    } else {
-      // console.log('medication %s does not exist or user has bad privileges', mid)
+    if (err) console.log(err)
+    if (rows.length == 0) {
       return response.redirect('/');
     }
-  })
-  // check session uid owns the medication
+
+    var medication = {
+      med_name: rows[0].med_name,
+      type: rows[0].type,
+      days: JSON.parse(rows[0].days),
+      repeat: rows[0].repeat,
+      mid: rows[0].mid,
+      active: rows[0].active,
+      remind_times: [rows[0].remind_time]
+    };
+
+    // if there are more remind times for this medication, add them
+    for (var i = 1; i < rows.length; i++) {
+      medication.remind_times.push(rows[i].remind_time);
+    }
+
+    return response.render('pages/edit', {page_title: 'Edit Medication', medication: medication});
+  });
 });
 app.post('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
@@ -421,7 +435,7 @@ function restrict(req, res, next) {
     next();
   } else {
     // console.log("no user");
-    res.redirect('/login');
+    res.redirect('/landing');
   }
 }
 

@@ -95,12 +95,20 @@
     <% for(var i=0; i < data.length; i++) { %>
 
       <%if(data[i].type == "1") {%>
-        var time = moment(parseInt("<%= data[i].remind_time %>")).format("h:mm a");
-        $("#dateAndTimeSet<%=i%>").html('Reminders set for: ' + time);
-      <% } else{ %>
-        var time = moment(parseInt("<%= data[i].remind_time %>")).format("MM/d/YY h:mm a");
+        var timeString = "";
+        <% for (var j = 0; j < data[i].remind_times.length; j++) { %>
+          <% if (j == 0) { %>
+        timeString += moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
+          <% } else { %>
+        timeString += ", " + moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
+          <% } %>
+        <% } %>
+        $("#dateAndTimeSet<%=i%>").html('Reminders set for: ' + timeString);
+      <% } else { %>
+        var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
         $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
       <% } %>
+
     <% } %>
 
   });
