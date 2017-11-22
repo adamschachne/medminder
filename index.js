@@ -14,7 +14,7 @@ var hash = require('pbkdf2-password')()
 const KnexSessionStore = require('connect-session-knex')(session);
 const connection = new Client({
   //connectionString: process.env.DATABASE_URL,
-  connectionString: 'postgres://vuezzvdnlortow:a5e04be5858874386c6cf626e96c7a68be459df14f126977cbfc2d61425c963e@ec2-50-19-105-113.compute-1.amazonaws.com:5432/d65ul1majensrg',
+  connectionString: '***REMOVED***',
   ssl: true
 });
 //db.connect();
@@ -116,6 +116,11 @@ app.get('/landing', restrict, function(request, response) {
 });
 app.get('/settings', restrict, function(request, response) {
   response.render('pages/settings', settingsPage);
+});
+app.get('/settings2', restrict, function(request, response) {
+  response.render('pages/settings2', {
+    page_title: 'Settings'
+  });
 });
 app.get('/reminders', restrict, function(request, response) {
   response.render('pages/reminders', remindersPage);
