@@ -407,15 +407,15 @@
       /** Get Times from multiple date and time pickers **/
       var reminderTimesPerDaySelected = [];
       for (var i = 0; i <= counter; i++) {
-        if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined) {
+        if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined || $('#specifiedStartTime' + i).data("DateTimePicker").date() == null) {
           break;
         }
-        if (reminders['#timePickerTrashBtn' + i]) {
-          reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date();
+        if (reminders['timePickerTrashBtn' + i] == false) {
+          continue;
         }
+        reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
       }
       /** Finished Collecting Times**/
-
 
 
       var payload = {

@@ -206,11 +206,12 @@ app.get('/logout', function(request, response) {
   });
 });
 app.post('/login', function(request, response){
+  var message = "Invalid username/password. Please try again.";
   authenticate(request.body.username, request.body.password, function(err, user){
     if (err) {
       console.log(err.message);
       // log error stack on server maybe?
-      return response.redirect('/login');
+      return response.render('pages/login', {page_title: 'Login', message: message });
     }
     if (user) {
       // Regenerate session when signing in
@@ -222,12 +223,11 @@ app.post('/login', function(request, response){
         // apply this new session header
         request.session.save(function(err) {
           if (err) return console.log(err);
-          response.redirect('/');
+          return response.redirect('/');
         })
       });
     } else {
-      //request.session.error = 'z failed, please check your username and password.'
-      response.redirect('/login');
+      return response.render('pages/login', {page_title: 'Login', message: message });
     }
   });
 });
@@ -372,6 +372,7 @@ app.post('/edit/:mid', restrict, function(request, response) {
   }
   days = arr;
   // console.log(request.body)
+
   knex('medications')
   .where('mid', '=', mid)
   .andWhere('uid', '=', request.session.uid)
@@ -379,13 +380,27 @@ app.post('/edit/:mid', restrict, function(request, response) {
     med_name: request.body.med_name,
     days: request.body.days,
     repeat: request.body.repeat,
-    times:  JSON.parse(request.body.times),
     type: request.body.type
   })
   .then(function (result) {
-    // console.log(result);
-    return response.redirect('/');
-  })
+    knex('remind_times')
+    .where('mid', '=', mid)
+    .del()
+    .then(function(result) {
+      var remind_times = [];
+      for (var i = 0; i < times.length; i++) {
+        remind_times.push({
+          mid: mid,
+          remind_time: times[i]
+        });
+      }
+      knex.insert(remind_times)
+      .into('remind_times')
+      .then(function() {
+        return response.sendStatus(200);
+      });
+    });
+  });
 });
 app.post('/modifyNotification', restrict, function(request, response) {
   var mid = request.body.mid;

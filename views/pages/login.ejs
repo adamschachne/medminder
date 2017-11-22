@@ -7,6 +7,15 @@
       width:100%;
       margin-left: -20px;
     }
+    .alert-fixed {
+      position:fixed;
+      top: 50px;
+      left: 0px;
+      width: 100%;
+      z-index:9999;
+      border-radius:0px;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -42,10 +51,18 @@
         <p>Don't have an account? <a href="/signup">Sign up</a></p>
       </div>
     </div>
-
     <!-- <a id="signup_button" title="Click here to sign up!" class="btn btn-default">Sign up</button> -->
   </form>
 </div>
+
+<% if (locals.message) { %>
+<div class="alert alert-fixed alert-danger" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong> <%=message%> </strong>
+</div>
+<% } %>
 
 </body>
 
