@@ -1,6 +1,6 @@
 'use strict';
 
-const applicationServerPublicKey = '***REMOVED***';
+const applicationServerPublicKey = 'BPLKVCg1Smf2dugaADHk5CBrwweDJfqixGUJAjqeVhfqKRTEegPj6M8vywNP1H7rPithockEE-zLKZKeR2nDQW0';
 
 let isSubscribed = false;
 let swRegistration = null;
@@ -56,9 +56,7 @@ function updateUI() {
     return;
   } else {
     // register the user here
-    // if (!isSubscribed) {
-      subscribeUser();
-    // }
+    subscribeUser();
   }
 }
 

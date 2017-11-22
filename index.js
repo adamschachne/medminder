@@ -6,6 +6,8 @@ var remindersPage = require(__dirname + '/javascript/reminders_page');
 var historyPage = require(__dirname + '/javascript/history_page');
 var httpsRedirect = require('express-https-redirect');
 
+
+const { exec } = require('child_process');
 const { Client } = require('pg');
 var bodyParser = require("body-parser");
 var session = require('express-session');
@@ -36,7 +38,8 @@ const store = new KnexSessionStore({
     tablename: 'sessions_store' // optional. Defaults to 'sessions'
 });
 
-//console.log(knex.select('*').from('users'));
+const NOTIFICATION_INTERVAL = 60000; // 1 minute
+var sendRemindersInterval = null;
 
 var app = express();
 app.set('port', (process.env.PORT || 5000));
@@ -513,4 +516,14 @@ function authenticate(uname, pass, cb) {
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
+  sendRemindersInterval = setInterval(function() {
+    exec('sendReminders', (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+    console.log(`stderr: ${stderr}`);
+  });
+  }, NOTIFICATION_INTERVAL);
 });

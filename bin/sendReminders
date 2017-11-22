@@ -1,14 +1,5 @@
 #!/usr/bin/env node
 
-
-process.env = {
-  CONTACT_EMAIL:     '***REMOVED***',
-  DATABASE_URL:      '***REMOVED***',
-FCM_SERVER_KEY:    '***REMOVED***',
-VAPID_PRIVATE_KEY: '***REMOVED***',
-VAPID_PUBLIC_KEY:  '***REMOVED***',
-}
-
 const webpush = require('web-push');
 const moment = require('moment');
 const { Client } = require('pg');
