@@ -249,8 +249,7 @@
       reminders['timePickerTrashBtn' + counter] = true;
 
       $('#specifiedStartTime' + counter).datetimepicker({
-        format: 'LT',
-        minDate: new Date()
+        format: 'LT'
       });
 
       $("[dont-allow-input='true']").keydown(function() {
@@ -373,12 +372,14 @@
 
       var reminderTimesPerDaySelected = [];
       for (var i = 0; i <= counter; i++) {
-        if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined) {
+        console.log('Counter: '+counter + " " +$('#specifiedStartTime' + i).data("DateTimePicker").date());
+        if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined || $('#specifiedStartTime' + i).data("DateTimePicker").date() == null) {
           break;
         }
         if (reminders['timePickerTrashBtn' + i] == false) {
           continue;
         }
+        console.log(i);
         reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
 
       }
@@ -389,8 +390,6 @@
         type: $reminderTypeSelector.val(),
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
-        //start_time: $('#start_time button.active').html()
-        //time: $('#specifiedStartTime0').data("DateTimePicker").date().unix() * 1000
         times: JSON.stringify(reminderTimesPerDaySelected)
       }
 
