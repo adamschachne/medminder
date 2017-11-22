@@ -374,9 +374,10 @@
         if($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined){
           break;
         }
-        if(reminders['#timePickerTrashBtn'+i]){
-          reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date();
+        if(reminders['timePickerTrashBtn'+i] == false) {
+          continue;
         }
+        reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
       }
       console.log(reminderTimesPerDaySelected);
 
@@ -386,7 +387,8 @@
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
         //start_time: $('#start_time button.active').html()
-        time: $('#specifiedStartTime0').data("DateTimePicker").date().unix() * 1000
+        //time: $('#specifiedStartTime0').data("DateTimePicker").date().unix() * 1000
+        times: JSON.stringify(reminderTimesPerDaySelected)
       }
 
       $.ajax({
@@ -396,7 +398,8 @@
         data: payload,
         complete: function() {
           console.log("done")
-          location.href = '/?medname=' + payload.med_name;
+          //location.href = '/?medname=' + payload.med_name;
+          location.href = '/';
         }
       })
     });
