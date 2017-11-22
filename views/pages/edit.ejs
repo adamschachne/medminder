@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <% include ../partials/header.ejs %>
-  <style>
-    .btn-secondary.active {
-      background-color: darkgrey;
-    }
-    .btn.btn-lg.active {
-      background-color: darkgrey;
-    }
-    .btn:focus,.btn:active {
-      outline: none !important;
-    }
-    .repeatmenu li {
-      cursor: pointer;
-    }
-    #start_time button {
-      height: 100%;
-    }
-    #dayofweek button {
-      width: 14%;
-    }
-  </style>
+    <style>
+      .btn-secondary.active {
+        background-color: darkgrey;
+      }
+
+      .btn.btn-lg.active {
+        background-color: darkgrey;
+      }
+
+      .btn:focus,
+      .btn:active {
+        outline: none !important;
+      }
+
+      .repeatmenu li {
+        cursor: pointer;
+      }
+
+      #start_time button {
+        height: 100%;
+      }
+
+      #dayofweek button {
+        width: 14%;
+      }
+
+      .btn-circle {
+        border-radius: 50%;
+
+      }
+    </style>
 </head>
 
 <body>
@@ -38,9 +50,9 @@
         <div class="form-group">
           <label for="">Type of Reminder</label>
           <select class="form-control" id="reminderTypeSelector">
-            <option value="0">What kind of reminders does this medication require?</option>
-            <option value="1">Specific days of the week</option>
-            <option value="2">Daily several hours apart</option>
+            <option value="0">Specify the type of reminders</option>
+            <option value="1">Flexible hours, specific days of the week</option>
+            <option value="2">Daily, with several hours apart</option>
           </select>
         </div>
 
@@ -87,17 +99,34 @@
             <option value="12">12 hours</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="">Start Reminders At</label>
+
+
+        <div id="remindersTimeGroup" class="form-group">
+          <label id="startRemindersLabel" for=""></label>
+
           <div id="start_time" class="row">
             <div class="col-xs-12">
-                <input id="specifiedStartTime" type="text" placeholder="Pick date and time" data-input>
+              <div class="form-group">
+                <div class='input-group date' id='specifiedStartTime0'>
+                  <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                  </span>
+                  <input dont-allow-input="true" type='text' placeholder="Choose when to get reminded" class="form-control" />
+                </div>
+              </div>
             </div>
           </div>
+
+          <div class="col-md-4 text-center">
+            <a id="addReminderTime" class="btn btn-default btn-circle">
+              <span style="padding-top:2px; padding-left:4px" class="glyphicon glyphicon-plus"></span>
+            </a>
+          </div>
         </div>
+
         <div class="row">
           <div class="col-xs-12">
-            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Save reminder</button>
+            <button id="finish_button" style="height:100%; width: 100%;" type="button" class="btn btn-lg">Finish adding reminder</button>
           </div>
         </div>
       </form>
@@ -107,58 +136,153 @@
 <script>
   $(document).ready(function() {
 
+    var counter = 0;
+    var reminders = {};
+
     $reminderTypeSelector = $('#reminderTypeSelector');
     $hourlyRepetitionDiv = $('#hourlyRepetition');
     $daysToRemindDiv = $('#daysToRemind');
-    $specifiedStartTimeInput = $('#specifiedStartTime');
+    $specifiedStartTimeInput = $('#specifiedStartTime0');
+
+    $remindersTimeGroup = $('#remindersTimeGroup');
+    $addReminderTimeBtn = $('#addReminderTime');
 
     if (Cookies.get("font-size")) {
-      switch(Cookies.get("font-size")) {
-          case "0":
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
-              break;
-          case "1":
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '1.5em');
-              break;
-          case "2":
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '2em');
-              break;
-          default:
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
+      switch (Cookies.get("font-size")) {
+        case "0":
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '');
+          break;
+        case "1":
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '1.5em');
+          break;
+        case "2":
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '2em');
+          break;
+        default:
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '');
       }
     }
 
-    $('#specifiedStartTime').datetimepicker();
+    $specifiedStartTimeInput.datetimepicker();
+    $("[dont-allow-input='true']").keydown(function() {
+      //code to not allow any changes to be made to input field
+      return false;
+    });
 
     $reminderTypeSelector.change(function() {
-      if($reminderTypeSelector.val() == "1"){
+
+      if ($reminderTypeSelector.val() == "1") {
         $daysToRemindDiv.show();
+        $remindersTimeGroup.show();
         $hourlyRepetitionDiv.hide();
-      } else if ($reminderTypeSelector.val() == "2"){
+        $addReminderTimeBtn.show();
+        $('#startRemindersLabel').html("Remind me At");
+        $('#specifiedStartTime0').data("DateTimePicker").destroy();
+        $('#specifiedStartTime0').datetimepicker({
+          format: 'LT',
+          minDate: new Date()
+        });
+
+      } else if ($reminderTypeSelector.val() == "2") {
+
+        for (var i = 1; i <= counter; i++) {
+          if (reminders['timePickerTrashBtn' + i]) {
+            // Erase the remaining reminders for other kind of medication reminder
+            $('#timePickerTrashBtn' + i).parent().parent().parent().parent().remove();
+          }
+        }
+
+        counter = 0;
+        reminders = {};
+
         $hourlyRepetitionDiv.show();
+        $remindersTimeGroup.show();
         $daysToRemindDiv.hide();
+        $addReminderTimeBtn.hide();
+        $('#startRemindersLabel').html("Start Reminder At");
+        $('#specifiedStartTime0').data("DateTimePicker").destroy();
+        $('#specifiedStartTime0').datetimepicker({
+          minDate: new Date(),
+          sideBySide: true
+        });
+
       } else {
         $hourlyRepetitionDiv.hide();
+        $remindersTimeGroup.hide();
         $daysToRemindDiv.hide();
       }
     });
 
-    $('#medication_name')[0].value = "<%= medication.med_name %>";
-    $specifiedStartTimeInput.val(moment(parseInt("<%= medication.remind_time %>")).format("MM/d/YY h:mm a"));
+    $('#addReminderTime').click(function() {
+      if (!$('#specifiedStartTime' + counter).data("DateTimePicker").date()) {
+        console.log('Returning');
+        $('#addReminderTime').tooltip({
+          placement: "bottom",
+          title: "Please choose a time"
+        }).tooltip('show');
+        return;
+      }
 
+      counter++;
+
+      $('#start_time').append(
+        '           <div class="col-xs-12">' +
+        '              <div class="form-group">' +
+        '                <div class=\'input-group date\'  id=\'specifiedStartTime' + counter + '\'>' +
+        '                    <span class="input-group-addon">' +
+        '                        <span class="glyphicon glyphicon-calendar"></span>' +
+        '                    </span>' +
+        '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" />' +
+        '                    <span class="input-group-addon">' +
+        '                        <a style=\'color:red;\' type="button" date-time-picker="true" id="timePickerTrashBtn' + counter + '"><span class="glyphicon glyphicon-trash"></span></a>' +
+        '                    </span>' +
+        '                </div>' +
+        '              </div>' +
+        '            </div>'
+      );
+
+      reminders['timePickerTrashBtn' + counter] = true;
+
+      $('#specifiedStartTime' + counter).datetimepicker({
+        format: 'LT',
+        minDate: new Date()
+      });
+
+      $("[dont-allow-input='true']").keydown(function() {
+        //code to not allow any changes to be made to input field
+        return false;
+      });
+    });
+
+
+    $('body').on('click', 'a span.glyphicon.glyphicon-trash', function(event) {
+      // Remove the current trash click container
+      reminders["#" + event.currentTarget.parentElement.id] = false;
+      $("#" + event.currentTarget.parentElement.id).parent().parent().parent().parent().remove();
+    });
+
+
+    $('#medication_name')[0].value = "<%= medication.med_name %>";
+    $specifiedStartTimeInput.val(moment(parseInt("<%= medication.remind_time %>")).format("MM/DD/YY h:mm a"));
 
 
     <%if(medication.type == "1") {%>
+
       $reminderTypeSelector.val("1");
       $hourlyRepetitionDiv.hide();
       <% for(var i=0; i < medication.days.length; i++) { %>
-        console.log("In here");
-        $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
+          console.log("In here");
+          $("#dayofweek").find("[data-value='<%=medication.days[i]%>']").addClass('active');
       <% } %>
+
     <%} else if(medication.type == "2"){%>
+
+
       $reminderTypeSelector.val("2");
       $daysToRemindDiv.hide();
+      $addReminderTimeBtn.hide();
       $('#hoursToRepeat')[0].value = <%=medication.repeat%>;
+
     <%}%>
 
     $('body').on('click', '.btn.btn-secondary', function() {
@@ -178,6 +302,7 @@
       }
     });
 
+    // When user is finished updating the current medicine
     $('body').on('click', '#finish_button', function() {
       var days = [];
       $('#dayofweek button').each(function() {
@@ -185,7 +310,90 @@
         if (day.hasClass('active')) {
           days.push(day.html());
         }
-      })
+      });
+
+      /** Validation Start**/
+      var valid = true;
+
+      if ($reminderTypeSelector.val() == "0") {
+        $('#reminderTypeSelector').tooltip({
+          placement: "bottom",
+          title: "Please choose a type of reminder"
+        }).tooltip('show');
+        setTimeout(function() {
+          $('#reminderTypeSelector').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
+      if ($('#medication_name')[0].value.length == 0) {
+        $('#medication_name').tooltip({
+          placement: "bottom",
+          title: "Please enter a medication name"
+        }).tooltip('show');
+        setTimeout(function() {
+          $('#medication_name').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
+      if ($reminderTypeSelector.val() == "1") {
+        if (days.length == 0) {
+          $('#dayofweek').tooltip({
+            placement: "bottom",
+            title: "please select at least one day of the week"
+          }).tooltip('show');
+          setTimeout(function() {
+            $('#dayofweek').tooltip('destroy');
+          }, 2000);
+          valid = false;
+        }
+      }
+
+      if (!$('#specifiedStartTime0').data("DateTimePicker").date()) {
+        $('#specifiedStartTime0').tooltip({
+          placement: "bottom",
+          title: "Please choose a date to be reminded"
+        }).tooltip('show');
+        setTimeout(function() {
+          $('#specifiedStartTime0').tooltip('destroy');
+        }, 2000);
+        valid = false;
+      }
+
+      if ($reminderTypeSelector.val() == "2") {
+        if ($('#hoursToRepeat')[0].value == "0") {
+          $('#hoursToRepeat').tooltip({
+            placement: "bottom",
+            title: "Please select how often you wish to be reminded"
+          }).tooltip('show');
+          setTimeout(function() {
+            $('#hoursToRepeat').tooltip('destroy');
+          }, 2000);
+          valid = false;
+        }
+      }
+
+      if (!valid) {
+        return false;
+      }
+      /** Validation End**/
+
+
+      /** Get Times from multiple date and time pickers **/
+      var reminderTimesPerDaySelected = [];
+      for (var i = 0; i <= counter; i++) {
+        if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined) {
+          break;
+        }
+        if (reminders['#timePickerTrashBtn' + i]) {
+          reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date();
+        }
+      }
+      /** Finished Collecting Times**/
+
+
+
       var payload = {
         type: $reminderTypeSelector.val(),
         med_name: $('#medication_name')[0].value,
@@ -198,7 +406,7 @@
         url: '/edit/<%=medication.mid%>',
         dataType: 'application/json',
         data: payload,
-        complete: function () {
+        complete: function() {
           console.log("done")
           location.href = '/';
         }
@@ -213,4 +421,5 @@
 
   });
 </script>
+
 </html>

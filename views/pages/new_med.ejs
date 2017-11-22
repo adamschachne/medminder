@@ -33,7 +33,6 @@
         border-radius: 50%;
 
       }
-
     </style>
 </head>
 
@@ -110,10 +109,10 @@
             <div class="col-xs-12">
               <div class="form-group">
                 <div class='input-group date' id='specifiedStartTime0'>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                    <input dont-allow-input="true" type='text' placeholder="Choose when to get reminded" class="form-control" />
+                  <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                  </span>
+                  <input dont-allow-input="true" type='text' placeholder="Choose when to get reminded" class="form-control" />
                 </div>
               </div>
             </div>
@@ -138,8 +137,6 @@
 
 
 <script>
-
-
   $(document).ready(function() {
 
     var counter = 0;
@@ -153,18 +150,18 @@
 
 
     if (Cookies.get("font-size")) {
-      switch(Cookies.get("font-size")) {
-          case "0":
-              $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '');
-              break;
-          case "1":
-              $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '1.5em');
-              break;
-          case "2":
-              $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '2em');
-              break;
-          default:
-              $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '');
+      switch (Cookies.get("font-size")) {
+        case "0":
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '');
+          break;
+        case "1":
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '1.5em');
+          break;
+        case "2":
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '2em');
+          break;
+        default:
+          $('.btn,h1,h2,h3,h4,p,label,span').not('#start_time span').css('font-size', '');
       }
     }
 
@@ -180,7 +177,7 @@
 
     $reminderTypeSelector.change(function() {
 
-      if($reminderTypeSelector.val() == "1"){
+      if ($reminderTypeSelector.val() == "1") {
         $daysToRemindDiv.show();
         $remindersTimeGroup.show();
         $hourlyRepetitionDiv.hide();
@@ -188,25 +185,20 @@
         $('#startRemindersLabel').html("Remind me At");
         $('#specifiedStartTime0').data("DateTimePicker").destroy();
         $('#specifiedStartTime0').datetimepicker({
-            format: 'LT',
-            minDate: new Date()
+          format: 'LT'
         });
 
-      } else if ($reminderTypeSelector.val() == "2"){
+      } else if ($reminderTypeSelector.val() == "2") {
 
-        //TODO: Remove all of added reminders
-        for(var i = 1; i <= counter; i++){
-          console.log(reminders);
-          if(reminders['timePickerTrashBtn'+i]){
+        for (var i = 1; i <= counter; i++) {
+          if (reminders['timePickerTrashBtn' + i]) {
             // Erase the remaining reminders for other kind of medication reminder
-            console.log('#timePickerTrashBtn'+i);
-            $('#timePickerTrashBtn'+i).parent().parent().parent().parent().remove();
+            $('#timePickerTrashBtn' + i).parent().parent().parent().parent().remove();
           }
         }
 
         counter = 0;
         reminders = {};
-
 
         $hourlyRepetitionDiv.show();
         $remindersTimeGroup.show();
@@ -226,8 +218,8 @@
       }
     });
 
-    $('#addReminderTime').click(function(){
-      if(!$('#specifiedStartTime' + counter).data("DateTimePicker").date()){
+    $('#addReminderTime').click(function() {
+      if (!$('#specifiedStartTime' + counter).data("DateTimePicker").date()) {
         console.log('Returning');
         $('#addReminderTime').tooltip({
           placement: "bottom",
@@ -239,24 +231,24 @@
       counter++;
 
       $('#start_time').append(
-          '           <div class="col-xs-12">'+
-          '              <div class="form-group">'+
-          '                <div class=\'input-group date\'  id=\'specifiedStartTime'+ counter +'\'>'+
-          '                    <span class="input-group-addon">'+
-          '                        <span class="glyphicon glyphicon-calendar"></span>'+
-          '                    </span>'+
-          '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" />'+
-          '                    <span class="input-group-addon">'+
-          '                        <a style=\'color:red;\' type="button" date-time-picker="true" id="timePickerTrashBtn'+counter+'"><span class="glyphicon glyphicon-trash"></span></a>'+
-          '                    </span>'+
-          '                </div>'+
-          '              </div>'+
-          '            </div>'
-	    );
+        '           <div class="col-xs-12">' +
+        '              <div class="form-group">' +
+        '                <div class=\'input-group date\'  id=\'specifiedStartTime' + counter + '\'>' +
+        '                    <span class="input-group-addon">' +
+        '                        <span class="glyphicon glyphicon-calendar"></span>' +
+        '                    </span>' +
+        '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" />' +
+        '                    <span class="input-group-addon">' +
+        '                        <a style=\'color:red;\' type="button" date-time-picker="true" id="timePickerTrashBtn' + counter + '"><span class="glyphicon glyphicon-trash"></span></a>' +
+        '                    </span>' +
+        '                </div>' +
+        '              </div>' +
+        '            </div>'
+      );
 
-      reminders['timePickerTrashBtn'+counter] = true;
+      reminders['timePickerTrashBtn' + counter] = true;
 
-      $('#specifiedStartTime'+counter).datetimepicker({
+      $('#specifiedStartTime' + counter).datetimepicker({
         format: 'LT',
         minDate: new Date()
       });
@@ -265,14 +257,20 @@
         //code to not allow any changes to be made to input field
         return false;
       });
-
     });
 
 
-    $('body').on('click','a span.glyphicon.glyphicon-trash',function(event){
+    $('body').on('click', 'a span.glyphicon.glyphicon-trash', function(event) {
+      var idStr = "" + event.currentTarget.parentElement.id;
+      var deletedReminderTime = idStr[idStr.length -1];
+
+      if(deletedReminderTime == counter){
+        counter--;
+      }
+
       // Remove the current trash click container
-      reminders["#"+event.currentTarget.parentElement.id] = false;
-      $("#"+event.currentTarget.parentElement.id).parent().parent().parent().parent().remove();
+      reminders["#" + event.currentTarget.parentElement.id] = false;
+      $("#" + event.currentTarget.parentElement.id).parent().parent().parent().parent().remove();
     });
 
 
@@ -294,6 +292,8 @@
       }
     });
 
+
+    // When user is finished creating new medicine
     $('body').on('click', '#finish_button', function() {
       var days = [];
       $('#dayofweek button').each(function() {
@@ -303,11 +303,10 @@
         }
       })
 
-
-
+      /** Validation Start **/
       var valid = true;
 
-      if($reminderTypeSelector.val() == "0") {
+      if ($reminderTypeSelector.val() == "0") {
         $('#reminderTypeSelector').tooltip({
           placement: "bottom",
           title: "Please choose a type of reminder"
@@ -329,7 +328,7 @@
         valid = false;
       }
 
-      if($reminderTypeSelector.val() == "1") {
+      if ($reminderTypeSelector.val() == "1") {
         if (days.length == 0) {
           $('#dayofweek').tooltip({
             placement: "bottom",
@@ -353,7 +352,7 @@
         valid = false;
       }
 
-      if($reminderTypeSelector.val() == "2") {
+      if ($reminderTypeSelector.val() == "2") {
         if ($('#hoursToRepeat')[0].value == "0") {
           $('#hoursToRepeat').tooltip({
             placement: "bottom",
@@ -369,15 +368,26 @@
       if (!valid) {
         return false;
       }
+
+      /** Validation End **/
+
       var reminderTimesPerDaySelected = [];
-      for(var i = 0; i <= counter; i++){
-        if($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined){
+      for (var i = 0; i <= counter; i++) {
+        if ($('#specifiedStartTime' + i).data("DateTimePicker") == null || $('#specifiedStartTime' + i).data("DateTimePicker") == undefined) {
           break;
         }
+<<<<<<< HEAD
         if(reminders['timePickerTrashBtn'+i] == false) {
           continue;
         }
         reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
+=======
+        if (reminders['timePickerTrashBtn' + i] == false) {
+          continue;
+        }
+        reminderTimesPerDaySelected[i] = $('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000;
+
+>>>>>>> 4daa8e0cd7983c47e7ca638f7736fe291fa629f5
       }
       console.log(reminderTimesPerDaySelected);
 
@@ -398,8 +408,12 @@
         data: payload,
         complete: function() {
           console.log("done")
+<<<<<<< HEAD
           //location.href = '/?medname=' + payload.med_name;
           location.href = '/';
+=======
+          // location.href = '/?medname=' + payload.med_name;
+>>>>>>> 4daa8e0cd7983c47e7ca638f7736fe291fa629f5
         }
       })
     });
