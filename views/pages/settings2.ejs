@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <% include ../partials/header.ejs %>
+  <style>
+    #saveSettings {
+      -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+         -khtml-user-select: none; /* Konqueror HTML */
+           -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+                user-select: none; /* Non-prefixed version, currently
+                                      supported by Chrome and Opera */
+    }
+  </style>
+</head>
+
+<body>
+
+  <% include ../partials/nav.ejs %>
+
+    <div class="container">
+      <form>
+        <div class="form-group row">
+          <div class="col-xs-12">
+            <label for="slider-text-size">Font Size</label>
+          </div>
+          <div class="col-xs-12">
+            <div class="btn-group" id="fontSizesBtns">
+              <button id="smallFontBtn" class="btn btn-default btn-lg" type="button" name="smallFont">Small</button>
+              <button id="mediumFontBtn" class="btn btn-default btn-lg" type="button" name="mediumFont">Medium</button>
+              <button id="largeFontBtn" class="btn btn-default btn-lg" type="button" name="largeFont">Large</button>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-xs-12">
+            <label for="notifications-switch">Enable reminders</label>
+          </div>
+          <div class="col-xs-12">
+            <% if (notifications) { %>
+              <input style="margin-left:15px;" type="checkbox" name="notifications-switch" id="notifications-switch" checked data-style="ios">
+            <% } else {%>
+              <input style="margin-left:15px;" type="checkbox" name="notifications-switch" id="notifications-switch" data-style="ios">
+            <%}%>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-xs-12">
+            <a id="saveSettings" style="text-align:center" type="button" class="col-xs-12 btn-lg btn-primary">Save Changes</a>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-xs-12 btn-group" id="appSettingsBtns">
+            <button style="width:100%;" onclick="location.href='/history'" class="btn btn-default btn-lg" type="button" name="historyButton">Recover Reminders</button>
+            <button style="width:100%;" onclick="location.href='/help'" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
+          </div>
+        </div>
+        <br>
+        <div class="form-group row">
+          <div class="col-xs-12 btn-group" id="logoutButtonGroup">
+            <button style="width:100%;" onclick="location.href='/logout'" style="width:100%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+
+
+
+        if (Cookies.get("font-size")) {
+          $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
+          switch(Cookies.get("font-size")) {
+              case "0":
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+                  break;
+              case "1":
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+                  break;
+              case "2":
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+                  break;
+              default:
+                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+          }
+        }
+      });
+
+      // $("#slider-text-size").bootstrapSlider();
+      $("[name='notifications-switch']").bootstrapToggle();
+
+      $('#smallFontBtn').click(function (){
+        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+        Cookies.set("font-size-placeholder", 0)
+      });
+      $('#mediumFontBtn').click(function (){
+        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+        Cookies.set("font-size-placeholder", 1)
+      });
+      $('#largeFontBtn').click(function (){
+        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+        Cookies.set("font-size-placeholder", 2)
+      });
+
+
+      // $('#slider-text-size').change(function() {
+      //   var sliderVal = $('#slider-text-size').val();
+      //   switch(sliderVal) {
+      //       case 0:
+      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+      //           break;
+      //       case 1:
+      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+      //           break;
+      //       case 2:
+      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+      //           break;
+      //       default:
+      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+      //   }
+      //
+      //   Cookies.set("font-size-placeholder", sliderVal)
+      //
+      // });
+
+      $("#saveSettings").click(function() {
+        $.ajax({
+          type: 'POST',
+          url: '/modifyUserNotification',
+          dataType: 'application/json',
+          data: {
+            enable: $("[name='notifications-switch']").bootstrapToggle().prop('checked')
+          },
+          complete: function (){
+            Cookies.set("font-size", Cookies.get("font-size-placeholder"));
+            location.href = '/';
+          }
+        });
+      })
+    </script>
+
+</body>
+
+</html>

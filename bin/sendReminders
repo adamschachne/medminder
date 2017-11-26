@@ -1,0 +1,194 @@
+#!/usr/bin/env node
+
+const webpush = require('web-push');
+const moment = require('moment');
+const { Client } = require('pg');
+const connection = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host: connection.host,
+    port: connection.port,
+    user: connection.user,
+    password: connection.password,
+    database: connection.database,
+    ssl: true
+  }
+  //connection: process.env.DATABASE_URL
+});
+
+const vapidKeys = {
+  publicKey : process.env.VAPID_PUBLIC_KEY,
+  privateKey : process.env.VAPID_PRIVATE_KEY
+}
+
+webpush.setGCMAPIKey(process.env.FCM_SERVER_KEY);
+webpush.setVapidDetails(
+  'mailto:'+process.env.CONTACT_EMAIL,
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
+);
+
+var nowMoment = moment();
+const buffer = 0.033333; // ~2 minutes plus or minus in hours
+const lastNotificationBuffer =  0.16666; // ~10 minutes in hours
+var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
+var numDone = 0;
+
+knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time', 'notifications', 'medications.uid', 'last_notified')
+.from('medications')
+.leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
+.leftOuterJoin('users', 'medications.uid', 'users.uid')
+.whereNull('deleted')
+.andWhere('notifications', '=', true)
+.andWhere('active', '=', true)
+.orderBy('mid', 'asc')
+.asCallback(function(err, rows) {
+  if (err) console.log(err)
+  var toRemind = [];
+  for (var i = 0; i < rows.length; i++) {
+
+    // if the last notification set to be notified is the current one, don't notify it again.
+    if (toRemind.length > 0 && toRemind[toRemind.length-1].mid == rows[i].mid) {
+      continue;
+    }
+
+    // TODO snoozing, careful about remind_time pushed to toRemind here
+    if (rows[i].snooze > 0) {
+      toRemind.push(rows[i]);
+      continue;
+    }
+
+    // last notified will always be before now
+    var last_notified = rows[i].last_notified;
+    if (last_notified) {
+      var lastNotifiedMoment = moment(parseFloat(last_notified));
+      var timeSinceLastNotification = moment.duration(nowMoment.diff(lastNotifiedMoment)).asHours();
+
+      // dont send a notification if the last one was sent within 10 minutes ago
+      if (timeSinceLastNotification < lastNotificationBuffer) {
+        continue;
+      }
+    }
+
+    var remind_time = parseFloat(rows[i].remind_time);
+    var repeat = parseFloat(rows[i].repeat);
+
+    if (nowMoment.valueOf() < remind_time) {
+      continue;
+    }
+
+    var type = rows[i].type;
+    let remindMoment = moment(remind_time);
+    if (type == "1") { // specific days of the week
+      // if not on the same hour of the day, continue
+
+      var days = JSON.parse(rows[i].days);
+      // make sure the the reminder is within +-6 mintes of the original scheduled minute
+      var reminderToday = moment(remindMoment.hour()+":"+remindMoment.minutes(), "HH:mm");
+      var difference = moment.duration(nowMoment.diff(remindMoment));
+      if (difference.asMinutes() > buffer*60) {
+        continue;
+      }
+
+      //console.log(nowMoment.weekday())
+      // check to see if today is any one of the days prescribed for the reminder
+      var validDayOfWeek = false;
+      for (var dayi = 0; dayi < days.length; dayi++) {
+        let dayIndex = 0;
+        switch (days[dayi]) {
+          case 'S': dayIndex = 0;
+            break;
+          case 'M': dayIndex = 1;
+            break;
+          case 'T': dayIndex = 2;
+            break;
+          case 'W': dayIndex = 3;
+            break;
+          case 'Th': dayIndex = 4;
+            break;
+          case 'F': dayIndex = 5;
+            break;
+          case 'Sa': dayIndex = 6;
+            break;
+        }
+        // if today is the same day as the prescribed day
+        if (dayIndex == nowMoment.weekday()) {
+          validDayOfWeek = true;
+          break;
+        }
+      }
+
+      if (validDayOfWeek == false) {
+        continue;
+      }
+
+      //passes all tests, send a notification for this reminder
+      toRemind.push(rows[i]);
+
+    } else if (type == "2") {
+      let duration = moment.duration(nowMoment.diff(remindMoment));
+      let numHoursNormalized = (duration.asHours() % repeat);
+      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within a buffer of the scheduled time
+        toRemind.push(rows[i]);
+      }
+    }
+  }
+
+  numDone = 0;
+  if (toRemind.length == 0) {
+    process.exit(1);
+  }
+  sendNotifications(toRemind, toRemind.length-1)
+
+});
+
+function sendNotifications(rows, index) {
+
+  if (index == -1) {
+    return;
+  }
+
+  knex.select('subscription')
+  .from('subscriptions')
+  .where('uid', '=', rows[index].uid)
+  .asCallback(function(err, subs) {
+    if (err) console.log(err)
+
+    if (subs.length == 0) {
+      console.log("no subscription for mid: " + rows[index].mid);
+      return;
+    }
+
+    // only 1 subscription for a uid, take first index
+    var subscription = subs[0].subscription;
+    var pushSubscription = {
+      endpoint: subscription.endpoint,
+      keys: subscription.keys
+    };
+    var payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'", "mid": "'+rows[index].mid+'"}';
+
+    webpush.sendNotification(pushSubscription, payloadMessage).catch((error) => {
+      console.log("bad or non-existant subscription for uid: " + rows[index].uid);
+    }).then(function(res) {
+      knex('medications')
+      .where('mid', '=', rows[index].mid)
+      .update({
+        last_notified: nowMoment.valueOf(),
+        snooze: rows[index].snooze > 0 ? rows[index].snooze - 1 : 0
+      })
+      .then(function (result) {
+        console.log(currentTimeString + "   -----   " + "notification sent to uid:" + rows[index].uid + " for medication:"+ rows[index].mid);
+
+        numDone++;
+        if (numDone == rows.length) {
+          process.exit(1);
+        }
+      })
+    })
+  });
+  sendNotifications(rows, index-1);
+}

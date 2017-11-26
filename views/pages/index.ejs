@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <% include ../partials/header.ejs %>
+
+    <style media="screen">
+      .centered-modal.in {
+        display: flex !important;
+      }
+
+      .centered-modal .modal-dialog {
+        margin: auto;
+      }
+
+      .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        /* Set the fixed height of the footer here */
+        height: 60px;
+        background-color: #f5f5f5;
+      }
+    </style>
+</head>
+
+<body>
+
+  <!-- Navigation bar -->
+  <% include ../partials/nav.ejs %>
+
+    <!-- Start of Menu -->
+    <div class="container" id="menuButtons">
+      <div class="btn-group" id="menuBtnGroup">
+        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="newMedBtn" onclick="location.href='/med/new';">
+        <span style="display:inherit" class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        <font size="2px">Add</font>
+      </button>
+        <button style="width:25%; white-space: normal;" onclick="editMedication()" class="btn btn-default btn-lg" type="button" name="editMedBtn">
+          <span style="display:inherit" class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+          <font size="2px">Edit</font>
+      </button>
+        <button style="width:25%; white-space: normal; padding-left: 7px;" class="btn btn-default btn-lg" type="button" name="remindersBtn" onclick="editReminders()">
+        <span style="display:inherit" class="glyphicon glyphicon-time" aria-hidden="true"></span>
+        <font size="2px">Reminders</font>
+      </button>
+        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="settingsBtn" onclick="location.href='/settings';">
+          <span style="display:inherit" class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+          <font size="2px">Settings</font>
+      </button>
+      </div>
+      <div id="allRemindersToggle" class="reminder row">
+        <div class="col-xs-8">
+          <h3>Pause all reminders</h3>
+        </div>
+        <div style="padding-top:20px" class="col-xs-4">
+          <input  class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
+        </div>
+        <div class="col-xs-12">
+          <p><small>Reminders reset after 12:00 am</small></p>
+        </div>
+        <div class="col-xs-12">
+          <h3 style="position: relative;top: 26px;">Pause individual reminders</h3>
+        </div>
+      </div>
+    </div>
+    <!-- End of menu options -->
+
+    <!-- Start of Medication List -->
+    <div class="container" id="medicationList">
+      <% for(var i=0; i < data.length; i++) { %>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="row">
+
+              <div class="col-xs-12">
+                <div class="row">
+                  <div class="col-xs-8">
+                    <h4><%=data[i].med_name%></h4>
+                  </div>
+                  <div class="col-xs-2 reminder">
+                    <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific"
+                    <% if (data[i].active) { %>
+                      checked
+                    <% } %>
+                    data-style="ios">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <% if (data[i].type == "1") { %>
+                      <p>Days to remind: <%=data[i].days%></p>
+                      <p id="dateAndTimeSet<%=i%>"></p>
+                    <% } else {%>
+                      <p>Every <%=data[i].repeat%> hour(s)</p>
+                      <p id="dateAndTimeStarted<%=i%>"></p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="background-color: #f5f5f5"class="row">
+              <div class="col-xs-6">
+                <div class="editIcons">
+                  <a onclick="location.href='/edit/<%=data[i].mid%>';" class="btn btn-default" data-toggle="modal">
+                  <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                  </a>
+                </div>
+              </div>
+              <div class="col-xs-6">
+                <div class="editIcons pull-right">
+                  <a class="btn btn-default" data-id="<%=data[i].mid%>" data-toggle="modal" data-target="#confirm-delete">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <% } %>
+    </div>
+    <!-- End of Container for Medication List -->
+
+
+
+    <!-- Start of delete confirmation -->
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-body">
+            <p>
+              Are you sure you want to delete this reminder?
+            </p>
+            <p>
+              Deleted reminders can be recovered in the Settings menu under History.
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
+            <a id="deleteReminderBtn" class="btn btn-danger btn-ok">Delete reminder</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Delete Confirmation -->
+
+
+
+    <!--Start of reminder simulation -->
+    <% if (locals.medname) { %>
+      <div class="modal fade" id="reminder-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+
+            <div class="modal-body">
+              This is a reminder to take
+              <%=medname%>!
+            </div>
+            <div class="modal-footer">
+              <button type="button" onclick="closeReminder()" class="btn btn-default" data-dismiss="modal">I've taken it</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% } %>
+      <!-- End of Reminder Simulation -->
+
+</body>
+
+<script src="scripts/main.js"></script>
+<script>
+  $(document).ready(function() {
+    if (Cookies.get("font-size")) {
+      switch(Cookies.get("font-size")) {
+          case "0":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+              break;
+          case "1":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
+              break;
+          case "2":
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
+              break;
+          default:
+              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+      }
+    }
+
+    $(".editIcons").toggle();
+    $(".reminder").toggle();
+    $("[name='reminders-switch']").bootstrapToggle();
+    $("[name='reminders-switch-specific']").bootstrapToggle();
+
+    $("[name='reminders-switch-specific']").change(function() {
+      $.ajax({
+        type: 'POST',
+        url: '/modifyNotification',
+        dataType: 'application/json',
+        data: {
+          mid: $(this).data("target"),
+          active: $(this).prop('checked')
+        }
+      })
+    })
+
+    $(".footer").toggle();
+
+    <% for(var i=0; i < data.length; i++) { %>
+
+      <%if(data[i].type == "1") {%>
+        var timeString = "";
+        <% for (var j = 0; j < data[i].remind_times.length; j++) { %>
+          <% if (j == 0) { %>
+        timeString += moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
+          <% } else { %>
+        timeString += ", " + moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
+          <% } %>
+        <% } %>
+        $("#dateAndTimeSet<%=i%>").html('Reminders set for: ' + timeString);
+      <% } else { %>
+        var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
+        $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
+      <% } %>
+
+    <% } %>
+
+    $('#confirm-delete').on('show.bs.modal', function(e) {
+      // TODO: Dont reload the page yet, until they click save, or if they undo it, then bring reminder back
+      $(this).find('.btn-ok').attr('href', '/delete/' + $(e.relatedTarget).data('id'));
+
+    });
+
+    $("#deleteReminderBtn").click(function popUpSaveUndo() {
+      $(".footer").toggle();
+    })
+
+    $("#reminders-switch").parent().change(
+      function() {
+        //console.log(this);
+        if (!$(this).hasClass('off')) {
+          $("[name='reminders-switch-specific']").parent().removeClass('off');
+          $.ajax({
+            type: 'POST',
+            url: '/enableAllNotifications',
+          })
+        } else {
+          $("[name='reminders-switch-specific']").parent().addClass('off');
+          $.ajax({
+            type: 'POST',
+            url: '/disableAllNotifications',
+          })
+        }
+
+      });
+  });
+
+  function editMedication() {
+    $(".editIcons").toggle();
+    $(".reminder").hide();
+  }
+  function editReminders() {
+    $(".reminder").toggle();
+    $(".editIcons").hide();
+  }
+
+  // <% if (locals.medname) { %>
+  //
+  function closeReminder() {
+    $('#reminder-modal').modal('hide');
+  }
+  // setTimeout(function() {
+  //   $('#reminder-modal').modal('show');
+  // }, 3000);
+  // <% } %>
+</script>
+
+</html>

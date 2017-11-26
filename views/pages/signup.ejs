@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+  <style>
+    .unidentical.form-control:focus {
+      border-color: #e96666;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(233, 102, 102, 0.6);
+    }
+    .alert-fixed {
+      position:fixed;
+      top: 50px;
+      left: 0px;
+      width: 100%;
+      z-index:9999;
+      border-radius:0px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<% include ../partials/nav.ejs %>
+
+<div class="container">
+  <form action="/signup" method="post">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" placeholder="Enter new username" class="form-control" name="username" id="username">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" placeholder="Enter new password" class="form-control" name="password" id="password">
+    </div>
+    <div class="form-group">
+      <label for="confirm">Confirm Password</label>
+      <input type="password" placeholder="Confirm new password"  class="form-control" name="confirm" id="confirm">
+    </div>
+    <button type="submit" class="disabled btn btn-primary">Sign Up</button>
+  </form>
+</div>
+
+</body>
+
+<% if (locals.message) { %>
+<div class="alert alert-fixed alert-danger" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <strong> <%=message%> </strong>
+</div>
+<% } %>
+
+<script>
+  $(document).ready(function() {
+
+    if (Cookies.get("font-size")) {
+      switch(Cookies.get("font-size")) {
+          case "0":
+              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
+              break;
+          case "1":
+              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '1.5em');
+              break;
+          case "2":
+              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '2em');
+              break;
+          default:
+              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
+      }
+    }
+
+    var valid = !$('#confirm').hasClass('unidentical');
+    $('body').on('keyup', function(e) {
+      if ($('#confirm')[0].value != $('#password')[0].value) {
+        $('#confirm').addClass('unidentical');
+        valid = false;
+      } else {
+        $('#confirm').removeClass('unidentical');
+        valid = true;
+      }
+      if (valid && $('#username')[0].value.length > 0 && $('#confirm')[0].value.length > 0) {
+        $('button').removeClass('disabled');
+      } else {
+        $('button').addClass('disabled');
+      }
+    })
+
+  });
+</script>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+
+  <% include ../partials/nav.ejs %>
+
+    <div class="container">
+      <h2>Things to Know</h2>
+      <h3>Medication Reminders Page</h3>
+      <p>This page contains all of your reminders</p>
+      <p>You can edit or delete the current reminders by pressing edit, and selecting the wrench to adjust a reminder or the trashcan to delete it.</p>
+      <p>You can also turn turn off all or specific reminders here temporarily, note, however, that these will reset every day in case one forgets to turn them on.</p>
+      <h3>Add Page</h3>
+      <p>Use this page to add a new reminder.</p>
+      <h3>Settings Page</h3>
+      <p>Here, you can change the size of the text for easier visibility. </p>
+      <p>You can also use this page to permanently turn off all notifications, that is reminders, on this application, until one decides to turn them on.</p>
+      <h3>Recover Reminder Page</h3>
+      <p>This page contains all your past reminders, where you can recover any one that you'd like.</p>
+    </div>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        if (Cookies.get("font-size")) {
+          switch(Cookies.get("font-size")) {
+              case "0":
+                  $('.btn,h1,h2,h3,h4,p,span').css('font-size', '');
+                  break;
+              case "1":
+                  $('.btn,h1,h2,h3,h4,p,span').css('font-size', '1.5em');
+                  break;
+              case "2":
+                  $('.btn,h1,h2,h3,h4,p,span').css('font-size', '2em');
+                  break;
+              default:
+                  $('.btn,h1,h2,h3,h4,p,span').css('font-size', '');
+          }
+        }
+      });
+    </script>
+
+</body>
+
+</html>

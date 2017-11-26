@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+
+const webpush = require('web-push');
+const moment = require('moment');
+const { Client } = require('pg');
+const connection = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+const knex = require('knex')({
+  client: 'pg',
+  connection: {
+    host: connection.host,
+    port: connection.port,
+    user: connection.user,
+    password: connection.password,
+    database: connection.database,
+    ssl: true
+  }
+});
+
+const vapidKeys = {
+  publicKey : process.env.VAPID_PUBLIC_KEY,
+  privateKey : process.env.VAPID_PRIVATE_KEY
+}
+
+webpush.setGCMAPIKey(process.env.FCM_SERVER_KEY);
+webpush.setVapidDetails(
+  'mailto:'+process.env.CONTACT_EMAIL,
+  vapidKeys.publicKey,
+  vapidKeys.privateKey
+);
+
+var notifications = [];
+
+knex.select('subscription')
+.from('subscriptions')
+.asCallback(function(err, subs) {
+  if (err) console.log(err)
+
+  for (var i = 0; i < subs.length; i++) {
+    var subscription = subs[i].subscription;
+    notifications.push(subscription);
+  }
+
+  sendNotifications(notifications, notifications.length-1);
+});
+//
+
+var numDone = 0;
+
+function sendNotifications(rows, index) {
+  if (index == -1) {
+    return;
+  }
+  var payloadMessage = '{"msg" : "Take your medication!", "mid": "1"}';
+  webpush.sendNotification(rows[index], payloadMessage).catch((error) => {
+    //console.log(error)
+  }).then(function(res) {
+    //console.log(res)
+    numDone++;
+    if (numDone == notifications.length) {
+      process.exit(1);
+    }
+  })
+  sendNotifications(rows, index-1);
+}

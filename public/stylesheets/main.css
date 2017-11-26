@@ -1,0 +1,18 @@
+/* Medication page CSS*/
+#pageTitle {
+  text-align: center;
+}
+#menuBtnGroup {
+    width: 100%;
+}
+#medicationList {
+  margin-top: 25px;
+}
+
+/*End of Medication page CSS*/
+
+/*Start of Switch and slider settings*/
+.toggle.ios, .toggle-on.ios, .toggle-off.ios { margin-left: 15px; border-radius: 20px; }
+.toggle.ios .toggle-handle { border-radius: 20px; }
+.slider.slider-horizontal {margin-left: 15px}
+/*End of Switch and slider settings*/
