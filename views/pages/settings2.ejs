@@ -2,6 +2,15 @@
 <html>
 
 <head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110199050-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-110199050-1');
+  </script>
   <% include ../partials/header.ejs %>
   <style>
     #saveSettings {
@@ -14,6 +23,7 @@
                                       supported by Chrome and Opera */
     }
   </style>
+
 </head>
 
 <body>
@@ -100,37 +110,31 @@
 
       $('#smallFontBtn').click(function (){
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+        gtag('event','change_font_size',{
+          'event_category': 'engagement',
+          'event_label': 'button',
+          'value':0
+        });
         Cookies.set("font-size-placeholder", 0)
       });
       $('#mediumFontBtn').click(function (){
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+        gtag('event','change_font_size',{
+          'event_category': 'engagement',
+          'event_label': 'button',
+          'value':1
+        });
         Cookies.set("font-size-placeholder", 1)
       });
       $('#largeFontBtn').click(function (){
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+        gtag('event','change_font_size',{
+          'event_category': 'engagement',
+          'event_label': 'button',
+          'value':2
+        });
         Cookies.set("font-size-placeholder", 2)
       });
-
-
-      // $('#slider-text-size').change(function() {
-      //   var sliderVal = $('#slider-text-size').val();
-      //   switch(sliderVal) {
-      //       case 0:
-      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-      //           break;
-      //       case 1:
-      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
-      //           break;
-      //       case 2:
-      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
-      //           break;
-      //       default:
-      //           $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-      //   }
-      //
-      //   Cookies.set("font-size-placeholder", sliderVal)
-      //
-      // });
 
       $("#saveSettings").click(function() {
         $.ajax({
