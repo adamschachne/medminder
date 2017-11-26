@@ -2,6 +2,15 @@
 <html>
 
 <head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110199050-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-110199050-1');
+  </script>
   <% include ../partials/header.ejs %>
     <style>
       .btn-secondary.active {
@@ -50,7 +59,7 @@
         <div class="form-group">
           <label for="">Type of Reminder</label>
           <select class="form-control" id="reminderTypeSelector">
-            <option value="0">Specify the type of reminders</option>
+            <option disabled selected value="0">Specify the type of reminders</option>
             <option value="1">Flexible hours, specific days of the week</option>
             <option value="2">Daily, with several hours apart</option>
           </select>
@@ -73,7 +82,7 @@
         <div id="hourlyRepetition" class="form-group">
           <label for="">Repeat Every</label>
           <select class="form-control" id="hoursToRepeat">
-            <option value="0">Select how often to repeat</option>
+            <option disabled selected value="0">Select how often to repeat</option>
             <option value="1">hour</option>
             <option value="1.5">1.5 hours</option>
             <option value="2">2 hours</option>
@@ -228,7 +237,7 @@
         '                        <span class="glyphicon glyphicon-calendar"></span>' +
         '                    </span>' +
         '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" />' +
-        '                    <span class="input-group-addon">' +
+        '                    <span delete-reminder-time=\'true\' class="input-group-addon">' +
         '                        <a style=\'color:red;\' type="button" date-time-picker="true" id="timePickerTrashBtn' + counter + '"><span class="glyphicon glyphicon-trash"></span></a>' +
         '                    </span>' +
         '                </div>' +
@@ -249,10 +258,10 @@
     });
 
 
-    $('body').on('click', 'a span.glyphicon.glyphicon-trash', function(event) {
+    $('body').on('click', "[delete-reminder-time='true']", function(event) {
       // Remove the current trash click container
       reminders["#" + event.currentTarget.parentElement.id] = false;
-      $("#" + event.currentTarget.parentElement.id).parent().parent().parent().parent().remove();
+      $("#" + event.currentTarget.parentElement.id).parent().parent().remove();
     });
 
 
@@ -339,7 +348,7 @@
       /** Validation Start**/
       var valid = true;
 
-      if ($reminderTypeSelector.val() == "0") {
+      if ($reminderTypeSelector.val() == null) {
         $('#reminderTypeSelector').tooltip({
           placement: "bottom",
           title: "Please choose a type of reminder"
