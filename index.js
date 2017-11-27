@@ -514,20 +514,4 @@ function authenticate(uname, pass, cb) {
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
-  setInterval(function() {
-    var child = spawn('node', ['bin/sendReminders']);
-
-    console.log(`started sendReminders - pid: ${child.pid}`);
-    child.stdout.on('data', (data) => {
-      console.log(`>>> ${data}`);
-    });
-
-    child.stderr.on('data', (data) => {
-      console.log(`>>> ${data}`);
-    });
-
-    child.on('close', (code) => {
-      console.log(`sendReminders:${child.pid} exited with code ${code}`);
-    });
-  }, NOTIFICATION_INTERVAL);
 });
