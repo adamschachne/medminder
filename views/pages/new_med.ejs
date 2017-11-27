@@ -42,6 +42,8 @@
         border-radius: 50%;
 
       }
+
+      .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control { background-color: #fff !important; opacity: 1; }
     </style>
 
 </head>
@@ -122,7 +124,7 @@
                   <span class="input-group-addon">
                     <!-- <span class="glyphicon glyphicon-calendar"></span> -->
                   </span>
-                  <input dont-allow-input="true" name="textInputDisplay" value="" type='text' placeholder="Choose when to get reminded" class="form-control"/>
+                  <input dont-allow-input="true" name="textInputDisplay" value="" type='text' placeholder="Choose when to get reminded" class="form-control" readonly/>
                 </div>
               </div>
             </div>
@@ -196,7 +198,6 @@
         $('#specifiedStartTime0').data("DateTimePicker").destroy();
         $('#specifiedStartTime0').datetimepicker({
           format: 'LT',
-          focusOnShow: false,
           ignoreReadonly: true
           // allowInputToggle: true
         });
@@ -223,6 +224,7 @@
         $('#specifiedStartTime0').datetimepicker({
           minDate: new Date(),
           sideBySide: true,
+          ignoreReadonly: true
           // allowInputToggle: true
         });
         $('#specifiedStartTime0').children().html('<span class="glyphicon glyphicon-calendar"></span>');
@@ -253,7 +255,7 @@
         '                    <span class="input-group-addon">' +
         '                        <span class="glyphicon glyphicon-time"></span>' +
         '                    </span>' +
-        '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" />' +
+        '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" readonly />' +
         '                    <span delete-reminder-time=\'true\' class="input-group-addon">' +
         '                        <a style=\'color:red;\' type="button" date-time-picker="true" id="timePickerTrashBtn' + counter + '"><span class="glyphicon glyphicon-trash"></span></a>' +
         '                    </span>' +
@@ -266,6 +268,7 @@
 
       $('#specifiedStartTime' + counter).datetimepicker({
         format: 'LT',
+        ignoreReadonly: true
         // allowInputToggle: true
       });
 
