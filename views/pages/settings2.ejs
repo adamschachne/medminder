@@ -29,6 +29,7 @@
 <body>
 
   <% include ../partials/nav.ejs %>
+  <div id="html-spinner"></div>
 
     <div class="container">
       <form>
@@ -135,6 +136,7 @@
       });
 
       $("#saveSettings").click(function() {
+        $("#html-spinner").toggle();
         $.ajax({
           type: 'POST',
           url: '/modifyUserNotification',
@@ -143,8 +145,12 @@
             enable: $("[name='notifications-switch']").bootstrapToggle().prop('checked')
           },
           complete: function (){
+            $("#html-spinner").toggle();
             Cookies.set("font-size", Cookies.get("font-size-placeholder"));
             location.href = '/';
+          },
+          error: function(response) {
+            $("#html-spinner").toggle();
           }
         });
       })
