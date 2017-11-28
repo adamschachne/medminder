@@ -399,7 +399,6 @@
         }
         reminderTimesPerDaySelected.push($('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000);
       }
-      console.log(reminderTimesPerDaySelected);
 
       var payload = {
         med_name: $('#medication_name')[0].value,

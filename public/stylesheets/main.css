@@ -1,3 +1,81 @@
+
+html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+
+    background: white; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#0085BD, #65DFFC,transparent); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#0085BD, #65DFFC,transparent); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#0085BD, #65DFFC,transparent); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#0085BD, #65DFFC,transparent); /* Standard syntax */
+
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+label{
+  color: white;
+}
+
+#html-spinner{
+  width: 50px;
+  height: 100px;
+  background-image: url('../images/blue-white-pill-vertical.jpeg');
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  position: absolute;
+  top: 40%;
+  left: 42%;
+
+  z-index: 1;
+
+
+  /*Added Code from here down*/
+
+  /*Animation code for older Chrome, Safari, Opera*/
+  -webkit-transition-property: -webkit-transform;
+  -webkit-transition-duration: 1.2s;
+  -webkit-transform-origin: 50% 50%;
+  -webkit-animation-name: rotate;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+
+  /*Animation code for older Firefox*/
+  -moz-transition-property: -moz-transform;
+  -moz-animation-name: rotate;
+  -moz-animation-duration: 1.2s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+
+  /*Default animation code*/
+  transition-property: transform;
+  animation-name: rotate; /*Call to @keyframe rule*/
+  animation-duration: 1.2s; /*Change to speed up or slow down the animation*/
+  animation-iteration-count: infinite; /*Make the animation go forever*/
+  animation-timing-function: linear;
+}
+
+/*keyframes rule for older Chrome, Safari, Opera*/
+@-webkit-keyframes rotate {
+    from {-webkit-transform: rotate(0deg);}
+    to {-webkit-transform: rotate(360deg);}
+}
+
+/*keyframes rule for older Firefox version*/
+@-moz-keyframes rotate {
+    from {-moz-transform: rotate(0deg);}
+    to {-moz-transform: rotate(360deg);}
+}
+
+/*Default @keyframes rule*/
+@keyframes rotate {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
 /* Medication page CSS*/
 #pageTitle {
   text-align: center;
@@ -8,6 +86,7 @@
 #medicationList {
   margin-top: 25px;
 }
+
 
 /*End of Medication page CSS*/
 
