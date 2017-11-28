@@ -85,8 +85,6 @@
     <script type="text/javascript">
       $(document).ready(function() {
 
-
-
         if (Cookies.get("font-size")) {
           $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
           switch(Cookies.get("font-size")) {
@@ -115,7 +113,7 @@
           'event_label': 'button',
           'value':0
         });
-        Cookies.set("font-size-placeholder", 0)
+        Cookies.set("font-size-placeholder", 0);
       });
       $('#mediumFontBtn').click(function (){
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
@@ -124,7 +122,7 @@
           'event_label': 'button',
           'value':1
         });
-        Cookies.set("font-size-placeholder", 1)
+        Cookies.set("font-size-placeholder", 1);
       });
       $('#largeFontBtn').click(function (){
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
@@ -133,7 +131,7 @@
           'event_label': 'button',
           'value':2
         });
-        Cookies.set("font-size-placeholder", 2)
+        Cookies.set("font-size-placeholder", 2);
       });
 
       $("#saveSettings").click(function() {
