@@ -93,25 +93,24 @@
 
     <script type="text/javascript">
       $(document).ready(function() {
-
-
-
-        if (Cookies.get("font-size")) {
-          $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
-          switch(Cookies.get("font-size")) {
-              case "0":
-                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-                  break;
-              case "1":
-                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
-                  break;
-              case "2":
-                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
-                  break;
-              default:
-                  $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-          }
-        }
+        $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
+        
+      //   if (Cookies.get("font-size")) {
+      //     $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
+      //     switch(Cookies.get("font-size")) {
+      //         case "0":
+      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+      //             break;
+      //         case "1":
+      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+      //             break;
+      //         case "2":
+      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+      //             break;
+      //         default:
+      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+      //     }
+      //   }
       });
 
       $("#slider-text-size").bootstrapSlider();

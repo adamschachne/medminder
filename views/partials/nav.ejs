@@ -39,6 +39,30 @@
 
 <script>
   function goBack() {
-      window.history.back();
+    window.history.back();
   }
+  $(document).ready(function() {
+    var pageTitle = "<%=page_title%>";
+    if(pageTitle != 'Login' && pageTitle != 'Sign Up' && pageTitle != 'Welcome!'){
+      if (Cookies.get("font-size")) {
+        switch(Cookies.get("font-size")) {
+            case "0":
+                $('.btn,h1,h2,h3,h4,p,label,a,.in-navbar').not("label.btn").css('font-size', '');
+                break;
+            case "1":
+                $('h1,h2,h3,h4').not("label.btn").css('font-size', '1.5em');
+                $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.25em');
+                break;
+            case "2":
+                $('h1,h2,h3,h4').not("label.btn").css('font-size', '2em');
+                $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.5em');
+                break;
+            default:
+                $('.btn,h1,h2,h3,h4,p,label,a,.in-navbar').not("label.btn").css('font-size', '');
+        }
+      }
+    }
+
+
+  });
 </script>

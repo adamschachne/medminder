@@ -37,48 +37,93 @@
 
 <body>
 
+  <div id="overlay"></div>
+  <div id="html-spinner"></div>
+
   <!-- Navigation bar -->
   <% include ../partials/nav.ejs %>
 
-    <!-- Start of Medication List -->
-    <div class="container" id="medicationList">
-      <% for(var i=0; i < data.length; i++) { %>
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <div class="row">
+  <!-- Start of Medication List -->
+  <div class="container" id="medicationList">
+    <div id="noMedRemindersDeletedMessage" class="row">
+      <div style="text-align:center; color:white;"class="col-xs-12">
+        <h3>No medication reminders to recover</h3>
+      </div>
+    </div>
+    <% for(var i=0; i < data.length; i++) { %>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="row">
 
-              <div class="col-xs-12">
-                <div class="row">
-                  <div class="col-xs-8">
-                    <h4><%=data[i].med_name%></h4>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-12">
-                    <% if (data[i].type == "1") { %>
-                      <p>Days to remind: <%=data[i].days%></p>
-                      <p id="dateAndTimeSet<%=i%>"></p>
-                    <% } else {%>
-                      <p>Every <%=data[i].repeat%> hour(s)</p>
-                      <p id="dateAndTimeStarted<%=i%>"></p>
-                    <% } %>
-                  </div>
-                </div>
-              </div>
-
+            <div class="col-xs-12">
               <div class="row">
-                <div class="col-xs-12 ">
-                  <button onclick="recoverReminder(<%=data[i].mid%>)" class="btn btn-lg pull-right" type="button" name="button">Recover Reminder</button>
+                <div class="col-xs-12">
+                  <h4 class="wraptext"><%=data[i].med_name%></h4>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <% if (data[i].type == "1") { %>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose on Thurs 12:59 pm </a>
+                      </div>
+                      <div class="col-xs-12">
+                        <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
+                          <div class="panel-body">
+                            <div class="col-xs-12">
+                              <p><strong>Schedule</strong></p>
+                            </div>
+                            <div class="col-xs-5">
+                              <p id="daysInWeek<%=i%>"></p>
+                            </div>
+                            <div class="col-xs-7">
+                              <p id="dateAndTimeSet<%=i%>"></p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% } else {%>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose today at 12:59 pm </a>
+                      </div>
+                      <div class="col-xs-12">
+                        <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
+                          <div class="panel-body">
+                            <div class="col-xs-12">
+                              <p><strong>Information</strong></p>
+                            </div>
 
+
+                            <%if (data[i].repeat > 1) {%>
+                              <div class="col-xs-12">
+                                <p id="dateAndTimeStarted<%=i%>">
+                                  Every<%=data[i].repeat%> hours
+                                </p>
+                              </div>
+                            <%} else{%>
+                              <div class="col-xs-12">
+                                <p id="dateAndTimeStarted<%=i%>">
+                                  Every hour
+                                </p>
+                              </div>
+                            <%}%>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
             </div>
-
           </div>
         </div>
-        <% } %>
-    </div>
-    <!-- End of Container for Medication List -->
+      </div>
+      <% } %>
+  </div>
+  <!-- End of Container for Medication List -->
 
 
 
@@ -87,40 +132,70 @@
 <script src="scripts/main.js"></script>
 <script>
   $(document).ready(function() {
-    if (Cookies.get("font-size")) {
-      switch(Cookies.get("font-size")) {
-          case "0":
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
-              break;
-          case "1":
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '1.5em');
-              break;
-          case "2":
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '2em');
-              break;
-          default:
-              $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
-      }
+    $("#noMedRemindersDeletedMessage").toggle();
+    $("#html-spinner").hide();
+    $("#overlay").hide();
+
+    var numberOfDeleted = "<%=data.length%>";
+    if(numberOfDeleted < 1){
+      $("#noMedRemindersDeletedMessage").toggle();
     }
+
 
     <% for(var i=0; i < data.length; i++) { %>
 
-      <%if(data[i].type == "1") {%>
-        var timeString = "";
-        <% for (var j = 0; j < data[i].remind_times.length; j++) { %>
-          <% if (j == 0) { %>
-        timeString += moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
-          <% } else { %>
-        timeString += ", " + moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
-          <% } %>
-        <% } %>
-        $("#dateAndTimeSet<%=i%>").html('Reminders set for: ' + timeString);
-      <% } else { %>
-        var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
-        $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
-      <% } %>
+    <%if(data[i].type == "1") {%>
+    var timeString = "";
+    var times = "<%=data[i].remind_times%>";
+
+    var sortedTimes = times.split(",").sort(function(x, y){
+        return x - y;
+    });
+    for (var j = 0; j < sortedTimes.length; j++) {
+      if (j == 0) {
+        timeString += moment(parseInt(sortedTimes[j])).format("h:mm a");
+      } else {
+        timeString += "<br>" + moment(parseInt(sortedTimes[j])).format("h:mm a");
+      }
+    }
+    $("#dateAndTimeSet<%=i%>").html(timeString);
+    var daysString = "";
+    <% for(var j=0; j < data[i].days.length; j++) { %>
+    var day = "<%=data[i].days[j]%>";
+    switch (day) {
+      case 'S':
+        daysString += "Sun, ";
+        break;
+      case 'M':
+        daysString += "Mon, ";
+        break;
+      case 'T':
+        daysString += "Tues, ";
+        break;
+      case 'W':
+        daysString += "Wed, ";
+        break;
+      case 'Th':
+        daysString += "Thurs, ";
+        break;
+      case 'F':
+        daysString += "Fri, ";
+        break;
+      case 'Sa':
+        daysString += "Sat, ";
+        break;
+    }
+    <%}%>
+    $('#daysInWeek<%=i%>').html(daysString.substr(0, daysString.length - 2));
+
+    <% } else { %>
+      var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
+      $("#dateAndTimeStarted<%=i%>").append('<br>Started reminder on ' + time);
+    <% } %>
 
     <% } %>
+
+
 
   });
 
