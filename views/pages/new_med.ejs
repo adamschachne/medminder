@@ -385,6 +385,8 @@
 
       if (!valid) {
         return false;
+      } else{
+        $('#finish_button').attr("disabled","disabled");
       }
 
       /** Validation End **/
@@ -414,7 +416,6 @@
         dataType: 'application/json',
         data: payload,
         complete: function() {
-          console.log("done")
           //location.href = '/?medname=' + payload.med_name;
           location.href = '/';
         }
