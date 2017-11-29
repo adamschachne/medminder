@@ -16,7 +16,12 @@
 
       <%if (!(page_title == 'Medication Reminders')) { %>
         <div class="col-xs-2">
-          <button style="margin-top:5px" onclick="goBack()" ><span class="glyphicon glyphicon-menu-left in-navbar" aria-hidden="true"></span></button>
+          <%if (page_title == 'Settings') { %>
+            <button style="margin-top:5px" onclick="location.href='/';" ><span class="glyphicon glyphicon-menu-left in-navbar" aria-hidden="true"></span></button>
+
+          <%} else{%>
+            <button style="margin-top:5px" onclick="goBack()" ><span class="glyphicon glyphicon-menu-left in-navbar" aria-hidden="true"></span></button>
+          <%}%>
         </div>
         <div id="pageTitle" class="col-xs-8">
           <h4 ><%=page_title%></h4>

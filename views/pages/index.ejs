@@ -41,11 +41,11 @@
 </head>
 
 <body>
-
+  <div id="overlay"></div>
+  <div id="html-spinner"></div>
   <!-- Navigation bar -->
   <% include ../partials/nav.ejs %>
 
-    <div id="html-spinner"></div>
 
     <!-- Start of Menu -->
     <div class="container" id="menuButtons">
@@ -88,7 +88,7 @@
     <div class="container" id="medicationList">
       <div id="noMedRemindersMessage" class="row">
         <div style="text-align:center; color:white;"class="col-xs-12">
-          <h3>No medications take!</h3>
+          <h3>No medications to take!</h3>
           <h3>To create a new reminder select 'Add'</h3>
         </div>
       </div>
@@ -109,27 +109,56 @@
                 <div class="row">
                   <div class="col-xs-12">
                     <% if (data[i].type == "1") { %>
-
                       <div class="row">
                         <div class="col-xs-12">
-                          <p>Reminders set for</p>
+                          <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose on Thurs 12:59 pm </a>
                         </div>
-                        <div class="col-xs-6">
-                          <p id="daysInWeek<%=i%>"></p>
-                        </div>
-                        <div class="col-xs-6">
-                          <p id="dateAndTimeSet<%=i%>"></p>
+                        <div class="col-xs-12">
+                          <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
+                            <div class="panel-body">
+                              <div class="col-xs-12">
+                                <p><strong>Schedule</strong></p>
+                              </div>
+                              <div class="col-xs-5">
+                                <p id="daysInWeek<%=i%>"></p>
+                              </div>
+                              <div class="col-xs-7">
+                                <p id="dateAndTimeSet<%=i%>"></p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     <% } else {%>
-                        <%if (data[i].repeat > 1) {%>
-                          <p>Every
-                            <%=data[i].repeat%> hours</p>
-                          <p id="dateAndTimeStarted<%=i%>"></p>
-                        <%} else{%>
-                            <p>Every hour</p>
-                            <p id="dateAndTimeStarted<%=i%>"></p>
-                        <%}%>
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose today at 12:59 pm </a>
+                        </div>
+                        <div class="col-xs-12">
+                          <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
+                            <div class="panel-body">
+                              <div class="col-xs-12">
+                                <p><strong>Information</strong></p>
+                              </div>
+
+
+                              <%if (data[i].repeat > 1) {%>
+                                <div class="col-xs-12">
+                                  <p id="dateAndTimeStarted<%=i%>">
+                                    Every<%=data[i].repeat%> hours
+                                  </p>
+                                </div>
+                              <%} else{%>
+                                <div class="col-xs-12">
+                                  <p id="dateAndTimeStarted<%=i%>">
+                                    Every hour
+                                  </p>
+                                </div>
+                              <%}%>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     <% } %>
                   </div>
                 </div>
@@ -140,6 +169,7 @@
                 <div class="editIcons">
                   <a onclick="location.href='/edit/<%=data[i].mid%>';" class="btn btn-default" data-toggle="modal">
                   <span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                  <font>Adjust</font>
                   </a>
                 </div>
               </div>
@@ -147,6 +177,7 @@
                 <div class="editIcons pull-right">
                   <a class="btn btn-default" data-id="<%=data[i].mid%>" data-toggle="modal" data-target="#confirm-delete">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    <font>Remove</font>
                 </a>
                 </div>
               </div>
@@ -175,8 +206,14 @@
           </div>
 
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Don't delete</button>
-            <a id="deleteReminderBtn" class="btn btn-danger btn-ok">Delete reminder</a>
+            <div class="row">
+              <div class="col-xs-6">
+                <button style="width:100%; white-space: normal;" type="button" class="btn btn-default wraptext" data-dismiss="modal">Don't delete it</button>
+              </div>
+              <div class="col-xs-6">
+                <a style="width:100%; white-space: normal;" id="deleteReminderBtn" class="btn btn-danger btn-ok wraptext">Delete reminder</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -202,7 +239,7 @@
         </div>
       </div>
       <% } %>
-        <!-- End of Reminder Simulation -->
+      <!-- End of Reminder Simulation -->
 
 
 
@@ -215,22 +252,24 @@
     if (Cookies.get("font-size")) {
       switch (Cookies.get("font-size")) {
         case "0":
-          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+          $('.btn,h1,h2,h3,h4,p,label,a').css('font-size', '');
           break;
         case "1":
-          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
+          $('.btn,h1,h2,h3,h4,p,label,a').css('font-size', '1.5em');
           break;
         case "2":
-          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
+          $('.btn,h1,h2,h3,h4,p,label,a').css('font-size', '2em');
           break;
         default:
-          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+          $('.btn,h1,h2,h3,h4,p,label,a').css('font-size', '');
       }
     }
 
     $(".editIcons").toggle();
     $(".reminder").toggle();
     $("#html-spinner").hide();
+    $("#overlay").hide();
+
     $("#noMedRemindersMessage").toggle();
     $("[name='reminders-switch']").bootstrapToggle({
       off: '<span class="glyphicon glyphicon-pause"></span>'
@@ -240,9 +279,8 @@
     });
 
     $("[name='reminders-switch-specific']").change(function() {
-
       $("#html-spinner").toggle();
-      console.log(this);
+      $("#overlay").toggle();
       $.ajax({
         type: 'POST',
         url: '/modifyNotification',
@@ -250,13 +288,15 @@
         data: {
           mid: $(this).data("target"),
           active: $(this).prop('checked')
-        },
-        success: function() {
-          $("#html-spinner").toggle();
-        },
-        error: function(response) {
-          $("#html-spinner").toggle();
         }
+        // success: function() {
+        //   $("#html-spinner").toggle();
+        //   $("#overlay").toggle();
+        // },
+        // error: function(response) {
+        //   $("#html-spinner").toggle();
+        //   $("#overlay").toggle();
+        // }
       })
     })
     <%if(data.length < 1){%>
@@ -271,13 +311,18 @@
 
     <%if(data[i].type == "1") {%>
     var timeString = "";
-    <% for (var j = 0; j < data[i].remind_times.length; j++) { %>
-    <% if (j == 0) { %>
-    timeString += moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
-    <% } else { %>
-    timeString += "<br> " + moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
-    <% } %>
-    <% } %>
+    var times = "<%=data[i].remind_times%>";
+    
+    var sortedTimes = times.split(",").sort(function(x, y){
+        return x - y;
+    });
+    for (var j = 0; j < sortedTimes.length; j++) {
+      if (j == 0) {
+        timeString += moment(parseInt(sortedTimes[j])).format("h:mm a");
+      } else {
+        timeString += "<br>" + moment(parseInt(sortedTimes[j])).format("h:mm a");
+      }
+    }
     $("#dateAndTimeSet<%=i%>").html(timeString);
     var daysString = "";
     <% for(var j=0; j < data[i].days.length; j++) { %>
@@ -309,9 +354,9 @@
     $('#daysInWeek<%=i%>').html(daysString.substr(0, daysString.length - 2));
 
     <% } else { %>
-    var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
-    //TODO: Do calculation of when to take next or get from server when to take next
-    $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
+      var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
+      //TODO: Do calculation of when to take next or get from server when to take next
+      $("#dateAndTimeStarted<%=i%>").append('<br>Started reminder on ' + time);
     <% } %>
 
     <% } %>
@@ -344,13 +389,11 @@
   function createNewMed() {
     $('#html-spinner').toggle();
     location.href='/med/new';
-    $('#html-spinner').toggle();
   }
 
   function goToSettings() {
     $('#html-spinner').toggle();
     location.href='/settings';
-    $('#html-spinner').toggle();
   }
 
   function editMedication() {
@@ -360,7 +403,6 @@
 
   function editReminders() {
     $(".reminder").toggle();
-    $('body').css('height: 100%;');
     $(".editIcons").hide();
   }
 
