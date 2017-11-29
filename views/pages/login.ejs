@@ -32,6 +32,7 @@
 <body>
 
 <% include ../partials/nav.ejs %>
+<div id="html-spinner"></div>
 
 <div class="container">
 
@@ -78,26 +79,11 @@
 
 <script>
   $(document).ready(function() {
-    // 
-    // if (Cookies.get("font-size")) {
-    //   switch(Cookies.get("font-size")) {
-    //       case "0":
-    //           $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
-    //           break;
-    //       case "1":
-    //           $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
-    //           break;
-    //       case "2":
-    //           $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
-    //           break;
-    //       default:
-    //           $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
-    //   }
-    // }
-
+    $('#html-spinner').toggle();
     $('button').on('click', function(e){
       if ($(this)[0] == $('#signup_button')[0]) {
         e.preventDefault();
+        $('#html-spinner').toggle();
         location.href = "/signup";
       }
     });
