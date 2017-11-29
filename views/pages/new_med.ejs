@@ -42,6 +42,8 @@
         border-radius: 50%;
 
       }
+
+      .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control { background-color: #fff !important; opacity: 1; }
     </style>
 
 </head>
@@ -120,9 +122,9 @@
               <div class="form-group">
                 <div class='input-group date' id='specifiedStartTime0'>
                   <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                    <!-- <span class="glyphicon glyphicon-calendar"></span> -->
                   </span>
-                  <input dont-allow-input="true" type='text' placeholder="Choose when to get reminded" class="form-control" />
+                  <input dont-allow-input="true" name="textInputDisplay" value="" type='text' placeholder="Choose when to get reminded" class="form-control" readonly/>
                 </div>
               </div>
             </div>
@@ -195,8 +197,11 @@
         $('#startRemindersLabel').html("Remind me At");
         $('#specifiedStartTime0').data("DateTimePicker").destroy();
         $('#specifiedStartTime0').datetimepicker({
-          format: 'LT'
+          format: 'LT',
+          ignoreReadonly: true
+          // allowInputToggle: true
         });
+        $('#specifiedStartTime0').children().html('<span class="glyphicon glyphicon-time"></span>');
 
       } else if ($reminderTypeSelector.val() == "2") {
 
@@ -218,8 +223,12 @@
         $('#specifiedStartTime0').data("DateTimePicker").destroy();
         $('#specifiedStartTime0').datetimepicker({
           minDate: new Date(),
-          sideBySide: true
+          sideBySide: true,
+          ignoreReadonly: true
+          // allowInputToggle: true
         });
+        $('#specifiedStartTime0').children().html('<span class="glyphicon glyphicon-calendar"></span>');
+
 
       } else {
         $hourlyRepetitionDiv.hide();
@@ -244,9 +253,9 @@
         '              <div class="form-group">' +
         '                <div class=\'input-group date\'  id=\'specifiedStartTime' + counter + '\'>' +
         '                    <span class="input-group-addon">' +
-        '                        <span class="glyphicon glyphicon-calendar"></span>' +
+        '                        <span class="glyphicon glyphicon-time"></span>' +
         '                    </span>' +
-        '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" />' +
+        '                    <input dont-allow-input=\'true\' type=\'text\' placeholder="Choose when to get reminded" class="form-control" readonly />' +
         '                    <span delete-reminder-time=\'true\' class="input-group-addon">' +
         '                        <a style=\'color:red;\' type="button" date-time-picker="true" id="timePickerTrashBtn' + counter + '"><span class="glyphicon glyphicon-trash"></span></a>' +
         '                    </span>' +
@@ -258,7 +267,9 @@
       reminders['timePickerTrashBtn' + counter] = true;
 
       $('#specifiedStartTime' + counter).datetimepicker({
-        format: 'LT'
+        format: 'LT',
+        ignoreReadonly: true
+        // allowInputToggle: true
       });
 
       $("[dont-allow-input='true']").keydown(function() {
@@ -266,20 +277,6 @@
         return false;
       });
     });
-
-
-    // $('body').on('click', 'a span.glyphicon.glyphicon-trash', function(event) {
-    //   var idStr = "" + event.currentTarget.parentElement.id;
-    //   var deletedReminderTime = idStr[idStr.length -1];
-    //
-    //   if(deletedReminderTime == counter){
-    //     counter--;
-    //   }
-    //
-    //   // Remove the current trash click container
-    //   reminders["#" + event.currentTarget.parentElement.id] = false;
-    //   $("#" + event.currentTarget.parentElement.id).parent().parent().parent().parent().remove();
-    // });
 
     $('body').on('click', "[delete-reminder-time='true']", function(event) {
       console.log(event.currentTarget);
@@ -402,7 +399,6 @@
         }
         reminderTimesPerDaySelected.push($('#specifiedStartTime' + i).data("DateTimePicker").date().unix() * 1000);
       }
-      console.log(reminderTimesPerDaySelected);
 
       var payload = {
         med_name: $('#medication_name')[0].value,

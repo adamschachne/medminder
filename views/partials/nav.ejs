@@ -1,16 +1,22 @@
+<style media="screen">
+  .navbar {
+    background-color: #10486E;
+  }
+  #pageTitle h4{
+    color: white;
+  }
+  .in-navbar {
+    color:white;
+  }
+</style>
+
 <nav class="navbar navbar-default navbar-static-top">
   <div class="container">
     <div class="row">
 
       <%if (!(page_title == 'Medication Reminders')) { %>
         <div class="col-xs-2">
-          <%if ((page_title == 'Recover Reminders' || page_title == 'Help')) { %>
-            <button style="margin-top:5px" onclick="location.href='/settings'" ><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
-          <% } else if (page_title == 'Login') { %>
-            <button style="margin-top:5px" onclick="location.href='/landing'" ><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
-          <% } else { %>
-            <button style="margin-top:5px" onclick="location.href='/'" ><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
-          <% }%>
+          <button style="margin-top:5px" onclick="goBack()" ><span class="glyphicon glyphicon-menu-left in-navbar" aria-hidden="true"></span></button>
         </div>
         <div id="pageTitle" class="col-xs-8">
           <h4 ><%=page_title%></h4>
@@ -24,5 +30,10 @@
       <% }%>
     </div>
   </div>
-
 </nav>
+
+<script>
+  function goBack() {
+      window.history.back();
+  }
+</script>

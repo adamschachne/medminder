@@ -6,7 +6,10 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110168499-1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
     gtag('js', new Date());
 
     gtag('config', 'UA-110168499-1');
@@ -22,13 +25,14 @@
         margin: auto;
       }
 
-      .footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        /* Set the fixed height of the footer here */
-        height: 60px;
-        background-color: #f5f5f5;
+      .wraptext {
+        word-wrap: break-word;
+      }
+
+      .toggle.ios,
+      .toggle-on.ios,
+      .toggle-off.ios {
+        margin-left: 0px;
       }
     </style>
 
@@ -41,10 +45,12 @@
   <!-- Navigation bar -->
   <% include ../partials/nav.ejs %>
 
+    <div id="html-spinner"></div>
+
     <!-- Start of Menu -->
     <div class="container" id="menuButtons">
       <div class="btn-group" id="menuBtnGroup">
-        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="newMedBtn" onclick="location.href='/med/new';">
+        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="newMedBtn" onclick="createNewMed()">
         <span style="display:inherit" class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         <font size="2px">Add</font>
       </button>
@@ -56,7 +62,7 @@
         <span style="display:inherit" class="glyphicon glyphicon-time" aria-hidden="true"></span>
         <font size="2px">Reminders</font>
       </button>
-        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="settingsBtn" onclick="location.href='/settings';">
+        <button style="width:25%; white-space: normal;" class="btn btn-default btn-lg" type="button" name="settingsBtn" onclick="goToSettings()">
           <span style="display:inherit" class="glyphicon glyphicon-cog" aria-hidden="true"></span>
           <font size="2px">Settings</font>
       </button>
@@ -66,7 +72,7 @@
           <h3>Pause all reminders</h3>
         </div>
         <div style="padding-top:20px" class="col-xs-4">
-          <input  class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
+          <input class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
         </div>
         <div class="col-xs-12">
           <p><small>Reminders reset after 12:00 am</small></p>
@@ -80,6 +86,12 @@
 
     <!-- Start of Medication List -->
     <div class="container" id="medicationList">
+      <div id="noMedRemindersMessage" class="row">
+        <div style="text-align:center; color:white;"class="col-xs-12">
+          <h3>No medications take!</h3>
+          <h3>To create a new reminder select 'Add'</h3>
+        </div>
+      </div>
       <% for(var i=0; i < data.length; i++) { %>
         <div class="panel panel-default">
           <div class="panel-body">
@@ -87,31 +99,43 @@
 
               <div class="col-xs-12">
                 <div class="row">
-                  <div class="col-xs-8">
-                    <h4><%=data[i].med_name%></h4>
+                  <div class="col-xs-9">
+                    <h4 class="wraptext"><%=data[i].med_name%></h4>
                   </div>
-                  <div class="col-xs-2 reminder">
-                    <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific"
-                    <% if (data[i].active) { %>
-                      checked
-                    <% } %>
-                    data-style="ios">
+                  <div class="col-xs-3 reminder">
+                    <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific" checked data-style="ios">
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-xs-12">
                     <% if (data[i].type == "1") { %>
-                      <p>Days to remind: <%=data[i].days%></p>
-                      <p id="dateAndTimeSet<%=i%>"></p>
+
+                      <div class="row">
+                        <div class="col-xs-12">
+                          <p>Reminders set for</p>
+                        </div>
+                        <div class="col-xs-6">
+                          <p id="daysInWeek<%=i%>"></p>
+                        </div>
+                        <div class="col-xs-6">
+                          <p id="dateAndTimeSet<%=i%>"></p>
+                        </div>
+                      </div>
                     <% } else {%>
-                      <p>Every <%=data[i].repeat%> hour(s)</p>
-                      <p id="dateAndTimeStarted<%=i%>"></p>
+                        <%if (data[i].repeat > 1) {%>
+                          <p>Every
+                            <%=data[i].repeat%> hours</p>
+                          <p id="dateAndTimeStarted<%=i%>"></p>
+                        <%} else{%>
+                            <p>Every hour</p>
+                            <p id="dateAndTimeStarted<%=i%>"></p>
+                        <%}%>
                     <% } %>
                   </div>
                 </div>
               </div>
             </div>
-            <div style="background-color: #f5f5f5"class="row">
+            <div class="row">
               <div class="col-xs-6">
                 <div class="editIcons">
                   <a onclick="location.href='/edit/<%=data[i].mid%>';" class="btn btn-default" data-toggle="modal">
@@ -178,7 +202,10 @@
         </div>
       </div>
       <% } %>
-      <!-- End of Reminder Simulation -->
+        <!-- End of Reminder Simulation -->
+
+
+
 
 </body>
 
@@ -186,27 +213,36 @@
 <script>
   $(document).ready(function() {
     if (Cookies.get("font-size")) {
-      switch(Cookies.get("font-size")) {
-          case "0":
-              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
-              break;
-          case "1":
-              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
-              break;
-          case "2":
-              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
-              break;
-          default:
-              $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+      switch (Cookies.get("font-size")) {
+        case "0":
+          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
+          break;
+        case "1":
+          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '1.5em');
+          break;
+        case "2":
+          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '2em');
+          break;
+        default:
+          $('.btn,h1,h2,h3,h4,p,label').css('font-size', '');
       }
     }
 
     $(".editIcons").toggle();
     $(".reminder").toggle();
-    $("[name='reminders-switch']").bootstrapToggle();
-    $("[name='reminders-switch-specific']").bootstrapToggle();
+    $("#html-spinner").hide();
+    $("#noMedRemindersMessage").toggle();
+    $("[name='reminders-switch']").bootstrapToggle({
+      off: '<span class="glyphicon glyphicon-pause"></span>'
+    });
+    $("[name='reminders-switch-specific']").bootstrapToggle({
+      off: '<span class="glyphicon glyphicon-pause"></span>'
+    });
 
     $("[name='reminders-switch-specific']").change(function() {
+
+      $("#html-spinner").toggle();
+      console.log(this);
       $.ajax({
         type: 'POST',
         url: '/modifyNotification',
@@ -214,79 +250,122 @@
         data: {
           mid: $(this).data("target"),
           active: $(this).prop('checked')
+        },
+        success: function() {
+          $("#html-spinner").toggle();
+        },
+        error: function(response) {
+          $("#html-spinner").toggle();
         }
       })
     })
+    <%if(data.length < 1){%>
 
-    $(".footer").toggle();
+      $("#noMedRemindersMessage").toggle();
+
+      $("[name=editMedBtn]").attr( "disabled" , "disabled" );
+      $("[name=remindersBtn]").attr( "disabled" , "disabled" );
+    <%}%>
 
     <% for(var i=0; i < data.length; i++) { %>
 
-      <%if(data[i].type == "1") {%>
-        var timeString = "";
-        <% for (var j = 0; j < data[i].remind_times.length; j++) { %>
-          <% if (j == 0) { %>
-        timeString += moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
-          <% } else { %>
-        timeString += ", " + moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
-          <% } %>
-        <% } %>
-        $("#dateAndTimeSet<%=i%>").html('Reminders set for: ' + timeString);
-      <% } else { %>
-        var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
-        $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
-      <% } %>
+    <%if(data[i].type == "1") {%>
+    var timeString = "";
+    <% for (var j = 0; j < data[i].remind_times.length; j++) { %>
+    <% if (j == 0) { %>
+    timeString += moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
+    <% } else { %>
+    timeString += "<br> " + moment(parseInt("<%= data[i].remind_times[j] %>")).format("h:mm a");
+    <% } %>
+    <% } %>
+    $("#dateAndTimeSet<%=i%>").html(timeString);
+    var daysString = "";
+    <% for(var j=0; j < data[i].days.length; j++) { %>
+    var day = "<%=data[i].days[j]%>";
+    switch (day) {
+      case 'S':
+        daysString += "Sun, ";
+        break;
+      case 'M':
+        daysString += "Mon, ";
+        break;
+      case 'T':
+        daysString += "Tues, ";
+        break;
+      case 'W':
+        daysString += "Wed, ";
+        break;
+      case 'Th':
+        daysString += "Thurs, ";
+        break;
+      case 'F':
+        daysString += "Fri, ";
+        break;
+      case 'Sa':
+        daysString += "Sat, ";
+        break;
+    }
+    <%}%>
+    $('#daysInWeek<%=i%>').html(daysString.substr(0, daysString.length - 2));
+
+    <% } else { %>
+    var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
+    //TODO: Do calculation of when to take next or get from server when to take next
+    $("#dateAndTimeStarted<%=i%>").html('Started reminders on: ' + time);
+    <% } %>
 
     <% } %>
 
     $('#confirm-delete').on('show.bs.modal', function(e) {
-      // TODO: Dont reload the page yet, until they click save, or if they undo it, then bring reminder back
       $(this).find('.btn-ok').attr('href', '/delete/' + $(e.relatedTarget).data('id'));
-
     });
-
-    $("#deleteReminderBtn").click(function popUpSaveUndo() {
-      $(".footer").toggle();
-    })
 
     $("#reminders-switch").parent().change(
       function() {
-        //console.log(this);
         if (!$(this).hasClass('off')) {
           $("[name='reminders-switch-specific']").parent().removeClass('off');
+          $("[name='reminders-switch-specific']").bootstrapToggle('on');
           $.ajax({
             type: 'POST',
-            url: '/enableAllNotifications',
+            url: '/enableAllNotifications'
           })
         } else {
           $("[name='reminders-switch-specific']").parent().addClass('off');
+          $("[name='reminders-switch-specific']").bootstrapToggle('off');
           $.ajax({
             type: 'POST',
-            url: '/disableAllNotifications',
+            url: '/disableAllNotifications'
           })
         }
 
       });
   });
 
+  function createNewMed() {
+    $('#html-spinner').toggle();
+    location.href='/med/new';
+  }
+
+  function goToSettings() {
+    $('#html-spinner').toggle();
+    location.href='/settings';
+  }
+
   function editMedication() {
     $(".editIcons").toggle();
     $(".reminder").hide();
   }
+
   function editReminders() {
     $(".reminder").toggle();
+    $('body').css('height: 100%;');
     $(".editIcons").hide();
   }
 
-  // <% if (locals.medname) { %>
-  //
   function closeReminder() {
     $('#reminder-modal').modal('hide');
   }
-  // setTimeout(function() {
-  //   $('#reminder-modal').modal('show');
-  // }, 3000);
-  // <% } %>
+
 </script>
 
 </html>
