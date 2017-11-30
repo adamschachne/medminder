@@ -76,15 +76,20 @@
 
         <div class="form-group row">
           <div class="col-xs-12">
-            <a id="saveSettings" style="text-align:center" type="button" class="col-xs-12 btn-lg btn-primary">Save</a>
+            <a id="saveSettings" style="text-align:center" type="button" class="col-xs-12 btn-lg btn-primary">Save Changes</a>
           </div>
         </div>
 
         <div class="form-group row">
-          <div class="col-xs-12 btn-group" id="appSettingsBtns">
-            <button style="width:33%; word-wrap:break-word;" onclick="location.href='/history'" class="btn btn-default btn-lg" type="button" name="historyButton">History</button>
-            <button style="width:33%;" onclick="location.href='/help'" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
-            <button style="width:33%;" onclick="location.href='/logout'" style="width:100%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
+          <div class="col-xs-12" id="appSettingsBtns">
+            <button style="width:100%;" onclick="location.href='/history'" class="btn btn-default btn-lg" type="button" name="historyButton">Recover Reminders</button>
+            <button style="width:100%;" onclick="location.href='/help'" class="btn btn-default btn-lg" type="button" name="helpButton">Help</button>
+          </div>
+        </div>
+        <br>
+        <div class="form-group row">
+          <div class="col-xs-12 btn-group" id="logoutButtonGroup">
+            <button style="width:100%;" onclick="location.href='/logout'" style="width:100%;" class="btn btn-default btn-lg separate" type="button" name="logoutButton">Logout</button>
           </div>
         </div>
       </form>
@@ -94,23 +99,6 @@
     <script type="text/javascript">
       $(document).ready(function() {
         $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
-        
-      //   if (Cookies.get("font-size")) {
-      //     $('#slider-text-size').bootstrapSlider('setValue',Cookies.get("font-size"));
-      //     switch(Cookies.get("font-size")) {
-      //         case "0":
-      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-      //             break;
-      //         case "1":
-      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
-      //             break;
-      //         case "2":
-      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
-      //             break;
-      //         default:
-      //             $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-      //     }
-      //   }
       });
 
       $("#slider-text-size").bootstrapSlider();
