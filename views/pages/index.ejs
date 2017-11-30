@@ -72,7 +72,12 @@
           <h3>Pause all reminders</h3>
         </div>
         <div style="padding-top:20px" class="col-xs-4">
-          <input class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
+          <% if (remindersSwitch) { %>
+            <input class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" checked data-style="ios">
+          <% } else {%>
+            <input class="col-xs-12" type="checkbox" name="reminders-switch" id="reminders-switch" data-style="ios">
+          <%}%>
+
         </div>
         <div class="col-xs-12">
           <p><small>Reminders reset after 12:00 am</small></p>
@@ -103,7 +108,11 @@
                     <h4 class="wraptext"><%=data[i].med_name%></h4>
                   </div>
                   <div class="col-xs-3 reminder">
-                    <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific" checked data-style="ios">
+                    <% if (data[i].active) { %>
+                      <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific" checked data-style="ios">
+                    <% } else {%>
+                      <input class="col-xs-12" type="checkbox" data-target="<%=data[i].mid%>" name="reminders-switch-specific" data-style="ios">
+                    <%}%>
                   </div>
                 </div>
                 <div class="row">
@@ -111,8 +120,11 @@
                     <% if (data[i].type == "1") { %>
                       <div class="row">
                         <div class="col-xs-12">
-                          <!-- TODO: Alongside rest of reminder data, return when the next reminder is, to display in homepage, and recover page. -->
-                          <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose on Thurs 12:59 pm </a>
+                          <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose on
+                            <script>
+                              document.write("Next dose at " + moment(parseInt(<%=data[i].next_dose%>)).format("dddd, h:mm A"))
+                            </script>
+                          </a>
                         </div>
                         <div class="col-xs-12">
                           <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
@@ -133,8 +145,11 @@
                     <% } else {%>
                       <div class="row">
                         <div class="col-xs-12">
-                          <!-- TODO: Alongside rest of reminder data, return when the next reminder is, to display in homepage, and recover page. -->
-                          <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose today at 12:59 pm </a>
+                          <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">
+                            <script>
+                              document.write("Next dose at " + moment(parseInt(<%=data[i].next_dose%>)).format("dddd, h:mm A"))
+                            </script>
+                          </a>
                         </div>
                         <div class="col-xs-12">
                           <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
@@ -272,7 +287,7 @@
         dataType: 'application/json',
         data: {
           mid: $(this).data("target"),
-          active: $(this).prop('checked')
+          local: $(this).prop('checked') ? null : moment().startOf('day').add(1,'days').valueOf()
         }
         // success: function() {
         //   $("#html-spinner").toggle();
@@ -303,9 +318,9 @@
     });
     for (var j = 0; j < sortedTimes.length; j++) {
       if (j == 0) {
-        timeString += moment(parseInt(sortedTimes[j])).format("h:mm a");
+        timeString += moment(parseInt(sortedTimes[j])).format("h:mm A");
       } else {
-        timeString += "<br>" + moment(parseInt(sortedTimes[j])).format("h:mm a");
+        timeString += "<br>" + moment(parseInt(sortedTimes[j])).format("h:mm A");
       }
     }
     $("#dateAndTimeSet<%=i%>").html(timeString);
@@ -339,7 +354,7 @@
     $('#daysInWeek<%=i%>').html(daysString.substr(0, daysString.length - 2));
 
     <% } else { %>
-      var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm a");
+      var time = moment(parseInt("<%= data[i].remind_times[0] %>")).format("MM/DD/YY h:mm A");
       $("#dateAndTimeStarted<%=i%>").append('<br>Started reminder on ' + time);
     <% } %>
 
@@ -350,21 +365,24 @@
     });
 
     $("#reminders-switch").parent().change(
-      // TODO: Store state of 'Pause all reminders' toggle in home page, to set when page loads.
       function() {
         if (!$(this).hasClass('off')) {
           $("[name='reminders-switch-specific']").parent().removeClass('off');
           $("[name='reminders-switch-specific']").bootstrapToggle('on');
           $.ajax({
             type: 'POST',
-            url: '/enableAllNotifications'
+            url: '/resumeAllNotifications'
           })
         } else {
           $("[name='reminders-switch-specific']").parent().addClass('off');
           $("[name='reminders-switch-specific']").bootstrapToggle('off');
           $.ajax({
             type: 'POST',
-            url: '/disableAllNotifications'
+            url: '/pauseAllNotifications',
+            dataType: 'application/json',
+            data: {
+              local: moment().startOf('day').add(1,'days').valueOf()
+            }
           })
         }
 
