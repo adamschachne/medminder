@@ -5,7 +5,7 @@ var settingsPage = require(__dirname + '/javascript/settings_page');
 var remindersPage = require(__dirname + '/javascript/reminders_page');
 var historyPage = require(__dirname + '/javascript/history_page');
 var httpsRedirect = require('express-https-redirect');
-
+const moment = require('moment');
 const { spawn } = require('child_process');
 const { Client } = require('pg');
 var bodyParser = require("body-parser");
@@ -71,7 +71,7 @@ app.get('/', restrict,  function(request, response) {
     medicationPage.medname = medname;
   }
 
-  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time')
+  knex.select('med_name', 'type', 'days', 'type', 'repeat', 'medications.mid', 'active_on', 'remind_time')
   .from('medications')
   .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNull('deleted')
@@ -79,11 +79,24 @@ app.get('/', restrict,  function(request, response) {
   .orderBy('mid', 'desc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
+
+    var now = moment();
+    var remindersSwitch = false;
     for (var i = 0; i < rows.length; i++) {
+      var isActive = false;
+      var next_dose = getNextReminderMoment(rows[i].active_on, rows[i].type, JSON.parse(rows[i].days), rows[i].repeat, rows[i].remind_time);
+
+      if (rows[i].active_on == null || moment(parseInt(rows[i].active_on)).isBefore(now)) {
+        isActive = true;
+        remindersSwitch = true;
+      }
       // if we are adding a new remind time for the same medication
       if (i > 0 && rows[i-1].mid == rows[i].mid) {
         // simply push the time to its remind_times array
         medicationPage.data[medicationPage.data.length-1].remind_times.push(rows[i].remind_time);
+        if (next_dose.valueOf() < medicationPage.data[medicationPage.data.length-1].next_dose) {
+          medicationPage.data[medicationPage.data.length-1].next_dose = next_dose;
+        }
       }
       else {
         medicationPage.data.push({
@@ -92,12 +105,14 @@ app.get('/', restrict,  function(request, response) {
           days: JSON.parse(rows[i].days),
           repeat: rows[i].repeat,
           mid: rows[i].mid,
-          active: rows[i].active,
-          remind_times: [rows[i].remind_time]
+          active: isActive,
+          remind_times: [rows[i].remind_time],
+          next_dose: next_dose.valueOf()
         });
       }
     }
-    // console.log(JSON.stringify(medicationPage))
+    //console.log(medicationPage);
+    medicationPage.remindersSwitch = remindersSwitch;
     response.render('pages/index', medicationPage);
   })
 });
@@ -113,7 +128,6 @@ app.post('/med/new', restrict, function(request, response) {
   //var start_time = request.body.start_time;
   //var time = request.body.time;
   var times =  JSON.parse(request.body.times);
-  console.log(times);
   var type = request.body.type;
   var message = "";
   var arr = [];
@@ -127,8 +141,7 @@ app.post('/med/new', restrict, function(request, response) {
     med_name: med_name,
     type: type,
     days: JSON.stringify(days),
-    repeat: repeat,
-    active: true
+    repeat: repeat
   }).into('medications')
   .returning('mid')
   .then(function (mid) {
@@ -142,7 +155,7 @@ app.post('/med/new', restrict, function(request, response) {
     knex.insert(remind_times)
     .into('remind_times')
     .then(function() {
-      return response.redirect('/');
+      return response.sendStatus(200);
     })
   })
 });
@@ -183,7 +196,7 @@ app.get('/history', restrict, function(request, response) {
     page_title: 'Recover Reminders',
     data: []
   };
-  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time')
+  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on', 'remind_time')
   .from('medications')
   .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNotNull('deleted')
@@ -191,7 +204,14 @@ app.get('/history', restrict, function(request, response) {
   .orderBy('mid', 'desc')
   .asCallback(function(err, rows) {
     if (err) console.log(err)
+
+    var now = moment();
     for (var i = 0; i < rows.length; i++) {
+
+      var isActive = false;
+      if (rows[i].active_on == null || moment(parseInt(rows[i].active_on)).isAfter(now)) {
+        isActive = true;
+      }
       // if we are adding a new remind time for the same medication
       if (i > 0 && rows[i-1].mid == rows[i].mid) {
         // simply push the time to its remind_times array
@@ -204,7 +224,7 @@ app.get('/history', restrict, function(request, response) {
           days: JSON.parse(rows[i].days),
           repeat: rows[i].repeat,
           mid: rows[i].mid,
-          active: rows[i].active,
+          active_on: isActive,
           remind_times: [rows[i].remind_time]
         });
       }
@@ -347,7 +367,7 @@ app.get('/delete/:mid', restrict, function(request, response) {
 });
 app.get('/edit/:mid', restrict, function(request, response) {
   var mid = request.params.mid;
-  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time')
+  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on', 'remind_time')
   .from('medications')
   .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNull('deleted')
@@ -365,7 +385,6 @@ app.get('/edit/:mid', restrict, function(request, response) {
       days: JSON.parse(rows[0].days),
       repeat: rows[0].repeat,
       mid: rows[0].mid,
-      active: rows[0].active,
       remind_times: [rows[0].remind_time]
     };
 
@@ -425,12 +444,18 @@ app.post('/edit/:mid', restrict, function(request, response) {
 });
 app.post('/modifyNotification', restrict, function(request, response) {
   var mid = request.body.mid;
+  var active_on;
+  if (!request.body.local) {
+    active_on = null;
+  } else {
+    active_on = request.body.local;
+  }
 
   knex('medications')
   .where('mid', '=', mid)
   .andWhere('uid', '=', request.session.uid)
   .update({
-    active: request.body.active
+    active_on: active_on
   })
   .then(function (result) {
     // console.log(result);
@@ -449,21 +474,21 @@ app.post('/modifyUserNotification', restrict, function(request, response) {
     return response.sendStatus(200);
   })
 });
-app.post('/enableAllNotifications', restrict, function(request, response) {
+app.post('/resumeAllNotifications', restrict, function(request, response) {
   knex('medications')
   .where('uid', '=', request.session.uid)
   .update({
-    active: true
+    active_on: null
   })
   .then(function (result) {
     return response.sendStatus(200);
   })
 });
-app.post('/disableAllNotifications', restrict, function(request, response) {
+app.post('/pauseAllNotifications', restrict, function(request, response) {
   knex('medications')
   .where('uid', '=', request.session.uid)
   .update({
-    active: false
+    active_on: request.body.local
   })
   .then(function (result) {
     return response.sendStatus(200);
@@ -510,6 +535,56 @@ function authenticate(uname, pass, cb) {
       cb(new Error('Invalid password'));
     });
   })
+}
+
+function getNextReminderMoment(active_on, type, days, repeat, remind_time) {
+  var nowMoment = moment();
+  var remindMoment = moment(parseInt(remind_time));
+  var reminderToday = moment(remindMoment.hour()+":"+remindMoment.minutes(), "HH:mm");
+  var returnMoment = reminderToday;
+
+  if (type == "1") {
+    var currentDay = returnMoment.weekday();
+    var dayIndex = 0;
+    for (var i = 0; i < 7; i++) {
+      if (currentDay == 0) {
+        dayIndex = days.indexOf('S');
+      } else if (currentDay == 0) {
+        dayIndex = days.indexOf('M');
+      } else if (currentDay == 1) {
+        dayIndex = days.indexOf('T');
+      } else if (currentDay == 2) {
+        dayIndex = days.indexOf('W');
+      } else if (currentDay == 3) {
+        dayIndex = days.indexOf('Th');
+      } else if (currentDay == 4) {
+        dayIndex = days.indexOf('F');
+      } else if (currentDay == 5) {
+        dayIndex = days.indexOf('Sa');
+      }
+      if (dayIndex != -1) {
+        if (reminderToday.isBefore(nowMoment)) { // reminder already happened today, schedule for the next one
+          returnMoment.add(1, 'day');
+          currentDay = returnMoment.weekday();
+        }
+        break;
+      }
+      returnMoment.add(1, 'day');
+      currentDay = returnMoment.weekday();
+    }
+    return returnMoment;
+
+  } else if (type == "2") {
+
+    if (remindMoment.isAfter(nowMoment)) { // reminder hasnt happened yet.
+      return remindMoment;
+    }
+
+    var duration = moment.duration(nowMoment.diff(reminderToday));
+    var hoursApart = Math.abs(duration.asHours());
+    nowMoment.add(repeat - (hoursApart % repeat), 'hour');
+    return nowMoment;
+  }
 }
 
 app.listen(app.get('port'), function() {

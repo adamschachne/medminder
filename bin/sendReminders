@@ -38,13 +38,13 @@ const lastNotificationBuffer =  0.16666; // ~10 minutes in hours
 var currentTimeString = nowMoment.format("dddd, MMMM Do YYYY, h:mm:ss a");
 var numDone = 0;
 
-knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', 'remind_time', 'notifications', 'medications.uid', 'last_notified')
+knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on', 'remind_time', 'notifications', 'medications.uid', 'last_notified')
 .from('medications')
 .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
 .leftOuterJoin('users', 'medications.uid', 'users.uid')
 .whereNull('deleted')
 .andWhere('notifications', '=', true)
-.andWhere('active', '=', true)
+.andWhere(knex.raw('active_on is null or active_on < ?', nowMoment.valueOf()))
 .orderBy('mid', 'asc')
 .asCallback(function(err, rows) {
   if (err) console.log(err)
@@ -77,6 +77,7 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', '
     var remind_time = parseFloat(rows[i].remind_time);
     var repeat = parseFloat(rows[i].repeat);
 
+    // dont check reminder if it current time is before the reminder time
     if (nowMoment.valueOf() < remind_time) {
       continue;
     }
@@ -87,7 +88,8 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', '
       // if not on the same hour of the day, continue
 
       var days = JSON.parse(rows[i].days);
-      // make sure the the reminder is within +-6 mintes of the original scheduled minute
+      // make sure the the reminder is within a buffer of the original scheduled minute
+      // take the time of the reminder if it were today
       var reminderToday = moment(remindMoment.hour()+":"+remindMoment.minutes(), "HH:mm");
       var difference = moment.duration(nowMoment.diff(remindMoment));
       if (difference.asMinutes() > buffer*60) {
@@ -132,7 +134,8 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active', '
     } else if (type == "2") {
       let duration = moment.duration(nowMoment.diff(remindMoment));
       let numHoursNormalized = (duration.asHours() % repeat);
-      if (buffer > numHoursNormalized && numHoursNormalized > 0) { // if the reminder is within a buffer of the scheduled time
+      //if (buffer > numHoursNormalized && numHoursNormalized >= 0) { // if the reminder is within a buffer of the scheduled time
+      if (buffer > numHoursNormalized || numHoursNormalized + buffer > repeat || numHoursNormalized == 0) {
         toRemind.push(rows[i]);
       }
     }
