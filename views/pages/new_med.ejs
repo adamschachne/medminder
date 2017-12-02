@@ -166,6 +166,10 @@
       return false;
     });
 
+    $('body').on('click', '.input-group.date > input', function(e) {
+      $(this).parent().data("DateTimePicker").show()
+    });
+
     $daysToRemindDiv.hide();
     $remindersTimeGroup.hide();
     $hourlyRepetitionDiv.hide();
@@ -183,8 +187,6 @@
           format: 'LT',
           ignoreReadonly: true,
           showClose: true
-
-          // allowInputToggle: true
         });
         $('#specifiedStartTime0').children().html('<span class="glyphicon glyphicon-time"></span>');
 
