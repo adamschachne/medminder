@@ -263,8 +263,10 @@
 
 <script src="scripts/main.js"></script>
 <script>
+  window.onpageshow = function(event) {
+    $("#html-spinner").hide();
+  };
   $(document).ready(function() {
-
     $(".editIcons").toggle();
     $(".reminder").toggle();
     $("#html-spinner").hide();
@@ -390,12 +392,12 @@
   });
 
   function createNewMed() {
-    $('#html-spinner').toggle();
+    $('#html-spinner').show();
     location.href='/med/new';
   }
 
   function goToSettings() {
-    $('#html-spinner').toggle();
+    $('#html-spinner').show();
     location.href='/settings';
   }
 
