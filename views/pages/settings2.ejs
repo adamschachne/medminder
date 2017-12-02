@@ -122,7 +122,7 @@
       });
 
       $("#saveSettings").click(function() {
-        $("#html-spinner").toggle();
+        $('#html-spinner').show();
         $.ajax({
           type: 'POST',
           url: '/modifyUserNotification',
@@ -131,12 +131,12 @@
             enable: $("[name='notifications-switch']").bootstrapToggle().prop('checked')
           },
           complete: function (){
-            $("#html-spinner").toggle();
+            $("#html-spinner").hide();
             Cookies.set("font-size", Cookies.get("font-size-placeholder"));
             location.href = '/';
           },
           error: function(response) {
-            $("#html-spinner").toggle();
+            $("#html-spinner").hide();
           }
         });
       })
