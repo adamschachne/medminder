@@ -123,10 +123,14 @@
         Cookies.set("font-size-placeholder", 0);
       });
       $('#mediumFontBtn').click(function (){
+
         $('#largeFontBtn').css('background-color', '#fff');
         $('#mediumFontBtn').css('background-color', '#e6e6e6');
         $('#smallFontBtn').css('background-color', '#fff');
-        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+
+        $('h1,h2,h3,h4').not("label.btn").css('font-size', '1.5em');
+        $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.25em');
+
         gtag('event','change_font_size',{
           'event_category': 'engagement',
           'event_label': 'button',
@@ -138,7 +142,10 @@
         $('#largeFontBtn').css('background-color', '#e6e6e6');
         $('#mediumFontBtn').css('background-color', '#fff');
         $('#smallFontBtn').css('background-color', '#fff');
-        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+
+        $('h1,h2,h3,h4').not("label.btn").css('font-size', '2em');
+        $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.5em');
+
         gtag('event','change_font_size',{
           'event_category': 'engagement',
           'event_label': 'button',
