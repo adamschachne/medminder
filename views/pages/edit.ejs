@@ -159,6 +159,9 @@
     $remindersTimeGroup = $('#remindersTimeGroup');
     $addReminderTimeBtn = $('#addReminderTime');
 
+    $('body').on('click', '.input-group.date > input', function(e) {
+      $(this).parent().data("DateTimePicker").show()
+    });
 
     $reminderTypeSelector.change(function() {
 
@@ -426,8 +429,8 @@
 
 
       var payload = {
-        type: $reminderTypeSelector.val(),
         med_name: $('#medication_name')[0].value,
+        type: $reminderTypeSelector.val(),
         days: JSON.stringify(days),
         repeat: $('#hoursToRepeat')[0].value,
         times: JSON.stringify(reminderTimesPerDaySelected)
@@ -438,7 +441,6 @@
         dataType: 'application/json',
         data: payload,
         complete: function() {
-          console.log("done")
           location.href = '/';
         }
       })
