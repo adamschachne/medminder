@@ -95,7 +95,7 @@ app.get('/', restrict,  function(request, response) {
         // simply push the time to its remind_times array
         medicationPage.data[medicationPage.data.length-1].remind_times.push(rows[i].remind_time);
         if (next_dose.valueOf() < medicationPage.data[medicationPage.data.length-1].next_dose) {
-          medicationPage.data[medicationPage.data.length-1].next_dose = next_dose;
+          medicationPage.data[medicationPage.data.length-1].next_dose = next_dose.valueOf();
         }
       }
       else {
@@ -196,7 +196,8 @@ app.get('/history', restrict, function(request, response) {
     page_title: 'Recover Reminders',
     data: []
   };
-  knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on', 'remind_time')
+
+  knex.select('med_name', 'type', 'days', 'type', 'repeat', 'medications.mid', 'active_on', 'remind_time')
   .from('medications')
   .leftOuterJoin('remind_times', 'medications.mid', 'remind_times.mid')
   .whereNotNull('deleted')
@@ -206,16 +207,22 @@ app.get('/history', restrict, function(request, response) {
     if (err) console.log(err)
 
     var now = moment();
+    var remindersSwitch = false;
     for (var i = 0; i < rows.length; i++) {
-
       var isActive = false;
-      if (rows[i].active_on == null || moment(parseInt(rows[i].active_on)).isAfter(now)) {
+      var next_dose = getNextReminderMoment(rows[i].active_on, rows[i].type, JSON.parse(rows[i].days), rows[i].repeat, rows[i].remind_time);
+
+      if (rows[i].active_on == null || moment(parseInt(rows[i].active_on)).isBefore(now)) {
         isActive = true;
+        remindersSwitch = true;
       }
       // if we are adding a new remind time for the same medication
       if (i > 0 && rows[i-1].mid == rows[i].mid) {
         // simply push the time to its remind_times array
         historyPage.data[historyPage.data.length-1].remind_times.push(rows[i].remind_time);
+        if (next_dose.valueOf() < historyPage.data[historyPage.data.length-1].next_dose) {
+          historyPage.data[historyPage.data.length-1].next_dose = next_dose.valueOf();
+        }
       }
       else {
         historyPage.data.push({
@@ -224,11 +231,14 @@ app.get('/history', restrict, function(request, response) {
           days: JSON.parse(rows[i].days),
           repeat: rows[i].repeat,
           mid: rows[i].mid,
-          active_on: isActive,
-          remind_times: [rows[i].remind_time]
+          active: isActive,
+          remind_times: [rows[i].remind_time],
+          next_dose: next_dose.valueOf()
         });
       }
     }
+
+    historyPage.remindersSwitch = remindersSwitch;
     response.render('pages/history', historyPage);
   })
 });
