@@ -32,9 +32,21 @@
 <body>
 
 <% include ../partials/nav.ejs %>
+<div id="overlay"></div>
 <div id="html-spinner"></div>
 
 <div class="container">
+  <div class="row">
+    <div class="col-cs-12">
+      <div id="infoNotifAlert" class="alert alert-info">
+        <strong>Info!</strong> This application uses notifications for reminders.
+        <br>Please allow this application to send you notifications.
+      </div>
+      <div id="warnNotifAlert" class="alert alert-warning">
+        <strong>Warning!</strong> This browser does not allow notifications.
+      </div>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-xs-12">
@@ -79,7 +91,22 @@
 
 <script>
   $(document).ready(function() {
+
+    $('#warnNotifAlert').hide();
+    $('#infoNotifAlert').hide();
+    $("#overlay").hide();
     $('#html-spinner').toggle();
+
+    if ('serviceWorker' in navigator && 'PushManager' in window && Notification.permission === "granted") {
+      $('#infoNotifAlert').hide();
+
+    } else if ('serviceWorker' in navigator && 'PushManager' in window && Notification.permission !== "granted") {
+      $('#infoNotifAlert').show();
+
+    } else {
+      $('#warnNotifAlert').show();
+    }
+
     $('button').on('click', function(e){
       if ($(this)[0] == $('#signup_button')[0]) {
         e.preventDefault();
