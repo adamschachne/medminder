@@ -66,7 +66,11 @@
                   <% if (data[i].type == "1") { %>
                     <div class="row">
                       <div class="col-xs-12">
-                        <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose on Thurs 12:59 pm </a>
+                        <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">
+                          <script>
+                            document.write("Next dose at " + moment(parseInt(<%=data[i].next_dose%>)).format("dddd, h:mm A"))
+                          </script>
+                        </a>
                       </div>
                       <div class="col-xs-12">
                         <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
@@ -87,7 +91,11 @@
                   <% } else {%>
                     <div class="row">
                       <div class="col-xs-12">
-                        <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">Next dose today at 12:59 pm </a>
+                        <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">
+                          <script>
+                            document.write("Next dose at " + moment(parseInt(<%=data[i].next_dose%>)).format("dddd, h:mm A"))
+                          </script>
+                        </a>
                       </div>
                       <div class="col-xs-12">
                         <div id="schedule<%=i%>" class="panel-collapse collapse to-collapse">
