@@ -31,8 +31,21 @@
 <body>
 
 <% include ../partials/nav.ejs %>
-
+<div id="overlay"></div>
 <div id="html-spinner"></div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-cs-12">
+      <div id="infoNotifAlert" class="alert alert-info">
+        <strong>Info!</strong> This application uses notifications for reminders.
+        <br>Please allow this application to send you notifications.
+      </div>
+      <div id="warnNotifAlert" class="alert alert-warning">
+        <strong>Warning!</strong> This browser does not allow notifications.
+      </div>
+    </div>
+  </div>
 
 <div class="container">
   <form id="signupForm" action="/signup" method="post">
@@ -69,23 +82,21 @@
 
 <script>
   $(document).ready(function() {
+    $("#overlay").hide();
     $('#html-spinner').toggle();
 
-    // if (Cookies.get("font-size")) {
-    //   switch(Cookies.get("font-size")) {
-    //       case "0":
-    //           $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
-    //           break;
-    //       case "1":
-    //           $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '1.5em');
-    //           break;
-    //       case "2":
-    //           $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '2em');
-    //           break;
-    //       default:
-    //           $('.btn,h1,h2,h3,h4,p,label,span').css('font-size', '');
-    //   }
-    // }
+    $('#warnNotifAlert').hide();
+    $('#infoNotifAlert').hide();
+
+    if ('serviceWorker' in navigator && 'PushManager' in window && Notification.permission === "granted") {
+      $('#infoNotifAlert').hide();
+
+    } else if ('serviceWorker' in navigator && 'PushManager' in window && Notification.permission !== "granted") {
+      $('#infoNotifAlert').show();
+
+    } else {
+      $('#warnNotifAlert').show();
+    }
 
     var valid = !$('#confirm').hasClass('unidentical');
     $('body').on('keyup', function(e) {
