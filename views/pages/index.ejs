@@ -147,7 +147,7 @@
                         <div class="col-xs-12">
                           <a data-toggle="collapse" data-parent="accordion" href="#schedule<%=i%>">
                             <script>
-                              document.write("Next dose at " + moment(parseInt(<%=data[i].next_dose%>)).format("dddd, h:mm A"))
+                              document.write("Next dose at " + moment("<%=data[i].next_dose%>").format("dddd, h:mm A"));
                             </script>
                           </a>
                         </div>
