@@ -113,17 +113,19 @@
           'value':sliderVal
         });
         switch(sliderVal) {
-            case 0:
-                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
-                break;
-            case 1:
-                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
-                break;
-            case 2:
-                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
-                break;
-            default:
-                $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
+          case 0:
+              $('.btn,h1,h2,h3,h4,p,label,a,.in-navbar').not("label.btn").css('font-size', '');
+              break;
+          case 1:
+              $('h1,h2,h3,h4').not("label.btn").css('font-size', '1.5em');
+              $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.25em');
+              break;
+          case 2:
+              $('h1,h2,h3,h4').not("label.btn").css('font-size', '2em');
+              $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.5em');
+              break;
+          default:
+              $('.btn,h1,h2,h3,h4,p,label,a,.in-navbar').not("label.btn").css('font-size', '');
         }
 
         Cookies.set("font-size-placeholder", sliderVal)
