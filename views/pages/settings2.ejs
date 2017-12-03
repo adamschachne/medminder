@@ -86,14 +86,34 @@
     <script type="text/javascript">
       $(document).ready(function() {
         $('#html-spinner').hide();
+        if(Cookies.get("font-size") != undefined){
+          if(Cookies.get("font-size") == "2"){
+            $('#largeFontBtn').css('background-color', '#e6e6e6');
+            $('#mediumFontBtn').css('background-color', '#fff');
+            $('#smallFontBtn').css('background-color', '#fff');
 
-        // TODO: Keep track of the font size in the database to keep from setting affecting other users after they log out, as well as to show which button representing small, medium, or large is currently selected(within /settings2)
+          } else if (Cookies.get("font-size") == "1"){
+            $('#largeFontBtn').css('background-color', '#fff');
+            $('#mediumFontBtn').css('background-color', '#e6e6e6');
+            $('#smallFontBtn').css('background-color', '#fff');
+
+          } else if(Cookies.get("font-size") == "0"){
+            $('#largeFontBtn').css('background-color', '#fff');
+            $('#mediumFontBtn').css('background-color', '#fff');
+            $('#smallFontBtn').css('background-color', '#e6e6e6');
+          }
+        }
+
       });
 
       // $("#slider-text-size").bootstrapSlider();
       $("[name='notifications-switch']").bootstrapToggle();
 
       $('#smallFontBtn').click(function (){
+        $('#largeFontBtn').css('background-color', '#fff');
+        $('#mediumFontBtn').css('background-color', '#fff');
+        $('#smallFontBtn').css('background-color', '#e6e6e6');
+
         $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '');
         gtag('event','change_font_size',{
           'event_category': 'engagement',
@@ -103,7 +123,14 @@
         Cookies.set("font-size-placeholder", 0);
       });
       $('#mediumFontBtn').click(function (){
-        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '1.5em');
+
+        $('#largeFontBtn').css('background-color', '#fff');
+        $('#mediumFontBtn').css('background-color', '#e6e6e6');
+        $('#smallFontBtn').css('background-color', '#fff');
+
+        $('h1,h2,h3,h4').not("label.btn").css('font-size', '1.5em');
+        $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.25em');
+
         gtag('event','change_font_size',{
           'event_category': 'engagement',
           'event_label': 'button',
@@ -112,7 +139,13 @@
         Cookies.set("font-size-placeholder", 1);
       });
       $('#largeFontBtn').click(function (){
-        $('.btn,h1,h2,h3,h4,p,label,a,span').not("label.btn").css('font-size', '2em');
+        $('#largeFontBtn').css('background-color', '#e6e6e6');
+        $('#mediumFontBtn').css('background-color', '#fff');
+        $('#smallFontBtn').css('background-color', '#fff');
+
+        $('h1,h2,h3,h4').not("label.btn").css('font-size', '2em');
+        $('.btn,p,label,a,.in-navbar').not("label.btn").css('font-size', '1.5em');
+
         gtag('event','change_font_size',{
           'event_category': 'engagement',
           'event_label': 'button',
