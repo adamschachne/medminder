@@ -305,7 +305,7 @@ app.post('/signup', function(request, response){
 
   knex.select('*').from('users').where('username', '=', username)
   .asCallback(function(err, rows) {
-    if (err) return consle.log(new Error('SQL error'));
+    if (err) return console.log(new Error('SQL error'));
     var user = rows[0];
     if (!user) {
       hash({password: password }, function (err, pass, salt, hash) {
