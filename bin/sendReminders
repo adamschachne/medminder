@@ -32,6 +32,13 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 );
 
+const options = {
+  TTL: 60 // 1 minute ttl
+  /* headers: {
+    '< header name >': '< header value >'
+  } */
+}
+
 var nowMoment = moment();
 const buffer = 0.033333; // ~2 minutes plus or minus in hours
 const lastNotificationBuffer =  0.16666; // ~10 minutes in hours
@@ -174,7 +181,7 @@ function sendNotifications(rows, index) {
     };
     var payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'", "mid": "'+rows[index].mid+'"}';
 
-    webpush.sendNotification(pushSubscription, payloadMessage).catch((error) => {
+    webpush.sendNotification(pushSubscription, payloadMessage, options).catch((error) => {
       console.log("bad or non-existant subscription for uid: " + rows[index].uid);
     }).then(function(res) {
       knex('medications')
