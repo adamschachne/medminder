@@ -32,8 +32,25 @@ self.addEventListener('push', function(event) {
         //icon: 'images/xmark.png'
       }
     ],
-    vibrate: [100, 50, 100]
+    vibrate: [100, 50,  100]
   };
+
+  const promiseChain = registration.getNotifications()
+  .then(notifications => {
+    let currentNotification;
+
+    for(let i = 0; i < notifications.length; i++) {
+
+      // if (notifications[i].data &&
+      //   notifications[i].data.userName === userName) {
+      //   currentNotification = notifications[i];
+      // }
+      if (notifications[i].body == data.msg) {
+        notifications[i].close();
+      }
+    }
+  })
+
   const notificationPromise = self.registration.showNotification(title, options);
   event.waitUntil(notificationPromise);
 });

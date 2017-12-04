@@ -559,24 +559,21 @@ function getNextReminderMoment(active_on, type, days, repeat, remind_time) {
     for (var i = 0; i < 7; i++) {
       if (currentDay == 0) {
         dayIndex = days.indexOf('S');
-      } else if (currentDay == 0) {
-        dayIndex = days.indexOf('M');
       } else if (currentDay == 1) {
-        dayIndex = days.indexOf('T');
+        dayIndex = days.indexOf('M');
       } else if (currentDay == 2) {
-        dayIndex = days.indexOf('W');
+        dayIndex = days.indexOf('T');
       } else if (currentDay == 3) {
-        dayIndex = days.indexOf('Th');
+        dayIndex = days.indexOf('W');
       } else if (currentDay == 4) {
-        dayIndex = days.indexOf('F');
+        dayIndex = days.indexOf('Th');
       } else if (currentDay == 5) {
+        dayIndex = days.indexOf('F');
+      } else if (currentDay == 6) {
         dayIndex = days.indexOf('Sa');
       }
-      if (dayIndex != -1) {
-        if (reminderToday.isBefore(nowMoment)) { // reminder already happened today, schedule for the next one
-          returnMoment.add(1, 'day');
-          currentDay = returnMoment.weekday();
-        }
+      
+      if (dayIndex != -1 && reminderToday.isAfter(nowMoment)) {
         break;
       }
       returnMoment.add(1, 'day');
