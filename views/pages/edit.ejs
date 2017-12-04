@@ -214,7 +214,6 @@
 
     $('#addReminderTime').click(function() {
       if (!$('#specifiedStartTime' + counter).data("DateTimePicker").date()) {
-        console.log('Returning');
         $('#addReminderTime').tooltip({
           placement: "bottom",
           title: "Please choose a time"
