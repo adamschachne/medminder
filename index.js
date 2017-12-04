@@ -524,7 +524,7 @@ function restrict(req, res, next) {
     // console.log("no user");
     res.redirect('/landing');
   }
-}
+} 
 
 function authenticate(uname, pass, cb) {
   //knex.raw('select * from users where uid = ?', [1]).on('query-error', function(error, obj) {
@@ -572,7 +572,7 @@ function getNextReminderMoment(active_on, type, days, repeat, remind_time) {
       } else if (currentDay == 6) {
         dayIndex = days.indexOf('Sa');
       }
-      
+
       if (dayIndex != -1 && reminderToday.isAfter(nowMoment)) {
         break;
       }
