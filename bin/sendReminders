@@ -57,7 +57,7 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on'
   if (err) console.log(err)
   var toRemind = [];
   for (var i = 0; i < rows.length; i++) {
-
+    //console.log(rows[i]);
     // if the last notification set to be notified is the current one, don't notify it again.
     if (toRemind.length > 0 && toRemind[toRemind.length-1].mid == rows[i].mid) {
       continue;
@@ -77,6 +77,7 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on'
 
       // dont send a notification if the last one was sent within 10 minutes ago
       if (timeSinceLastNotification < lastNotificationBuffer) {
+        //console.log(rows[i]);
         continue;
       }
     }
@@ -85,9 +86,9 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on'
     var repeat = parseFloat(rows[i].repeat);
 
     // dont check reminder if it current time is before the reminder time
-    if (nowMoment.valueOf() < remind_time) {
-      continue;
-    }
+    // if (nowMoment.valueOf() < remind_time) {
+    //   continue;
+    // }
 
     var type = rows[i].type;
     let remindMoment = moment(remind_time);
@@ -99,6 +100,7 @@ knex.select('med_name', 'type', 'days', 'repeat', 'medications.mid', 'active_on'
       // take the time of the reminder if it were today
       var reminderToday = moment(remindMoment.hour()+":"+remindMoment.minutes(), "HH:mm");
       var difference = moment.duration(nowMoment.diff(remindMoment));
+      //console.log(rows[i].med_name + "\n" + difference.asMinutes());
       if (difference.asMinutes() > buffer*60) {
         continue;
       }
@@ -182,7 +184,8 @@ function sendNotifications(rows, index) {
     var payloadMessage = '{"msg" : "Take your '+rows[index].med_name+'", "mid": "'+rows[index].mid+'"}';
 
     webpush.sendNotification(pushSubscription, payloadMessage, options).catch((error) => {
-      console.log("bad or non-existant subscription for uid: " + rows[index].uid);
+      console.log(error, " for mid: " + rows[index].mid);
+      //console.log("bad or non-existant subscription for uid: " + rows[index].uid);
     }).then(function(res) {
       knex('medications')
       .where('mid', '=', rows[index].mid)
